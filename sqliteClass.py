@@ -17,80 +17,18 @@ class db:
 
         # Creating table as per requirement
         query = """
-            CREATE TABLE IF NOT EXISTS 'dimChains' (
-                'id'	            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-                'description'	    TEXT NOT NULL UNIQUE,
-                'isActive'	        boolean NOT NULL DEFAULT 0,
-                'insertDatetime'	datetime DEFAULT current_timestamp
-            );
-        """
-
-        self.executeQuery(query)
-
-        query = """
-            CREATE TABLE IF NOT EXISTS 'dimTypes' (
-                'id'	            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-                'description'	    TEXT NOT NULL UNIQUE,
-                'insertDatetime'	datetime DEFAULT current_timestamp
-            );
-        """
-
-        self.executeQuery(query)
-
-        query = """
-            CREATE TABLE IF NOT EXISTS 'dimCryptos' (
-                'id'	            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-                'symbol'	        TEXT,
-                'symbolName'        TEXT,
-                'slug'              TEXT,
-                'contract'	        TEXT NOT NULL,
-                'FK_typeId'	        INTEGER,
-                'FK_chainId'	    INTEGER,
-                'insertDatetime'	datetime DEFAULT current_timestamp,
-                FOREIGN KEY('FK_typeId')  REFERENCES dimTypes('id'),
-                FOREIGN KEY('FK_chainId') REFERENCES dimChains('id')
-            );
-        """
-
-        self.executeQuery(query)
-
-        query = """
-            CREATE TABLE IF NOT EXISTS 'dimCryptosHistory' (
-                'id'	            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-                'symbol'	        TEXT,
-                'symbolName'        TEXT,
-                'slug'              TEXT,
-                'contract'	        TEXT NOT NULL,
-                'FK_typeId'	        INTEGER,
-                'FK_chainId'	    INTEGER,
-                'insertDatetime'	datetime DEFAULT current_timestamp,
-                FOREIGN KEY('FK_typeId')  REFERENCES dimTypes('id'),
-                FOREIGN KEY('FK_chainId') REFERENCES dimChains('id')
-            );
-        """
-
-        self.executeQuery(query)
-
-        query = """
-            CREATE TABLE IF NOT EXISTS tradingHistory (
-                'id'	                INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-                'FK_cryptoId'	        INTEGER NOT NULL,
-                'contract'	            TEXT NOT NULL,
-                'isSold'	            boolean NOT NULL DEFAULT 0,
-                'isTrading'	            boolean NOT NULL DEFAULT 0,
-                'prevPrice'	            numeric,
-                'price'	                numeric,
-                'sellPrice'	            numeric,
-                'percentageDiff'	    numeric,
-                'sellPercentageDiff'	numeric,
-                'buyDatetime'	        datetime,
-                'sellDatetime'	        datetime,
-                'realBuyPrice'	        numeric,
-                'realSellPrice'	        numeric,
-                'buyURL'	            TEXT,
-                'approveSellURL'	    TEXT,
-                'sellURL'	            TEXT,
-                FOREIGN KEY('FK_cryptoId') REFERENCES dimCryptos('id')
+            CREATE TABLE IF NOT EXISTS 'bonolotoResults' (
+                'id'	INTEGER,
+                'fecha'	date NOT NULL,
+                'N1'	INTEGER NOT NULL,
+                'N2'	INTEGER NOT NULL,
+                'N3'	INTEGER NOT NULL,
+                'N4'	INTEGER NOT NULL,
+                'N5'	INTEGER NOT NULL,
+                'N6'	INTEGER NOT NULL,
+                'COMPLEMENTARIO'	INTEGER NOT NULL,
+                'REINTEGRO'	INTEGER NOT NULL,
+                CONSTRAINT 'date_id' PRIMARY KEY('id' AUTOINCREMENT)
             );
         """
 
