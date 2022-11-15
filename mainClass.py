@@ -23,6 +23,9 @@ class predictData:
 
         self.sortUnpivotedDf = [self.dateDesc, self.unpivotedTableTitleDesc, self.unpivotedTableValueDesc]
 
+        self.tableDesc = "bonolotoHistory"
+        self.tempTableDesc = "TMP_" + self.tableDesc
+
         self.getDataset()
 
     def getDataset(self):
@@ -46,9 +49,7 @@ class predictData:
         df = df.loc[df[self.dateDesc].str.len() <= 15]
 
         # Set FECHA as date
-        df[self.dateDesc] = pd.to_datetime(df[self.dateDesc]).dt.date
-
-        print(df)
+        df[self.dateDesc] = pd.to_datetime(df[self.dateDesc], format='%d/%m/%Y').dt.date
 
         # Unpivot df columns
         df = pd.melt(df,
@@ -58,12 +59,26 @@ class predictData:
 
         df = df.sort_values(by=self.sortUnpivotedDf)
 
-        print(df)
-
         self.insertData(sourceDf=df)
 
     def insertData(self, sourceDf:pd.DataFrame):
 
         sqlite = sqliteClass.db()
 
-        sqlite.insertIntoFromPandasDf(sourceDf=sourceDf, targetTable="bonolotoResults")
+        sqlite.insertIntoFromPandasDf(sourceDf=sourceDf, targetTable=self.tempTableDesc)
+
+        query = f"""
+            INSERT INTO {self.tableDesc} ({self.dateDesc}, {self.unpivotedTableTitleDesc}, {self.unpivotedTableValueDesc})
+            SELECT tmp.{self.dateDesc}, tmp.{self.unpivotedTableTitleDesc}, tmp.{self.unpivotedTableValueDesc}
+            FROM {self.tempTableDesc} tmp
+            LEFT JOIN {self.tableDesc} t
+            ON t.{self.dateDesc} = tmp.{self.dateDesc}
+            AND t.{self.unpivotedTableTitleDesc} = tmp.{self.unpivotedTableTitleDesc}
+            WHERE t.{self.dateDesc} IS NULL
+        """
+
+        sqlite.executeQuery(query)
+
+        query = f"DELETE FROM {self.tempTableDesc}"
+
+        sqlite.executeQuery(query)

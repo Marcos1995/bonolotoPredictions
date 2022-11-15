@@ -17,12 +17,24 @@ class db:
 
         # Creating table as per requirement
         query = """
-            CREATE TABLE IF NOT EXISTS 'bonolotoResults' (
+            CREATE TABLE IF NOT EXISTS 'bonolotoHistory' (
                 'ID'	INTEGER,
                 'FECHA'	DATE NOT NULL,
                 'TIPO'	TEXT NOT NULL,
                 'VALOR'	INTEGER NOT NULL,
-                PRIMARY KEY('id' AUTOINCREMENT)
+                'PREDICCION' INTEGER,
+                PRIMARY KEY('ID' AUTOINCREMENT)
+            );
+        """
+
+        self.executeQuery(query)
+
+        # Creating table as per requirement
+        query = """
+            CREATE TABLE IF NOT EXISTS 'TMP_bonolotoHistory' (
+                'FECHA'	DATE NOT NULL,
+                'TIPO'	TEXT NOT NULL,
+                'VALOR'	INTEGER NOT NULL
             );
         """
 
@@ -120,5 +132,5 @@ class db:
 
         except Exception as e:
             commonFunctions.printInfo(f"Error en executeQuery() {e}", colorama.Fore.RED)
-            commonFunctions.printInfo(query, colorama.Fore.RED)
+            #commonFunctions.printInfo(query, colorama.Fore.RED)
             exit()
