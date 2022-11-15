@@ -18,17 +18,11 @@ class db:
         # Creating table as per requirement
         query = """
             CREATE TABLE IF NOT EXISTS 'bonolotoResults' (
-                'id'	INTEGER,
-                'fecha'	date NOT NULL,
-                'N1'	INTEGER NOT NULL,
-                'N2'	INTEGER NOT NULL,
-                'N3'	INTEGER NOT NULL,
-                'N4'	INTEGER NOT NULL,
-                'N5'	INTEGER NOT NULL,
-                'N6'	INTEGER NOT NULL,
-                'COMPLEMENTARIO'	INTEGER NOT NULL,
-                'REINTEGRO'	INTEGER NOT NULL,
-                CONSTRAINT 'date_id' PRIMARY KEY('id' AUTOINCREMENT)
+                'ID'	INTEGER,
+                'FECHA'	DATE NOT NULL,
+                'TIPO'	TEXT NOT NULL,
+                'VALOR'	INTEGER NOT NULL,
+                PRIMARY KEY('id' AUTOINCREMENT)
             );
         """
 
