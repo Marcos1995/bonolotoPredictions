@@ -1,6 +1,7 @@
 import sqliteClass
 import pandas as pd
 import datetime as dt
+import sklearn
 
 class predictData:
 
@@ -68,17 +69,58 @@ class predictData:
         sqlite.insertIntoFromPandasDf(sourceDf=sourceDf, targetTable=self.tempTableDesc)
 
         query = f"""
+            DELETE FROM {self.tempTableDesc};
+
             INSERT INTO {self.tableDesc} ({self.dateDesc}, {self.unpivotedTableTitleDesc}, {self.unpivotedTableValueDesc})
             SELECT tmp.{self.dateDesc}, tmp.{self.unpivotedTableTitleDesc}, tmp.{self.unpivotedTableValueDesc}
             FROM {self.tempTableDesc} tmp
             LEFT JOIN {self.tableDesc} t
             ON t.{self.dateDesc} = tmp.{self.dateDesc}
             AND t.{self.unpivotedTableTitleDesc} = tmp.{self.unpivotedTableTitleDesc}
-            WHERE t.{self.dateDesc} IS NULL
+            WHERE t.{self.dateDesc} IS NULL;
+
+            DELETE FROM {self.tempTableDesc};
         """
 
         sqlite.executeQuery(query)
 
-        query = f"DELETE FROM {self.tempTableDesc}"
+    def predictions(self):
 
-        sqlite.executeQuery(query)
+        # Import train_test_split from sklearn.model_selection using the import keyword.
+        from sklearn.model_selection import train_test_split
+        # Import os module using the import keyword
+        import os
+        # Import dataset using read_csv() function by pasing the dataset name as
+        # an argument to it.
+        # Store it in a variable.
+        bike_dataset = pd.read_csv("bikeDataset.csv")
+        # Make a copy of the original given dataset and store it in another variable.
+        bike = bike_dataset.copy()
+        # Give the columns to be updated list as static input and store it in a variable
+        categorical_column_updated = ['season', 'yr', 'mnth', 'weathersit', 'holiday']
+        bike = pd.get_dummies(bike, columns=categorical_column_updated)
+        # separate the dependent and independent variables into two data frames.
+        X = bike.drop(['cnt'], axis=1)
+        Y = bike['cnt']
+        # Divide the dataset into 80 percent training and 20 percent testing.
+        X_train, X_test, Y_train, Y_test = train_test_split(
+            X, Y, test_size=.20, random_state=0
+        )
+
+        #On our dataset, we're going to build a Decision Tree Model.
+        from sklearn.tree import DecisionTreeRegressor
+        #We pass max_depth as argument to decision Tree Regressor
+        DT_model = DecisionTreeRegressor(max_depth=5).fit(X_train,Y_train)
+        #Predictions based on data testing
+        DT_prediction = DT_model.predict(X_test) 
+        #Print the value of prediction
+        print(DT_prediction)
+
+        #On our dataset, we're going to build a KNN model.
+        from sklearn.neighbors import KNeighborsRegressor
+        #We pass n_neighborss as argument to KNeighborsRegressor
+        KNN_model = KNeighborsRegressor(n_neighbors=3).fit(X_train,Y_train)
+        #Predictions based on data testing
+        KNN_predict = KNN_model.predict(X_test)
+        #Print the value of prediction
+        print(KNN_predict)
