@@ -1,11 +1,16 @@
 import sqliteClass
+import commonFunctions
 import pandas as pd
 import datetime as dt
-import sklearn
+import colorama
+#import sklearn
 
 class predictData:
 
     def __init__(self):
+
+        self.sqlite = sqliteClass.db()
+
         # Historic dataset for the Bonoloto
         self.url = "https://docs.google.com/spreadsheets/u/0/d/175SqVQ3E7PFZ0ebwr2o98Kb6YEAwSUykGFh6ascEfI0/pubhtml/sheet?headers=false&gid=0"
         
@@ -52,40 +57,68 @@ class predictData:
         # Set FECHA as date
         df[self.dateDesc] = pd.to_datetime(df[self.dateDesc], format='%d/%m/%Y').dt.date
 
-        # Unpivot df columns
-        df = pd.melt(df,
-            id_vars=self.dateDesc, value_vars=self.unpivotColumnsDesc,
-            var_name=self.unpivotedTableTitleDesc, value_name=self.unpivotedTableValueDesc
-        )
+        query = f"""
+            SELECT
+                COALESCE(MAX({self.dateDesc}), '1970-01-01') AS {self.dateDesc}
+            FROM {self.tableDesc}
+        """
 
-        df = df.sort_values(by=self.sortUnpivotedDf)
+        # Set max date from our dataset
+        maxDate = self.sqlite.executeQuery(query)[self.dateDesc][0]
 
-        self.insertData(sourceDf=df)
+        # Format date as type datetime.date
+        maxDate = dt.datetime.strptime(maxDate, '%Y-%m-%d').date()
 
-    def insertData(self, sourceDf:pd.DataFrame):
+        # Filter dataset to select the rows to insert only
+        df = df[df[self.dateDesc] > maxDate]
 
-        sqlite = sqliteClass.db()
+        # If there are no rows to insert
+        if df.empty:
+            self.predictions()
 
-        sqlite.insertIntoFromPandasDf(sourceDf=sourceDf, targetTable=self.tempTableDesc)
+        else: # There are rows to insert
+
+            # Unpivot df columns
+            df = pd.melt(df,
+                id_vars=self.dateDesc, value_vars=self.unpivotColumnsDesc,
+                var_name=self.unpivotedTableTitleDesc, value_name=self.unpivotedTableValueDesc
+            )
+
+            # Order columns
+            df = df.sort_values(by=self.sortUnpivotedDf)
+
+            # Insert dataframe to the DB
+            self.insertData(sourceDf=df)
+
+    # Insert dataframe in the DB
+    def insertData(self, sourceDf:pd.DataFrame()):
+
+        query = f"DELETE FROM {self.tempTableDesc}"
+
+        self.sqlite.executeQuery(query)
+
+        self.sqlite.insertIntoFromPandasDf(sourceDf=sourceDf, targetTable=self.tempTableDesc)
 
         query = f"""
-            DELETE FROM {self.tempTableDesc};
-
             INSERT INTO {self.tableDesc} ({self.dateDesc}, {self.unpivotedTableTitleDesc}, {self.unpivotedTableValueDesc})
             SELECT tmp.{self.dateDesc}, tmp.{self.unpivotedTableTitleDesc}, tmp.{self.unpivotedTableValueDesc}
             FROM {self.tempTableDesc} tmp
             LEFT JOIN {self.tableDesc} t
             ON t.{self.dateDesc} = tmp.{self.dateDesc}
             AND t.{self.unpivotedTableTitleDesc} = tmp.{self.unpivotedTableTitleDesc}
-            WHERE t.{self.dateDesc} IS NULL;
-
-            DELETE FROM {self.tempTableDesc};
+            WHERE t.{self.dateDesc} IS NULL
         """
 
-        sqlite.executeQuery(query)
+        self.sqlite.executeQuery(query)
 
+        query = f"DELETE FROM {self.tempTableDesc}"
+
+        self.sqlite.executeQuery(query)
+
+    # Predict the results for any day and any number type
     def predictions(self):
-
+        1
+        """
         # Import train_test_split from sklearn.model_selection using the import keyword.
         from sklearn.model_selection import train_test_split
         # Import os module using the import keyword
@@ -124,3 +157,4 @@ class predictData:
         KNN_predict = KNN_model.predict(X_test)
         #Print the value of prediction
         print(KNN_predict)
+        """
