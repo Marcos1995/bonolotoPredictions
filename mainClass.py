@@ -1,9 +1,18 @@
 import sqliteClass
 import commonFunctions
+# --------------------------------
 import pandas as pd
 import datetime as dt
 import colorama
-#import sklearn
+import sklearn
+import math
+import numpy as np
+from sklearn.preprocessing import MinMaxScaler
+from keras.models import Sequential 
+from keras.layers import Dense, LSTM
+import matplotlib
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 
 class predictData:
 
@@ -117,7 +126,49 @@ class predictData:
 
     # Predict the results for any day and any number type
     def predictions(self):
-        1
+
+        query = f"""
+            SELECT
+                {self.dateDesc}, {self.unpivotedTableTitleDesc}, {self.unpivotedTableValueDesc}
+            FROM {self.tableDesc}
+            ORDER BY {self.dateDesc}, {self.unpivotedTableTitleDesc}
+        """
+
+        # Get all the dataset
+        df = self.sqlite.executeQuery(query)
+
+        commonFunctions.printInfo(df, colorama.Fore.BLUE)
+
+        df = df.pivot(index=self.dateDesc, columns=self.unpivotedTableTitleDesc, values=self.unpivotedTableValueDesc)
+
+        commonFunctions.printInfo(df, colorama.Fore.BLUE)
+
+        plt.style.use('fivethirtyeight')
+
+        #Visualize the closing price history
+        #We create a plot with name 'Close Price History'
+        plt.figure(figsize=(16,8))
+        plt.title('Bonoloto')
+
+        #We give the plot the data (the closing price of our stock)
+        plt.plot(df[self.unpivotColumnsDesc])
+
+        #We label the axis
+        plt.xlabel(self.dateDesc, fontsize=18)
+        plt.ylabel(self.unpivotedTableValueDesc, fontsize=18)
+
+        # Function add a legend  
+        plt.legend(self.unpivotColumnsDesc, loc ="lower right")
+
+        # Avoid overlapping
+        plt.xticks(np.arange(0, len(df)+1, 25))
+        plt.gcf().autofmt_xdate()
+
+        #We show the plot
+        plt.show()
+
+
+
         """
         # Import train_test_split from sklearn.model_selection using the import keyword.
         from sklearn.model_selection import train_test_split
