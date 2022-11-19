@@ -1,5 +1,5 @@
 import sqliteClass
-import commonFunctions
+import commonFunctions as cf
 # --------------------------------
 import pandas as pd
 import datetime as dt
@@ -16,32 +16,46 @@ import matplotlib.dates as mdates
 
 class predictData:
 
-    def __init__(self):
+    def __init__(self, dbFileName, datasetTable, predictionsTable):
 
-        self.sqlite = sqliteClass.db()
+        self.dbFileName = dbFileName
+        self.datasetTable = datasetTable
+        self.tempDatasetTable = "TMP_" + self.datasetTable
+        self.predictionsTable = predictionsTable
+
+        # Initialize sqlite database connection
+        self.sqlite = sqliteClass.db(
+            dbFileName=self.dbFileName,
+            datasetTable=self.datasetTable,
+            tempDatasetTable=self.tempDatasetTable,
+            predictionsTable=self.predictionsTable
+        )
 
         # Historic dataset for the Bonoloto
         self.url = "https://docs.google.com/spreadsheets/u/0/d/175SqVQ3E7PFZ0ebwr2o98Kb6YEAwSUykGFh6ascEfI0/pubhtml/sheet?headers=false&gid=0"
         
-        # DB date column name
-        self.dateDesc = "FECHA"
+        # DB result date column name
+        self.dateDesc = "RESULT_DATE"
         
         # Rename all columns
         self.unpivotColumnsDesc = ["N1", "N2", "N3", "N4", "N5", "N6", "COMPLEMENTARIO", "REINTEGRO"]
 
+        self.unpivotedTableTitleDesc = "NUMBER_TYPE"
+
+        self.unpivotedTableValueDesc = "NUMBER"
+
         # Append date column in first position
         self.allColumnsDesc = [self.dateDesc] + self.unpivotColumnsDesc
 
-        self.unpivotedTableTitleDesc = "TIPO"
-
-        self.unpivotedTableValueDesc = "VALOR"
-
         self.sortUnpivotedDf = [self.dateDesc, self.unpivotedTableTitleDesc, self.unpivotedTableValueDesc]
 
-        self.tableDesc = "bonolotoHistory"
-        self.tempTableDesc = "TMP_" + self.tableDesc
+        self.raffleDesc = "Bonoloto"
+        self.datasetTable = "raffleDataset"
+        self.tempDatasetTable = "TMP_" + self.datasetTable
+        self.predictionsTable = "rafflePredictions"
 
         self.getDataset()
+
 
     def getDataset(self):
 
@@ -69,7 +83,7 @@ class predictData:
         query = f"""
             SELECT
                 COALESCE(MAX({self.dateDesc}), '1970-01-01') AS {self.dateDesc}
-            FROM {self.tableDesc}
+            FROM {self.datasetTable}
         """
 
         # Set max date from our dataset
@@ -102,17 +116,20 @@ class predictData:
     # Insert dataframe in the DB
     def insertData(self, sourceDf:pd.DataFrame()):
 
-        query = f"DELETE FROM {self.tempTableDesc}"
+        # Truncate TMP table
+        query = f"DELETE FROM {self.tempDatasetTable}"
 
         self.sqlite.executeQuery(query)
 
-        self.sqlite.insertIntoFromPandasDf(sourceDf=sourceDf, targetTable=self.tempTableDesc)
+        # Insert data into TMP table
+        self.sqlite.insertIntoFromPandasDf(sourceDf=sourceDf, targetTable=self.tempDatasetTable)
 
+        # Insert new data only into the final table from the TMP table
         query = f"""
-            INSERT INTO {self.tableDesc} ({self.dateDesc}, {self.unpivotedTableTitleDesc}, {self.unpivotedTableValueDesc})
+            INSERT INTO {self.datasetTable} ({self.dateDesc}, {self.unpivotedTableTitleDesc}, {self.unpivotedTableValueDesc})
             SELECT tmp.{self.dateDesc}, tmp.{self.unpivotedTableTitleDesc}, tmp.{self.unpivotedTableValueDesc}
-            FROM {self.tempTableDesc} tmp
-            LEFT JOIN {self.tableDesc} t
+            FROM {self.tempDatasetTable} tmp
+            LEFT JOIN {self.datasetTable} t
             ON t.{self.dateDesc} = tmp.{self.dateDesc}
             AND t.{self.unpivotedTableTitleDesc} = tmp.{self.unpivotedTableTitleDesc}
             WHERE t.{self.dateDesc} IS NULL
@@ -120,40 +137,45 @@ class predictData:
 
         self.sqlite.executeQuery(query)
 
-        query = f"DELETE FROM {self.tempTableDesc}"
+        # Truncate TMP table
+        query = f"DELETE FROM {self.tempDatasetTable}"
 
         self.sqlite.executeQuery(query)
+
+        # Let's predict!
+        self.predictions()
 
     # Predict the results for any day and any number type
     def predictions(self):
 
+        # Get historic data
         query = f"""
             SELECT
                 {self.dateDesc}, {self.unpivotedTableTitleDesc}, {self.unpivotedTableValueDesc}
-            FROM {self.tableDesc}
+            FROM {self.datasetTable}
+            WHERE FECHA >= '2022-01-01'
             ORDER BY {self.dateDesc}, {self.unpivotedTableTitleDesc}
         """
 
         # Get all the dataset
         df = self.sqlite.executeQuery(query)
 
-        commonFunctions.printInfo(df, colorama.Fore.BLUE)
-
+        # Pivot data
         df = df.pivot(index=self.dateDesc, columns=self.unpivotedTableTitleDesc, values=self.unpivotedTableValueDesc)
 
-        commonFunctions.printInfo(df, colorama.Fore.BLUE)
+        cf.printInfo(df, colorama.Fore.BLUE)
 
         plt.style.use('fivethirtyeight')
 
-        #Visualize the closing price history
-        #We create a plot with name 'Close Price History'
+        # Visualize the closing price history
+        # We create a plot with name 'Close Price History'
         plt.figure(figsize=(16,8))
         plt.title('Bonoloto')
 
-        #We give the plot the data (the closing price of our stock)
+        # We give the plot the data (the closing price of our stock)
         plt.plot(df[self.unpivotColumnsDesc])
 
-        #We label the axis
+        # We label the axis
         plt.xlabel(self.dateDesc, fontsize=18)
         plt.ylabel(self.unpivotedTableValueDesc, fontsize=18)
 
@@ -161,33 +183,36 @@ class predictData:
         plt.legend(self.unpivotColumnsDesc, loc ="lower right")
 
         # Avoid overlapping
-        plt.xticks(np.arange(0, len(df)+1, 365))
+        plt.xticks(np.arange(0, len(df)+1, 20))
         plt.gcf().autofmt_xdate()
 
-        #We show the plot
-        plt.show()
+        # We show the plot
+        #plt.show()
 
         for typeValue in self.unpivotColumnsDesc:
 
-            #Create a new dataframe with only the typeValue column
+            # Create a new dataframe with only the typeValue column
             data = df.filter([typeValue])
 
-            #Convert the dataframe to a numpy array
+            # Convert the dataframe to a numpy array
             dataset = data.values
-            #Get the number of rows to train the model on
+
+            # Get the number of rows to train the model on
             training_data_len = math.ceil(len(dataset) * 0.8)
 
-            #Scale the data
+            # Scale the data
             scaler = MinMaxScaler(feature_range=(0,1))
             scaled_data = scaler.fit_transform(dataset)
 
-            #Create the training data set 
-            #Create the scaled training data set
+            # Create the training data set 
+            # Create the scaled training data set
             train_data = scaled_data[0:training_data_len, :]
-            #Split the data into x_train and y_train data sets
+
+            # Split the data into x_train and y_train data sets
             x_train = []
             y_train = []
-            #We create a loop
+
+            # We create a loop
             for i in range(60, len(train_data)):
                 x_train.append(train_data[i-60:i, 0]) #Will conaint 60 values (0-59)
                 y_train.append(train_data[i, 0]) #Will contain the 61th value (60)
@@ -196,64 +221,70 @@ class predictData:
                     print(y_train)
                     print()
 
-
-            #Convert the x_train and y_train to numpy arrays
+            # Convert the x_train and y_train to numpy arrays
             x_train, y_train = np.array(x_train), np.array(y_train)
 
-            #Reshape the data
+            # Reshape the data
             x_train = np.reshape(x_train, (x_train.shape[0], x_train.shape[1], 1))
             x_train.shape
 
-            #Build the LSTM model
+            # Build the LSTM model
             model = Sequential()
             model.add(LSTM(50, return_sequences=True, input_shape=(x_train.shape[1], 1)))
             model.add(LSTM(50, return_sequences=False))
             model.add(Dense(25))
             model.add(Dense(1))
 
-            #Compile the model
+            # Compile the model
             model.compile(optimizer='adam', loss='mean_squared_error')
 
-            #Train the model
+            # Train the model
             model.fit(x_train, y_train, batch_size=1, epochs=1)
 
-            #Create the testing data set
-            #Create a new array containing scaled values from index 1738 to 2247
+            # Create the testing data set
+            # Create a new array containing scaled values from index 1738 to 2247
             test_data = scaled_data[training_data_len - 60:]
-            #Create the data set x_test and y_test
+
+            # Create the data set x_test and y_test
             x_test = []
             y_test = dataset[training_data_len:, :]
             for i in range(60, len(test_data)):
                 x_test.append(test_data[i-60:i, 0])
 
-            #Convert the data to a numpy array
+            # Convert the data to a numpy array
             x_test = np.array(x_test)
 
-            #Reshape the data
+            # Reshape the data
             x_test = np.reshape(x_test, (x_test.shape[0], x_test.shape[1], 1))
 
-            #Get the model's predicted price values for the x_test data set
+            # Get the model's predicted price values for the x_test data set
             predictions = model.predict(x_test)
             predictions = scaler.inverse_transform(predictions)
-            predictions
 
-            #Evaluate model (get the root mean quared error (RMSE))
+            # Evaluate model (get the root mean quared error (RMSE))
             rmse = np.sqrt( np.mean( predictions - y_test )**2 )
             rmse
 
-            #Plot the data
+            # Plot the data
             train = data[:training_data_len]
             valid = data[training_data_len:]
             valid['Predictions'] = predictions
-            #Visualize the data
+
+            # Visualize the data
+            plt.style.use('fivethirtyeight')
             plt.figure(figsize=(16,8))
             plt.title('Model')
-            plt.xlabel('Date', fontsize=18)
+            plt.xlabel(self.dateDesc, fontsize=18)
             plt.ylabel('Close Price USD ($)', fontsize=18)
             plt.plot(train[typeValue])
             plt.plot(valid[[typeValue, 'Predictions']])
             plt.legend(['Train', 'Validation', 'Predictions'], loc='lower right')
-            plt.show()
+
+            # Avoid overlapping
+            plt.xticks(np.arange(0, len(df)+1, 20))
+            plt.gcf().autofmt_xdate()
+
+            #plt.show()
 
             X_FUTURE = 1
             predictions = np.array([])
@@ -266,26 +297,40 @@ class predictData:
                 predictions = np.concatenate([predictions, curr_prediction[0]])
 
             predictions = scaler.inverse_transform([predictions])[0]
-            print(predictions)
+            cf.printInfo(predictions, colorama.Fore.BLUE)
 
             dicts = []
-            curr_date = data.index[-1]
+
+            # Format date as type datetime.date
+            curr_date = dt.datetime.strptime(data.index[-1], '%Y-%m-%d').date()
+            
+            # Insert last historic data value to connect the presiction line with the next day value
+            dicts.append({'Predictions': data[typeValue][-1], self.dateDesc: str(curr_date)})
+
             for i in range(X_FUTURE):
                 curr_date = curr_date + dt.timedelta(days=1)
-                dicts.append({'Predictions':predictions[i], "Date": curr_date})
+                cf.printInfo(curr_date, colorama.Fore.GREEN)
+                dicts.append({'Predictions': predictions[i], self.dateDesc: str(curr_date)})
 
-            new_data = pd.DataFrame(dicts).set_index("Date")
+            cf.printInfo(dicts, colorama.Fore.GREEN)
+            new_data = pd.DataFrame(dicts).set_index(self.dateDesc)
 
             #Plot the data
             train = data
             #Visualize the data
+            plt.style.use('fivethirtyeight')
             plt.figure(figsize=(16,8))
             plt.title('Model')
-            plt.xlabel('Date', fontsize=18)
+            plt.xlabel(self.dateDesc, fontsize=18)
             plt.ylabel('Close Price USD ($)', fontsize=18)
             plt.plot(train[typeValue])
             plt.plot(new_data['Predictions'])
             plt.legend(['Train', 'Predictions'], loc='lower right')
+
+            # Avoid overlapping
+            plt.xticks(np.arange(0, len(df)+1, 20))
+            plt.gcf().autofmt_xdate()
+
             plt.show()
 
 

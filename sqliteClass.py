@@ -5,8 +5,13 @@ import pandas as pd
 
 class db:
 
-    def __init__(self, dbFileName="predictions.sqlite"):
+    def __init__(self, dbFileName, datasetTable, tempDatasetTable, predictionsTable):
+
         self.dbFileName = dbFileName
+        self.datasetTable = datasetTable
+        self.predictionsTable = predictionsTable
+
+        self.tempDatasetTable = "TMP_" + self.datasetTable
 
         # Create database and tables if they doesn't already exists
         self.createDatabaseStructureIfNotExists()
@@ -17,24 +22,44 @@ class db:
 
         # Creating table as per requirement
         query = """
-            CREATE TABLE IF NOT EXISTS 'bonolotoHistory' (
-                'ID'	INTEGER,
-                'FECHA'	DATE NOT NULL,
-                'TIPO'	TEXT NOT NULL,
-                'VALOR'	INTEGER NOT NULL,
-                'PREDICCION' INTEGER,
+            CREATE TABLE IF NOT EXISTS 'raffleDataset' (
+                'ID' INTEGER,
+                'RAFFLE' VARCHAR(30) NOT NULL,
+                'RESULT_DATE' DATE NOT NULL,
+                'NUMBER_TYPE' VARCHAR(30) NOT NULL,
+                'NUMBER' INTEGER NOT NULL,
+                'ENTRY_DATE' DATETIME DEFAULT CURRENT_TIMESTAMP,
                 PRIMARY KEY('ID' AUTOINCREMENT)
             );
         """
 
         self.executeQuery(query)
 
-        # Creating table as per requirement
+        # Creating TMP table as per requirement
         query = """
-            CREATE TABLE IF NOT EXISTS 'TMP_bonolotoHistory' (
-                'FECHA'	DATE NOT NULL,
-                'TIPO'	TEXT NOT NULL,
-                'VALOR'	INTEGER NOT NULL
+            CREATE TABLE IF NOT EXISTS 'TMP_raffleDataset' (
+                'RAFFLE' VARCHAR(30) NOT NULL,
+                'RESULT_DATE' DATE NOT NULL,
+                'NUMBER_TYPE' VARCHAR(30) NOT NULL,
+                'NUMBER' INTEGER NOT NULL,
+                'ENTRY_DATE' DATETIME DEFAULT CURRENT_TIMESTAMP
+            );
+        """
+
+        self.executeQuery(query)
+
+        # Creating predictions table as per requirement
+        query = """
+            CREATE TABLE IF NOT EXISTS 'rafflePredictions' (
+                'ID' INTEGER,
+                'RAFFLE' VARCHAR(30) NOT NULL,
+                'START_DATE' DATE NOT NULL,
+                'END_DATE' DATE NOT NULL,
+                'PREDICTION_DATE' DATE NOT NULL,
+                'NUMBER_TYPE' VARCHAR(30) NOT NULL,
+                'PREDICTION_NUMBER' FLOAT NOT NULL,
+                'ENTRY_DATE' DATETIME DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY('ID' AUTOINCREMENT)
             );
         """
 
