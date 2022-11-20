@@ -5,13 +5,12 @@ import pandas as pd
 
 class db:
 
-    def __init__(self, dbFileName, datasetTable, tempDatasetTable, predictionsTable):
+    def __init__(self, dbFileName, datasetTable, predictionsTable):
 
         self.dbFileName = dbFileName
         self.datasetTable = datasetTable
-        self.predictionsTable = predictionsTable
-
         self.tempDatasetTable = "TMP_" + self.datasetTable
+        self.predictionsTable = predictionsTable
 
         # Create database and tables if they doesn't already exists
         self.createDatabaseStructureIfNotExists()
@@ -21,8 +20,8 @@ class db:
     def createDatabaseStructureIfNotExists(self):
 
         # Creating table as per requirement
-        query = """
-            CREATE TABLE IF NOT EXISTS 'raffleDataset' (
+        query = f"""
+            CREATE TABLE IF NOT EXISTS '{self.datasetTable}' (
                 'ID' INTEGER,
                 'RAFFLE' VARCHAR(30) NOT NULL,
                 'RESULT_DATE' DATE NOT NULL,
@@ -36,8 +35,8 @@ class db:
         self.executeQuery(query)
 
         # Creating TMP table as per requirement
-        query = """
-            CREATE TABLE IF NOT EXISTS 'TMP_raffleDataset' (
+        query = f"""
+            CREATE TABLE IF NOT EXISTS '{self.tempDatasetTable}' (
                 'RAFFLE' VARCHAR(30) NOT NULL,
                 'RESULT_DATE' DATE NOT NULL,
                 'NUMBER_TYPE' VARCHAR(30) NOT NULL,
@@ -49,8 +48,8 @@ class db:
         self.executeQuery(query)
 
         # Creating predictions table as per requirement
-        query = """
-            CREATE TABLE IF NOT EXISTS 'rafflePredictions' (
+        query = f"""
+            CREATE TABLE IF NOT EXISTS '{self.predictionsTable}' (
                 'ID' INTEGER,
                 'RAFFLE' VARCHAR(30) NOT NULL,
                 'START_DATE' DATE NOT NULL,

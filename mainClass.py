@@ -4,13 +4,11 @@ import commonFunctions as cf
 import pandas as pd
 import datetime as dt
 import colorama
-import sklearn
 import math
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 from keras.models import Sequential 
 from keras.layers import Dense, LSTM
-import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
@@ -27,18 +25,22 @@ class predictData:
         self.sqlite = sqliteClass.db(
             dbFileName=self.dbFileName,
             datasetTable=self.datasetTable,
-            tempDatasetTable=self.tempDatasetTable,
             predictionsTable=self.predictionsTable
         )
 
-        # Historic dataset for the Bonoloto
-        self.url = "https://docs.google.com/spreadsheets/u/0/d/175SqVQ3E7PFZ0ebwr2o98Kb6YEAwSUykGFh6ascEfI0/pubhtml/sheet?headers=false&gid=0"
+        self.raffleProperties = {
+            "Bonoloto": "https://docs.google.com/spreadsheets/u/0/d/175SqVQ3E7PFZ0ebwr2o98Kb6YEAwSUykGFh6ascEfI0/pubhtml/sheet?headers=false&gid=0"
+        }
+
+        self.raffle = self.url = ""
+
+        self.raffleDesc = "RAFFLE"
         
         # DB result date column name
         self.dateDesc = "RESULT_DATE"
         
         # Rename all columns
-        self.unpivotColumnsDesc = ["N1", "N2", "N3", "N4", "N5", "N6", "COMPLEMENTARIO", "REINTEGRO"]
+        self.unpivotColumnsDesc = ["N1", "N2", "N3", "N4", "N5", "N6", "Complementario", "Reintegro"]
 
         self.unpivotedTableTitleDesc = "NUMBER_TYPE"
 
@@ -49,72 +51,77 @@ class predictData:
 
         self.sortUnpivotedDf = [self.dateDesc, self.unpivotedTableTitleDesc, self.unpivotedTableValueDesc]
 
-        self.raffleDesc = "Bonoloto"
-        self.datasetTable = "raffleDataset"
-        self.tempDatasetTable = "TMP_" + self.datasetTable
-        self.predictionsTable = "rafflePredictions"
-
         self.getDataset()
 
 
+    # Get the dataset for the predefined raffles
     def getDataset(self):
 
-        # Returns list of all tables on page
-        tables = pd.read_html(self.url, header=1)
+        for raffle, url in self.raffleProperties.items():
+            self.raffle = raffle
+            self.url = url
 
-        # Select table
-        df = tables[0]
+            # Returns list of all tables on page
+            tables = pd.read_html(self.url, header=1)
 
-        # Drop first column as it's an added index
-        df.drop(df.columns[0], axis=1, inplace=True)
+            # Select table
+            df = tables[0]
 
-        # Rename all columns
-        df.columns = self.allColumnsDesc
+            # Drop first column as it's an added index
+            df.drop(df.columns[0], axis=1, inplace=True)
 
-        # Drop rows with NaN values 
-        df = df.dropna()
+            # Rename all columns
+            df.columns = self.allColumnsDesc
 
-        # Drop all rows with a length over 15. There is a large text in the dataset talking about the pandemic break
-        df = df.loc[df[self.dateDesc].str.len() <= 15]
+            # Drop rows with NaN values 
+            df = df.dropna()
 
-        # Set FECHA as date
-        df[self.dateDesc] = pd.to_datetime(df[self.dateDesc], format='%d/%m/%Y').dt.date
+            # Drop all rows with a length over 15. There is a large text in the dataset talking about the pandemic break
+            df = df.loc[df[self.dateDesc].str.len() <= 15]
 
-        query = f"""
-            SELECT
-                COALESCE(MAX({self.dateDesc}), '1970-01-01') AS {self.dateDesc}
-            FROM {self.datasetTable}
-        """
+            # Set FECHA as date
+            df[self.dateDesc] = pd.to_datetime(df[self.dateDesc], format='%d/%m/%Y').dt.date
 
-        # Set max date from our dataset
-        maxDate = self.sqlite.executeQuery(query)[self.dateDesc][0]
+            query = f"""
+                SELECT
+                    COALESCE(MAX({self.dateDesc}), '1970-01-01') AS {self.dateDesc}
+                FROM {self.datasetTable}
+                WHERE {self.raffleDesc} = '{self.raffle}'
+            """
 
-        # Format date as type datetime.date
-        maxDate = dt.datetime.strptime(maxDate, '%Y-%m-%d').date()
+            # Set max date from our dataset
+            maxDate = self.sqlite.executeQuery(query)[self.dateDesc][0]
 
-        # Filter dataset to select the rows to insert only
-        df = df[df[self.dateDesc] > maxDate]
+            # Format date as type datetime.date
+            maxDate = dt.datetime.strptime(maxDate, '%Y-%m-%d').date()
 
-        # If there are no rows to insert
-        if df.empty:
-            self.predictions()
+            # Filter dataset to select the rows to insert only
+            df = df[df[self.dateDesc] > maxDate]
 
-        else: # There are rows to insert
+            # If there are no rows to insert
+            if df.empty:
+                self.predictions()
 
-            # Unpivot df columns
-            df = pd.melt(df,
-                id_vars=self.dateDesc, value_vars=self.unpivotColumnsDesc,
-                var_name=self.unpivotedTableTitleDesc, value_name=self.unpivotedTableValueDesc
-            )
+            else: # There are rows to insert
 
-            # Order columns
-            df = df.sort_values(by=self.sortUnpivotedDf)
+                # Unpivot df columns
+                df = pd.melt(df,
+                    id_vars=self.dateDesc, value_vars=self.unpivotColumnsDesc,
+                    var_name=self.unpivotedTableTitleDesc, value_name=self.unpivotedTableValueDesc
+                )
 
-            # Insert dataframe to the DB
-            self.insertData(sourceDf=df)
+                # Order columns
+                df = df.sort_values(by=self.sortUnpivotedDf)
+
+                # Inserting the column at the beginning in the DataFrame
+                df.insert(loc=0, column=self.raffleDesc, value=self.raffle)
+
+                # Insert dataframe to the DB
+                self.insertData(sourceDf=df)
+
 
     # Insert dataframe in the DB
-    def insertData(self, sourceDf:pd.DataFrame()):
+    def insertData(self, sourceDf: pd.DataFrame()):
 
         # Truncate TMP table
         query = f"DELETE FROM {self.tempDatasetTable}"
@@ -126,11 +133,12 @@ class predictData:
 
         # Insert new data only into the final table from the TMP table
         query = f"""
-            INSERT INTO {self.datasetTable} ({self.dateDesc}, {self.unpivotedTableTitleDesc}, {self.unpivotedTableValueDesc})
-            SELECT tmp.{self.dateDesc}, tmp.{self.unpivotedTableTitleDesc}, tmp.{self.unpivotedTableValueDesc}
+            INSERT INTO {self.datasetTable} ({self.raffleDesc}, {self.dateDesc}, {self.unpivotedTableTitleDesc}, {self.unpivotedTableValueDesc})
+            SELECT '{self.raffle}' as {self.raffleDesc}, tmp.{self.dateDesc}, tmp.{self.unpivotedTableTitleDesc}, tmp.{self.unpivotedTableValueDesc}
             FROM {self.tempDatasetTable} tmp
             LEFT JOIN {self.datasetTable} t
-            ON t.{self.dateDesc} = tmp.{self.dateDesc}
+            ON t.{self.raffleDesc} = tmp.{self.raffleDesc}
+            AND t.{self.dateDesc} = tmp.{self.dateDesc}
             AND t.{self.unpivotedTableTitleDesc} = tmp.{self.unpivotedTableTitleDesc}
             WHERE t.{self.dateDesc} IS NULL
         """
@@ -153,7 +161,8 @@ class predictData:
             SELECT
                 {self.dateDesc}, {self.unpivotedTableTitleDesc}, {self.unpivotedTableValueDesc}
             FROM {self.datasetTable}
-            WHERE FECHA >= '2022-01-01'
+            WHERE {self.raffleDesc} = '{self.raffle}'
+            AND {self.dateDesc} >= '2022-01-01'
             ORDER BY {self.dateDesc}, {self.unpivotedTableTitleDesc}
         """
 
@@ -170,7 +179,7 @@ class predictData:
         # Visualize the closing price history
         # We create a plot with name 'Close Price History'
         plt.figure(figsize=(16,8))
-        plt.title('Bonoloto')
+        plt.title(self.raffle)
 
         # We give the plot the data (the closing price of our stock)
         plt.plot(df[self.unpivotColumnsDesc])
@@ -239,7 +248,7 @@ class predictData:
             model.compile(optimizer='adam', loss='mean_squared_error')
 
             # Train the model
-            model.fit(x_train, y_train, batch_size=1, epochs=1)
+            model.fit(x_train, y_train, batch_size=1, epochs=10)
 
             # Create the testing data set
             # Create a new array containing scaled values from index 1738 to 2247
