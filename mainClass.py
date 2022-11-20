@@ -51,6 +51,8 @@ class predictData:
 
         self.sortUnpivotedDf = [self.dateDesc, self.unpivotedTableTitleDesc, self.unpivotedTableValueDesc]
 
+        self.validationDays = 0
+
         self.getDataset()
 
 
@@ -100,7 +102,7 @@ class predictData:
 
             # If there are no rows to insert
             if df.empty:
-                self.predictions()
+                self.getDataToPredict()
 
             else: # There are rows to insert
 
@@ -151,10 +153,10 @@ class predictData:
         self.sqlite.executeQuery(query)
 
         # Let's predict!
-        self.predictions()
+        self.getDataToPredict()
 
     # Predict the results for any day and any number type
-    def predictions(self):
+    def getDataToPredict(self):
 
         # Get historic data
         query = f"""
@@ -162,7 +164,7 @@ class predictData:
                 {self.dateDesc}, {self.unpivotedTableTitleDesc}, {self.unpivotedTableValueDesc}
             FROM {self.datasetTable}
             WHERE {self.raffleDesc} = '{self.raffle}'
-            AND {self.dateDesc} >= '2022-01-01'
+            AND {self.dateDesc} >= (SELECT date(MAX({self.dateDesc}),'-1 year') FROM {self.datasetTable})
             ORDER BY {self.dateDesc}, {self.unpivotedTableTitleDesc}
         """
 
@@ -174,6 +176,7 @@ class predictData:
 
         cf.printInfo(df, colorama.Fore.BLUE)
 
+        """
         plt.style.use('fivethirtyeight')
 
         # Visualize the closing price history
@@ -197,6 +200,12 @@ class predictData:
 
         # We show the plot
         #plt.show()
+        """
+
+        self.createModelByColumn(df)
+
+
+    def createModelByColumn(self, df: pd.DataFrame()):
 
         for typeValue in self.unpivotColumnsDesc:
 
@@ -208,6 +217,7 @@ class predictData:
 
             # Get the number of rows to train the model on
             training_data_len = math.ceil(len(dataset) * 0.8)
+            self.validationDays = len(dataset) - training_data_len
 
             # Scale the data
             scaler = MinMaxScaler(feature_range=(0,1))
@@ -222,10 +232,10 @@ class predictData:
             y_train = []
 
             # We create a loop
-            for i in range(60, len(train_data)):
-                x_train.append(train_data[i-60:i, 0]) #Will conaint 60 values (0-59)
-                y_train.append(train_data[i, 0]) #Will contain the 61th value (60)
-                if i <= 60:
+            for i in range(self.validationDays, len(train_data)):
+                x_train.append(train_data[i-self.validationDays:i, 0]) #Will conaint self.validationDays values (0-59)
+                y_train.append(train_data[i, 0]) #Will contain the 61th value (self.validationDays)
+                if i <= self.validationDays:
                     print(x_train)
                     print(y_train)
                     print()
@@ -248,17 +258,17 @@ class predictData:
             model.compile(optimizer='adam', loss='mean_squared_error')
 
             # Train the model
-            model.fit(x_train, y_train, batch_size=1, epochs=10)
+            model.fit(x_train, y_train, batch_size=1, epochs=3)
 
             # Create the testing data set
             # Create a new array containing scaled values from index 1738 to 2247
-            test_data = scaled_data[training_data_len - 60:]
+            test_data = scaled_data[training_data_len - self.validationDays:]
 
             # Create the data set x_test and y_test
             x_test = []
             y_test = dataset[training_data_len:, :]
-            for i in range(60, len(test_data)):
-                x_test.append(test_data[i-60:i, 0])
+            for i in range(self.validationDays, len(test_data)):
+                x_test.append(test_data[i-self.validationDays:i, 0])
 
             # Convert the data to a numpy array
             x_test = np.array(x_test)
@@ -279,12 +289,13 @@ class predictData:
             valid = data[training_data_len:]
             valid['Predictions'] = predictions
 
+            """
             # Visualize the data
             plt.style.use('fivethirtyeight')
             plt.figure(figsize=(16,8))
             plt.title('Model')
             plt.xlabel(self.dateDesc, fontsize=18)
-            plt.ylabel('Close Price USD ($)', fontsize=18)
+            plt.ylabel(self.unpivotedTableValueDesc, fontsize=18)
             plt.plot(train[typeValue])
             plt.plot(valid[[typeValue, 'Predictions']])
             plt.legend(['Train', 'Validation', 'Predictions'], loc='lower right')
@@ -294,6 +305,7 @@ class predictData:
             plt.gcf().autofmt_xdate()
 
             #plt.show()
+            """
 
             X_FUTURE = 1
             predictions = np.array([])
@@ -318,29 +330,46 @@ class predictData:
 
             for i in range(X_FUTURE):
                 curr_date = curr_date + dt.timedelta(days=1)
-                cf.printInfo(curr_date, colorama.Fore.GREEN)
                 dicts.append({'Predictions': predictions[i], self.dateDesc: str(curr_date)})
 
-            cf.printInfo(dicts, colorama.Fore.GREEN)
             new_data = pd.DataFrame(dicts).set_index(self.dateDesc)
+            cf.printInfo(new_data, colorama.Fore.GREEN)
 
-            #Plot the data
+            # Plot the data
             train = data
-            #Visualize the data
+
+            """
+            # Visualize the data
             plt.style.use('fivethirtyeight')
             plt.figure(figsize=(16,8))
-            plt.title('Model')
-            plt.xlabel(self.dateDesc, fontsize=18)
-            plt.ylabel('Close Price USD ($)', fontsize=18)
+            plt.title(self.raffle)
+            #plt.xlabel(self.dateDesc, fontsize=18)
+            #plt.ylabel('Close Price USD ($)', fontsize=18)
             plt.plot(train[typeValue])
             plt.plot(new_data['Predictions'])
-            plt.legend(['Train', 'Predictions'], loc='lower right')
+            plt.legend(['Train', 'Predictions'], loc='upper left')
 
             # Avoid overlapping
             plt.xticks(np.arange(0, len(df)+1, 20))
             plt.gcf().autofmt_xdate()
+            """
 
-            plt.show()
+            # Visualize the data
+            plt.style.use('fivethirtyeight')
+            plt.figure(figsize=(16,8))
+            plt.title(f"{self.raffle} {curr_date} {typeValue} {new_data['Predictions'][-1]}")
+            #plt.xlabel(self.dateDesc, fontsize=18)
+            #plt.ylabel(self.unpivotedTableValueDesc, fontsize=18)
+            plt.plot(train[typeValue])
+            plt.plot(valid[[typeValue, 'Predictions']])
+            plt.plot(new_data['Predictions'])
+            plt.legend(['Train', 'Validation', 'Predictions', 'Schedule'], loc='upper left')
+
+            # Avoid overlapping
+            plt.xticks(np.arange(0, len(df)+1, int(len(df) / 10)))
+            plt.gcf().autofmt_xdate()
+
+        plt.show()
 
 
 
