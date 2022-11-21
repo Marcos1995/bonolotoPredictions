@@ -14,12 +14,17 @@ import matplotlib.dates as mdates
 
 class predictData:
 
-    def __init__(self, dbFileName, datasetTable, predictionsTable):
+    def __init__(self, dbFileName: str, datasetTable: str, predictionsTable: str, batch_size: int, epoch: int):
 
         self.dbFileName = dbFileName
         self.datasetTable = datasetTable
         self.tempDatasetTable = "TMP_" + self.datasetTable
         self.predictionsTable = predictionsTable
+
+        self.batch_size = batch_size
+        self.epoch = epoch
+
+        self.startDate = self.endDate = ""
 
         # Initialize sqlite database connection
         self.sqlite = sqliteClass.db(
@@ -35,16 +40,12 @@ class predictData:
         self.raffle = self.url = ""
 
         self.raffleDesc = "RAFFLE"
-        
-        # DB result date column name
         self.dateDesc = "RESULT_DATE"
+        self.unpivotedTableTitleDesc = "NUMBER_TYPE"
+        self.unpivotedTableValueDesc = "NUMBER"
         
         # Rename all columns
         self.unpivotColumnsDesc = ["N1", "N2", "N3", "N4", "N5", "N6", "Complementario", "Reintegro"]
-
-        self.unpivotedTableTitleDesc = "NUMBER_TYPE"
-
-        self.unpivotedTableValueDesc = "NUMBER"
 
         # Append date column in first position
         self.allColumnsDesc = [self.dateDesc] + self.unpivotColumnsDesc
@@ -52,6 +53,15 @@ class predictData:
         self.sortUnpivotedDf = [self.dateDesc, self.unpivotedTableTitleDesc, self.unpivotedTableValueDesc]
 
         self.validationDays = 0
+
+        self.startDateDesc = "START_DATE"
+        self.endDateDesc = "END_DATE"
+        self.predictionDateDesc = "PREDICTION_DATE"
+        self.predictionNumberDesc = "PREDICTION_NUMBER"
+        self.floorNumberDesc = "FLOOR_NUMBER"
+        self.ceilNumberDesc = "CEIL_NUMBER"
+        self.batchSizeDesc = "BATCH_SIZE"
+        self.epochDesc = "EPOCH"
 
         self.getDataset()
 
@@ -164,12 +174,15 @@ class predictData:
                 {self.dateDesc}, {self.unpivotedTableTitleDesc}, {self.unpivotedTableValueDesc}
             FROM {self.datasetTable}
             WHERE {self.raffleDesc} = '{self.raffle}'
-            AND {self.dateDesc} >= (SELECT date(MAX({self.dateDesc}),'-1 year') FROM {self.datasetTable})
+            AND {self.dateDesc} >= (SELECT date(MAX({self.dateDesc}),'-3 year') FROM {self.datasetTable})
             ORDER BY {self.dateDesc}, {self.unpivotedTableTitleDesc}
         """
 
         # Get all the dataset
         df = self.sqlite.executeQuery(query)
+
+        self.startDate = df[self.dateDesc][0]
+        self.endDate = df[self.dateDesc].iloc[-1]
 
         # Pivot data
         df = df.pivot(index=self.dateDesc, columns=self.unpivotedTableTitleDesc, values=self.unpivotedTableValueDesc)
@@ -206,6 +219,18 @@ class predictData:
 
 
     def createModelByColumn(self, df: pd.DataFrame()):
+
+        # Get historic data
+        query = f"""
+            SELECT *
+            FROM {self.predictionsTable}
+            LIMIT 0
+        """
+
+        # Get all the dataset
+        predictionsToInsert = self.sqlite.executeQuery(query)
+
+        predictionsToInsert.drop(['ID', 'ENTRY_DATE'], axis=1, inplace=True) 
 
         for typeValue in self.unpivotColumnsDesc:
 
@@ -258,7 +283,7 @@ class predictData:
             model.compile(optimizer='adam', loss='mean_squared_error')
 
             # Train the model
-            model.fit(x_train, y_train, batch_size=1, epochs=3)
+            model.fit(x_train, y_train, batch_size=self.batch_size, epochs=self.epoch)
 
             # Create the testing data set
             # Create a new array containing scaled values from index 1738 to 2247
@@ -368,6 +393,23 @@ class predictData:
             # Avoid overlapping
             plt.xticks(np.arange(0, len(df)+1, int(len(df) / 10)))
             plt.gcf().autofmt_xdate()
+
+            dicts = [{
+                self.raffleDesc: self.raffle,
+                self.startDateDesc: self.startDate,
+                self.endDateDesc: self.endDate,
+                self.predictionDateDesc: curr_date,
+                self.unpivotedTableTitleDesc: typeValue,
+                self.predictionNumberDesc: new_data['Predictions'][-1],
+                self.floorNumberDesc: math.floor(new_data['Predictions'][-1]),
+                self.ceilNumberDesc: math.ceil(new_data['Predictions'][-1]),
+                self.batchSizeDesc: self.batch_size,
+                self.epochDesc: self.epoch
+            }]
+
+            predictionsToInsert = predictionsToInsert.append(dicts, ignore_index=True, sort=False)
+
+        self.sqlite.insertIntoFromPandasDf(sourceDf=predictionsToInsert, targetTable=self.predictionsTable)
 
         plt.show()
 

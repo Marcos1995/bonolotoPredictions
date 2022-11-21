@@ -57,6 +57,10 @@ class db:
                 'PREDICTION_DATE' DATE NOT NULL,
                 'NUMBER_TYPE' VARCHAR(30) NOT NULL,
                 'PREDICTION_NUMBER' FLOAT NOT NULL,
+                'FLOOR_NUMBER' INTEGER NOT NULL,
+                'CEIL_NUMBER' INTEGER NOT NULL,
+                'BATCH_SIZE' INTEGER NOT NULL,
+                'EPOCH' INTEGER NOT NULL,
                 'ENTRY_DATE' DATETIME DEFAULT CURRENT_TIMESTAMP,
                 PRIMARY KEY('ID' AUTOINCREMENT)
             );

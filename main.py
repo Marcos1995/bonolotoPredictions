@@ -3,5 +3,7 @@ import mainClass
 d = mainClass.predictData(
     dbFileName="predictions.sqlite",
     datasetTable="raffleDataset",
-    predictionsTable="rafflePredictions"
+    predictionsTable="rafflePredictions",
+    batch_size=1,
+    epoch=3
 )
