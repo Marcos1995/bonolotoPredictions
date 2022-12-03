@@ -5,5 +5,5 @@ d = mainClass.predictData(
     datasetTable="raffleDataset",
     predictionsTable="rafflePredictions",
     batch_size=1,
-    epoch=1
+    epoch=5
 )

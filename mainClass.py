@@ -174,7 +174,7 @@ class predictData:
                 {self.dateDesc}, {self.unpivotedTableTitleDesc}, {self.unpivotedTableValueDesc}
             FROM {self.datasetTable}
             WHERE {self.raffleDesc} = '{self.raffle}'
-            AND {self.dateDesc} >= (SELECT date(MAX({self.dateDesc}),'-3 year') FROM {self.datasetTable})
+            AND {self.dateDesc} >= (SELECT date(MAX({self.dateDesc}),'-1 year') FROM {self.datasetTable})
             ORDER BY {self.dateDesc}, {self.unpivotedTableTitleDesc}
         """
 
@@ -242,7 +242,7 @@ class predictData:
 
             # Get the number of rows to train the model on
             training_data_len = math.ceil(len(dataset) * 0.8)
-            self.validationDays = len(dataset) - training_data_len
+            self.validationDays = 60 #len(dataset) - training_data_len
 
             # Scale the data
             scaler = MinMaxScaler(feature_range=(0,1))
