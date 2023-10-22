@@ -174,7 +174,7 @@ class predictData:
                 {self.dateDesc}, {self.unpivotedTableTitleDesc}, {self.unpivotedTableValueDesc}
             FROM {self.datasetTable}
             WHERE {self.raffleDesc} = '{self.raffle}'
-            AND {self.dateDesc} >= (SELECT date(MAX({self.dateDesc}),'-1 year') FROM {self.datasetTable})
+            AND {self.dateDesc} >= (SELECT date(MAX({self.dateDesc}),'-3 months') FROM {self.datasetTable})
             ORDER BY {self.dateDesc}, {self.unpivotedTableTitleDesc}
         """
 
@@ -378,6 +378,9 @@ class predictData:
             plt.xticks(np.arange(0, len(df)+1, 20))
             plt.gcf().autofmt_xdate()
             """
+
+            cf.printInfo(valid, colorama.Fore.YELLOW)
+            cf.printInfo(new_data, colorama.Fore.GREEN)
 
             # Visualize the data
             plt.style.use('fivethirtyeight')
