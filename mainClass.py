@@ -305,8 +305,8 @@ class predictData:
             predictions = model.predict(x_test)
             predictions = scaler.inverse_transform(predictions)
 
-            # Evaluate model (get the root mean quared error (RMSE))
-            rmse = np.sqrt( np.mean( predictions - y_test )**2 )
+            # Evaluate model (get the root mean squared error (RMSE))
+            rmse = np.sqrt(np.mean((predictions - y_test) ** 2))
             rmse
 
             # Plot the data
@@ -342,16 +342,23 @@ class predictData:
                 last = np.concatenate([last[1:], curr_prediction])
                 predictions = np.concatenate([predictions, curr_prediction[0]])
 
-            predictions = scaler.inverse_transform([predictions])[0]
+            # Inverse-transform with correct shape regardless of horizon length
+            predictions = scaler.inverse_transform(predictions.reshape(-1, 1)).ravel()
             cf.printInfo(predictions, colorama.Fore.BLUE)
 
             dicts = []
 
-            # Format date as type datetime.date
-            curr_date = dt.datetime.strptime(data.index[-1], '%Y-%m-%d').date()
+            # Get last date from index robustly as datetime.date
+            last_index_value = data.index[-1]
+            if isinstance(last_index_value, dt.datetime):
+                curr_date = last_index_value.date()
+            elif isinstance(last_index_value, dt.date):
+                curr_date = last_index_value
+            else:
+                curr_date = pd.to_datetime(last_index_value).date()
             
             # Insert last historic data value to connect the presiction line with the next day value
-            dicts.append({'Predictions': data[typeValue][-1], self.dateDesc: str(curr_date)})
+            dicts.append({'Predictions': data[typeValue].iloc[-1], self.dateDesc: str(curr_date)})
 
             for i in range(X_FUTURE):
                 curr_date = curr_date + dt.timedelta(days=1)
@@ -382,7 +389,7 @@ class predictData:
             # Visualize the data
             plt.style.use('fivethirtyeight')
             plt.figure(figsize=(16,8))
-            plt.title(f"{self.raffle} {curr_date} {typeValue} {new_data['Predictions'][-1]}")
+            plt.title(f"{self.raffle} {curr_date} {typeValue} {new_data['Predictions'].iloc[-1]}")
             #plt.xlabel(self.dateDesc, fontsize=18)
             #plt.ylabel(self.unpivotedTableValueDesc, fontsize=18)
             plt.plot(train[typeValue])
@@ -400,14 +407,15 @@ class predictData:
                 self.endDateDesc: self.endDate,
                 self.predictionDateDesc: curr_date,
                 self.unpivotedTableTitleDesc: typeValue,
-                self.predictionNumberDesc: new_data['Predictions'][-1],
-                self.floorNumberDesc: math.floor(new_data['Predictions'][-1]),
-                self.ceilNumberDesc: math.ceil(new_data['Predictions'][-1]),
+                self.predictionNumberDesc: new_data['Predictions'].iloc[-1],
+                self.floorNumberDesc: math.floor(new_data['Predictions'].iloc[-1]),
+                self.ceilNumberDesc: math.ceil(new_data['Predictions'].iloc[-1]),
                 self.batchSizeDesc: self.batch_size,
                 self.epochDesc: self.epoch
             }]
 
-            predictionsToInsert = predictionsToInsert.append(dicts, ignore_index=True, sort=False)
+            # Append new prediction row(s) in a pandas 2.x compatible way
+            predictionsToInsert = pd.concat([predictionsToInsert, pd.DataFrame(dicts)], ignore_index=True)
 
         self.sqlite.insertIntoFromPandasDf(sourceDf=predictionsToInsert, targetTable=self.predictionsTable)
 
