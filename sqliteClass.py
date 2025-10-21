@@ -71,37 +71,38 @@ class db:
 
     # Prepare the pandas DataFrame data to be inserted in a table
     def insertIntoFromPandasDf(self, sourceDf=None, targetTable: str=None):
-
+        
         # Validations
-        if sourceDf is None or targetTable is None:
+        if sourceDf is None or targetTable is None or sourceDf.empty:
             return
 
+        # Log the dataframe preview
         commonFunctions.printInfo(sourceDf, colorama.Fore.BLUE)
 
-        values = ""
+        # Prepare column names and parameter placeholders safely
+        column_names = list(sourceDf.columns)
+        column_names_sql = ", ".join([f'"{c}"' for c in column_names])
+        placeholders_sql = ", ".join(["?"] * len(column_names))
+        insert_sql = f"INSERT INTO {targetTable} ({column_names_sql}) VALUES ({placeholders_sql})"
 
-        # Prepare column names to be inserted
-        columnNames = "'" + "', '".join(list(sourceDf)) + "'"
+        # Convert dataframe rows to tuples; keep None for NaN so sqlite stores NULL
+        def _normalize_value(v):
+            if pd.isna(v):
+                return None
+            return v
 
-        # For each row, concatenate the values to prepare the INSERT INTO statement
-        for i in range(len(sourceDf)):
+        rows = [tuple(_normalize_value(v) for v in row) for row in sourceDf.itertuples(index=False, name=None)]
 
-            # Split with ", " the values to be inserted (needed if we want to insert more than 1 row in the same insert condition)
-            if i > 0:
-                values += ", "
-
-            # Concatenate values to be inserted from each row
-            rowValues = sourceDf.iloc[i,:].apply(str).values
-            values += "('" + "', '".join(rowValues) + "')"
-
-        # Create query statement
-        query = f"""
-                INSERT INTO {targetTable} ({columnNames})
-                VALUES {values};
-            """
-
-        # Execute the query
-        self.executeQuery(query)
+        # Execute parameterized bulk insert for security and performance
+        conn = None
+        try:
+            conn = sqlite3.connect(self.dbFileName)
+            cursor = conn.cursor()
+            cursor.executemany(insert_sql, rows)
+            conn.commit()
+        finally:
+            if conn is not None:
+                conn.close()
 
 
     # Execute any query
