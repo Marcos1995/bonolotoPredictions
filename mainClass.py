@@ -101,6 +101,8 @@ class predictData:
                 WHERE {self.raffleDesc} = '{self.raffle}'
             """
 
+            cf.printInfo(desc=query, color=colorama.Fore.GREEN)
+
             # Set max date from our dataset
             maxDate = self.sqlite.executeQuery(query)[self.dateDesc][0]
 
@@ -407,7 +409,7 @@ class predictData:
                 self.epochDesc: self.epoch
             }]
 
-            predictionsToInsert = predictionsToInsert.append(dicts, ignore_index=True, sort=False)
+            predictionsToInsert = pd.concat([predictionsToInsert, pd.DataFrame(dicts)], ignore_index=True)
 
         self.sqlite.insertIntoFromPandasDf(sourceDf=predictionsToInsert, targetTable=self.predictionsTable)
 
