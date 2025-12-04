@@ -384,7 +384,7 @@ class predictData:
             # Visualize the data
             plt.style.use('fivethirtyeight')
             plt.figure(figsize=(16,8))
-            plt.title(f"{self.raffle} {curr_date} {typeValue} {new_data['Predictions'][-1]}")
+            plt.title(f"{self.raffle} {curr_date} {typeValue} {new_data['Predictions'].iloc[-1]}")
             #plt.xlabel(self.dateDesc, fontsize=18)
             #plt.ylabel(self.unpivotedTableValueDesc, fontsize=18)
             plt.plot(train[typeValue])
@@ -402,9 +402,9 @@ class predictData:
                 self.endDateDesc: self.endDate,
                 self.predictionDateDesc: curr_date,
                 self.unpivotedTableTitleDesc: typeValue,
-                self.predictionNumberDesc: new_data['Predictions'][-1],
-                self.floorNumberDesc: math.floor(new_data['Predictions'][-1]),
-                self.ceilNumberDesc: math.ceil(new_data['Predictions'][-1]),
+                self.predictionNumberDesc: new_data['Predictions'].iloc[-1],
+                self.floorNumberDesc: math.floor(new_data['Predictions'].iloc[-1]),
+                self.ceilNumberDesc: math.ceil(new_data['Predictions'].iloc[-1]),
                 self.batchSizeDesc: self.batch_size,
                 self.epochDesc: self.epoch
             }]
