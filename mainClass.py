@@ -34,7 +34,10 @@ class predictData:
         )
 
         self.raffleProperties = {
-            "Bonoloto": "https://docs.google.com/spreadsheets/u/0/d/175SqVQ3E7PFZ0ebwr2o98Kb6YEAwSUykGFh6ascEfI0/pubhtml/sheet?headers=false&gid=0"
+            "Bonoloto": [
+                "https://docs.google.com/spreadsheets/u/0/d/175SqVQ3E7PFZ0ebwr2o98Kb6YEAwSUykGFh6ascEfI0/pubhtml/sheet?headers=false&gid=1", # 1988 - 2012
+                "https://docs.google.com/spreadsheets/u/0/d/175SqVQ3E7PFZ0ebwr2o98Kb6YEAwSUykGFh6ascEfI0/pubhtml/sheet?headers=false&gid=0" # 2013 - Present
+            ]
         }
 
         self.raffle = self.url = ""
@@ -71,28 +74,41 @@ class predictData:
 
         for raffle, url in self.raffleProperties.items():
             self.raffle = raffle
-            self.url = url
 
-            # Returns list of all tables on page
-            tables = pd.read_html(self.url, header=1)
+            # Convert string URL to list for uniform handling
+            if isinstance(url, str):
+                url = [url]
 
-            # Select table
-            df = tables[0]
+            # Initialize empty dataframe to accumulate data from all URLs
+            totalDf = pd.DataFrame()
 
-            # Drop first column as it's an added index
-            df.drop(df.columns[0], axis=1, inplace=True)
+            # Process each URL and concatenate the data
+            for urlLink in url:
+                self.url = urlLink
 
-            # Rename all columns
-            df.columns = self.allColumnsDesc
+                # Returns list of all tables on page
+                tables = pd.read_html(self.url, header=1)
 
-            # Drop rows with NaN values 
-            df = df.dropna()
+                # Select table
+                df = tables[0]
 
-            # Drop all rows with a length over 15. There is a large text in the dataset talking about the pandemic break
-            df = df.loc[df[self.dateDesc].str.len() <= 15]
+                # Drop first column as it's an added index
+                df.drop(df.columns[0], axis=1, inplace=True)
 
-            # Set FECHA as date
-            df[self.dateDesc] = pd.to_datetime(df[self.dateDesc], format='%d/%m/%Y').dt.date
+                # Rename all columns
+                df.columns = self.allColumnsDesc
+
+                # Drop rows with NaN values 
+                df = df.dropna(subset=[self.dateDesc])
+
+                # Drop all rows with a length over 15. There is a large text in the dataset talking about the pandemic break
+                df = df.loc[df[self.dateDesc].str.len() <= 15]
+
+                # Set FECHA as date
+                df[self.dateDesc] = pd.to_datetime(df[self.dateDesc], format='%d/%m/%Y').dt.date
+
+                # Concatenate each table to accumulate data from all URLs
+                totalDf = pd.concat([totalDf, df], ignore_index=True)
 
             query = f"""
                 SELECT
@@ -110,28 +126,28 @@ class predictData:
             maxDate = dt.datetime.strptime(maxDate, '%Y-%m-%d').date()
 
             # Filter dataset to select the rows to insert only
-            df = df[df[self.dateDesc] > maxDate]
+            totalDf = totalDf[totalDf[self.dateDesc] > maxDate]
 
             # If there are no rows to insert
-            if df.empty:
+            if totalDf.empty:
                 self.getDataToPredict()
 
             else: # There are rows to insert
 
                 # Unpivot df columns
-                df = pd.melt(df,
+                totalDf = pd.melt(totalDf,
                     id_vars=self.dateDesc, value_vars=self.unpivotColumnsDesc,
                     var_name=self.unpivotedTableTitleDesc, value_name=self.unpivotedTableValueDesc
                 )
 
                 # Order columns
-                df = df.sort_values(by=self.sortUnpivotedDf)
+                totalDf = totalDf.sort_values(by=self.sortUnpivotedDf)
 
                 # Inserting the column at the beginning in the DataFrame
-                df.insert(loc=0, column=self.raffleDesc, value=self.raffle)
+                totalDf.insert(loc=0, column=self.raffleDesc, value=self.raffle)
 
                 # Insert dataframe to the DB
-                self.insertData(sourceDf=df)
+                self.insertData(sourceDf=totalDf)
 
 
     # Insert dataframe in the DB
