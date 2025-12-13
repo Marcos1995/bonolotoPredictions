@@ -11,6 +11,7 @@ class db:
         self.datasetTable = datasetTable
         self.tempDatasetTable = "TMP_" + self.datasetTable
         self.predictionsTable = predictionsTable
+        self.quiet = False  # Set to True to suppress query printing
 
         # Create database and tables if they doesn't already exists
         self.createDatabaseStructureIfNotExists()
@@ -111,7 +112,8 @@ class db:
         if query is None:
             return
 
-        commonFunctions.printInfo(query, colorama.Fore.CYAN)
+        if not self.quiet:
+            commonFunctions.printInfo(query, colorama.Fore.CYAN)
 
         # Verify and assign which type of query is it, commit or not commit one
         keyWords = ["INSERT", "CREATE", "ALTER", "DELETE", "UPDATE"]

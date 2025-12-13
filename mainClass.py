@@ -1,5 +1,6 @@
 import sqliteClass
 import commonFunctions as cf
+import webScraper
 # --------------------------------
 import pandas as pd
 import datetime as dt
@@ -128,11 +129,13 @@ class predictData:
             # Filter dataset to select the rows to insert only
             totalDf = totalDf[totalDf[self.dateDesc] > maxDate]
 
-            # If there are no rows to insert
+            # If there are no rows to insert from Google Sheets
             if totalDf.empty:
-                self.getDataToPredict()
+                cf.printInfo("No new data from Google Sheets. Scraping official website for latest results...", colorama.Fore.YELLOW)
+                # Web scrape latest results from official website
+                self.scrapeLatestResults(maxDate)
 
-            else: # There are rows to insert
+            else: # There are rows to insert from Google Sheets
 
                 # Unpivot df columns
                 totalDf = pd.melt(totalDf,
@@ -148,6 +151,88 @@ class predictData:
 
                 # Insert dataframe to the DB
                 self.insertData(sourceDf=totalDf)
+                
+                # After inserting Google Sheets data, also scrape for any newer results
+                newMaxDate = dt.datetime.strptime(
+                    self.sqlite.executeQuery(query)[self.dateDesc][0], '%Y-%m-%d'
+                ).date()
+                cf.printInfo("Checking official website for any more recent results...", colorama.Fore.YELLOW)
+                self.scrapeLatestResults(newMaxDate)
+
+
+    def scrapeLatestResults(self, maxDate):
+        """
+        Scrape latest Bonoloto results from the official website and insert any new ones.
+        
+        Args:
+            maxDate: The current maximum date in the database (datetime.date)
+        """
+        try:
+            # Scrape results from official website
+            scraped_results = webScraper.scrape_bonoloto(headless=True, max_results=10)
+            
+            if not scraped_results:
+                cf.printInfo("No results scraped from website. Proceeding with prediction...", colorama.Fore.YELLOW)
+                self.getDataToPredict()
+                return
+            
+            # Prepare data for insertion
+            rows = []
+            for result in scraped_results:
+                result_date_str = result.get("date")
+                if not result_date_str:
+                    continue
+                    
+                result_date = dt.datetime.strptime(result_date_str, '%Y-%m-%d').date()
+                
+                # Skip if this date is already in the database
+                if result_date <= maxDate:
+                    continue
+                
+                numbers = result.get("numbers", [])
+                if len(numbers) != 6:
+                    continue
+                
+                # Build row for each number type
+                for i, num in enumerate(numbers):
+                    rows.append({
+                        self.raffleDesc: self.raffle,
+                        self.dateDesc: result_date,
+                        self.unpivotedTableTitleDesc: self.unpivotColumnsDesc[i],
+                        self.unpivotedTableValueDesc: num
+                    })
+                
+                # Add complementario
+                if result.get("complementario"):
+                    rows.append({
+                        self.raffleDesc: self.raffle,
+                        self.dateDesc: result_date,
+                        self.unpivotedTableTitleDesc: "Complementario",
+                        self.unpivotedTableValueDesc: result["complementario"]
+                    })
+                
+                # Add reintegro
+                if result.get("reintegro") is not None:
+                    rows.append({
+                        self.raffleDesc: self.raffle,
+                        self.dateDesc: result_date,
+                        self.unpivotedTableTitleDesc: "Reintegro",
+                        self.unpivotedTableValueDesc: result["reintegro"]
+                    })
+            
+            if rows:
+                # Convert to DataFrame and insert
+                scrapedDf = pd.DataFrame(rows)
+                unique_dates = scrapedDf[self.dateDesc].unique()
+                cf.printInfo(f"Scraped {len(unique_dates)} new draw(s) from official website: {sorted([str(d) for d in unique_dates])}", colorama.Fore.GREEN)
+                self.insertData(sourceDf=scrapedDf)
+            else:
+                cf.printInfo("Database is up to date with latest scraped results.", colorama.Fore.GREEN)
+                self.getDataToPredict()
+                
+        except Exception as e:
+            cf.printInfo(f"Error during web scraping: {e}. Proceeding with existing data...", colorama.Fore.RED)
+            self.getDataToPredict()
 
 
     # Insert dataframe in the DB

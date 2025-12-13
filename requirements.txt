@@ -8,3 +8,4 @@ colorama
 lxml
 beautifulsoup4
 html5lib
+selenium
