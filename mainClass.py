@@ -9,17 +9,12 @@ import colorama
 
 class predictData:
 
-    def __init__(self, dbFileName: str, datasetTable: str, predictionsTable: str, batch_size: int, epoch: int):
+    def __init__(self, dbFileName: str, datasetTable: str, predictionsTable: str):
 
         self.dbFileName = dbFileName
         self.datasetTable = datasetTable
         self.tempDatasetTable = "TMP_" + self.datasetTable
         self.predictionsTable = predictionsTable
-
-        self.batch_size = batch_size
-        self.epoch = epoch
-
-        self.startDate = self.endDate = ""
 
         self.sqlite = sqliteClass.db(
             dbFileName=self.dbFileName,
@@ -44,16 +39,6 @@ class predictData:
         self.unpivotColumnsDesc = ["N1", "N2", "N3", "N4", "N5", "N6", "Complementario", "Reintegro"]
         self.allColumnsDesc = [self.dateDesc] + self.unpivotColumnsDesc
         self.sortUnpivotedDf = [self.dateDesc, self.unpivotedTableTitleDesc, self.unpivotedTableValueDesc]
-
-        self.startDateDesc = "START_DATE"
-        self.endDateDesc = "END_DATE"
-        self.predictionDateDesc = "PREDICTION_DATE"
-        self.predictionNumberDesc = "PREDICTION_NUMBER"
-        self.floorNumberDesc = "FLOOR_NUMBER"
-        self.ceilNumberDesc = "CEIL_NUMBER"
-        self.batchSizeDesc = "BATCH_SIZE"
-        self.epochDesc = "EPOCH"
-
         self.getDataset()
 
     def getDataset(self):
@@ -112,7 +97,7 @@ class predictData:
                 cf.printInfo("Checking official website for any more recent results...", colorama.Fore.YELLOW)
 
             self.scrapeLatestResults(maxDate)
-            self.getDataToPredict()
+            # ponytail: 21 strategies, 30-draw walk-forward, none beat chance (best 0.90 vs 0.74; 95% bar ~1.01). No predictor.
 
     def scrapeLatestResults(self, maxDate):
         try:
@@ -193,65 +178,3 @@ class predictData:
         """
         self.sqlite.executeQuery(query)
         self.sqlite.executeQuery(f"DELETE FROM {self.tempDatasetTable}")
-
-    def getDataToPredict(self):
-
-        query = f"""
-            SELECT
-                {self.dateDesc}, {self.unpivotedTableTitleDesc}, {self.unpivotedTableValueDesc}
-            FROM {self.datasetTable}
-            WHERE {self.raffleDesc} = '{self.raffle}'
-            AND {self.dateDesc} >= (SELECT date(MAX({self.dateDesc}),'-1 year') FROM {self.datasetTable})
-            ORDER BY {self.dateDesc}, {self.unpivotedTableTitleDesc}
-        """
-        df = self.sqlite.executeQuery(query)
-        if df.empty:
-            cf.printInfo("No historic data to predict.", colorama.Fore.RED)
-            return
-
-        self.startDate = df[self.dateDesc].iloc[0]
-        self.endDate = df[self.dateDesc].iloc[-1]
-        df = df.pivot(index=self.dateDesc, columns=self.unpivotedTableTitleDesc, values=self.unpivotedTableValueDesc)
-        cf.printInfo(df, colorama.Fore.BLUE)
-        self.createModelByColumn(df)
-
-    def createModelByColumn(self, df: pd.DataFrame):
-        # ponytail: LSTM+MSE on sorted N1..N6 always converges to each slot's mean
-        # (draws are ~i.i.d.). Lottery has no upgrade path; emit a valid unique ticket
-        # from recent frequency instead of 8 regressors.
-        last_date = pd.to_datetime(df.index[-1]).date()
-        pred_date = cf.nextBonolotoDate(last_date)
-        main_cols = [c for c in self.unpivotColumnsDesc[:6] if c in df.columns]
-        counts = pd.to_numeric(
-            pd.Series(df[main_cols].to_numpy().ravel()), errors="coerce"
-        ).dropna().astype(int).value_counts()
-        ticket = cf.topUniqueNumbers(counts, k=6, low=1, high=49)
-
-        extra = {}
-        for col, low, high in (("Complementario", 1, 49), ("Reintegro", 0, 9)):
-            if col not in df.columns:
-                extra[col] = low
-                continue
-            vc = pd.to_numeric(df[col], errors="coerce").dropna().astype(int).value_counts()
-            extra[col] = int(vc.index[0]) if len(vc) else low
-            if not (low <= extra[col] <= high):
-                extra[col] = low
-
-        cf.printInfo(f"Prediction {pred_date}: {ticket} C:{extra['Complementario']} R:{extra['Reintegro']}", colorama.Fore.GREEN)
-
-        rows = []
-        values = list(ticket) + [extra["Complementario"], extra["Reintegro"]]
-        for typeValue, n in zip(self.unpivotColumnsDesc, values):
-            rows.append({
-                self.raffleDesc: self.raffle,
-                self.startDateDesc: self.startDate,
-                self.endDateDesc: self.endDate,
-                self.predictionDateDesc: pred_date,
-                self.unpivotedTableTitleDesc: typeValue,
-                self.predictionNumberDesc: float(n),
-                self.floorNumberDesc: n,
-                self.ceilNumberDesc: n,
-                self.batchSizeDesc: self.batch_size,
-                self.epochDesc: self.epoch
-            })
-        self.sqlite.insertIntoFromPandasDf(sourceDf=pd.DataFrame(rows), targetTable=self.predictionsTable)
