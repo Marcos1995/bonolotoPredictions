@@ -6,6 +6,7 @@ the best possible lottery predictions.
 """
 
 import sqliteClass
+import commonFunctions as cf
 import pandas as pd
 import numpy as np
 from collections import defaultdict
@@ -31,7 +32,7 @@ def generate_best_prediction():
     """
     max_date_df = db.executeQuery(max_date_query)
     max_date = pd.to_datetime(max_date_df.iloc[0]['MAX_DATE']).date()
-    next_draw = max_date + dt.timedelta(days=1)
+    next_draw = cf.nextBonolotoDate(max_date)
     
     prediction_date_str = next_draw.strftime('%A, %d %B %Y')
     
@@ -120,7 +121,7 @@ def generate_best_prediction():
     """
     overdue_df = db.executeQuery(query)
     for _, row in overdue_df.iterrows():
-        days = (pd.to_datetime('2025-12-13') - pd.to_datetime(row['LAST_DRAWN'])).days
+        days = (pd.to_datetime(max_date) - pd.to_datetime(row['LAST_DRAWN'])).days
         if 15 <= days <= 40:
             scores[row['NUMBER']] += 15
         elif 10 <= days < 15:
@@ -199,16 +200,6 @@ def generate_best_prediction():
     print(f"{Fore.CYAN}BALANCED ALTERNATIVE (2 low, 2 mid, 2 high)")
     print(f"{Fore.CYAN}{'='*60}")
     print(f"\n{Fore.WHITE}  >>> {balanced}\n")
-    
-    # Show why these numbers were selected
-    print(f"{Fore.YELLOW}{'='*60}")
-    print(f"{Fore.YELLOW}ANALYSIS BREAKDOWN")
-    print(f"{Fore.YELLOW}{'='*60}\n")
-    
-    print("Recent hot numbers (last 30 draws): 21, 12, 46, 43, 41")
-    print("Overdue numbers (15-25 days): 15, 32, 22, 44, 13, 49")
-    print("Strong pairs: (12,14), (12,34), (40,42), (7,23)")
-    print("All-time favorites: 33, 10, 34, 2, 22")
     
     return top6, balanced
 

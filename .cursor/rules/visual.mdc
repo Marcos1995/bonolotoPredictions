@@ -1,0 +1,15 @@
+---
+description: Any user-facing UI must look modern, minimal, and elegant. Ugly UI is unfinished.
+alwaysApply: true
+---
+
+# Visual
+
+Any HTML, web, or app UI is a product. It must look modern, minimal, simple, and elegant. Default-unstyled or cluttered UI is a bug — ship looks with the feature, not later.
+
+- Generous whitespace. One typeface. A small palette (background, text, one accent). Real contrast.
+- Clear hierarchy: one focal action, not a wall of equal controls.
+- No leftover lorem, no browser-default dump, no generic AI-slop (purple gradients, glassmorphism, Inter-on-everything) unless the product already uses that.
+- Prefer a little original CSS over a new UI framework. Reuse what the repo already has.
+- Native platform look for native apps. Readable on a phone.
+- Never cut accessibility for looks (contrast, labels, focus, hit targets).
