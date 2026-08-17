@@ -25,12 +25,19 @@ def printInfo(desc, color=""):
     print(f"{dt.datetime.now()} // {color}{desc}{colorama.Fore.RESET}")
 
 
-def nextBonolotoDate(last_date):
-    """Bonoloto draws Mon-Sat. Skip Sunday."""
+def nextDrawDate(last_date, weekdays=(0, 1, 2, 3, 4, 5)):
+    """Next date after last_date whose weekday is in weekdays (Mon=0)."""
     d = last_date + dt.timedelta(days=1)
-    while d.weekday() == 6:
+    for _ in range(14):
+        if d.weekday() in weekdays:
+            return d
         d += dt.timedelta(days=1)
     return d
+
+
+def nextBonolotoDate(last_date):
+    """Bonoloto draws Mon-Sat. Skip Sunday."""
+    return nextDrawDate(last_date, (0, 1, 2, 3, 4, 5))
 
 
 def topUniqueNumbers(counts, k=6, low=1, high=49):

@@ -1,45 +1,33 @@
-"""Walk-forward hunt: any cheap Bonoloto signal beat hypergeometric chance?
-
-Loads historic draws (sqlite or the same Google Sheets as mainClass), then
-predicts each draw using ONLY past data. Reports z vs E[hits]=k*6/49.
-Selection = all but last 500; confirm = last 500. Winner only if both beat chance.
-"""
+"""Walk-forward hunt across Lotoideas games: any cheap signal beat hypergeometric chance?"""
 from collections import deque
-from datetime import date
 import math
-import sqlite3
 
 import numpy as np
-import pandas as pd
 
 import commonFunctions as cf
+import raffles
 
-N, W, K = 49, 6, 6  # universe, winning balls, default ticket size
 WARMUP = 200
 HOLDOUT = 500
-SHEETS = [
-    "https://docs.google.com/spreadsheets/u/0/d/175SqVQ3E7PFZ0ebwr2o98Kb6YEAwSUykGFh6ascEfI0/pubhtml/sheet?headers=false&gid=1",
-    "https://docs.google.com/spreadsheets/u/0/d/175SqVQ3E7PFZ0ebwr2o98Kb6YEAwSUykGFh6ascEfI0/pubhtml/sheet?headers=false&gid=0",
-]
-COLS = ["RESULT_DATE", "N1", "N2", "N3", "N4", "N5", "N6", "Complementario", "Reintegro"]
 
 
-def expected_hits(k=K, n=N, w=W):
+def expected_hits(k=6, n=49, w=6):
     return k * w / n
 
 
-def var_hits(k=K, n=N, w=W):
+def var_hits(k=6, n=49, w=6):
     return k * (w / n) * ((n - w) / n) * ((n - k) / (n - 1))
 
 
-def z_hits(mean, n_draws, k=K):
-    se = math.sqrt(var_hits(k) / n_draws)
-    return (mean - expected_hits(k)) / se if se else 0.0
+def z_hits(mean, n_draws, k=6, n=49, w=6):
+    se = math.sqrt(var_hits(k, n, w) / n_draws)
+    return (mean - expected_hits(k, n, w)) / se if se else 0.0
 
 
 def _topk(scores, k, prefer_old=None):
-    """scores[1..49]; prefer_old[n]=last index, used as tie-break (older first if cold)."""
-    idx = np.arange(1, N + 1)
+    """scores[1..n]; prefer_old[n]=last index, used as tie-break (older first if cold)."""
+    n = len(scores) - 1
+    idx = np.arange(1, n + 1)
     if prefer_old is None:
         order = np.lexsort((idx, -scores[1:]))
     else:
@@ -48,10 +36,11 @@ def _topk(scores, k, prefer_old=None):
 
 
 class Rolling:
-    def __init__(self, size):
+    def __init__(self, size, n):
         self.size = size
+        self.n = n
         self.buf = deque()
-        self.freq = np.zeros(N + 1, dtype=np.int32)
+        self.freq = np.zeros(n + 1, dtype=np.int32)
 
     def push(self, nums):
         self.buf.append(nums)
@@ -62,22 +51,24 @@ class Rolling:
 
 
 class State:
-    def __init__(self):
+    def __init__(self, n=49, k=6):
+        self.n = n
+        self.k = k
         self.i = 0
-        self.freq = np.zeros(N + 1, dtype=np.int32)
-        self.last = np.full(N + 1, -10_000, dtype=np.int32)
-        self.ewm = {d: np.zeros(N + 1) for d in (0.85, 0.90, 0.95)}
-        self.wd = np.zeros((7, N + 1), dtype=np.int32)
-        self.cooc = np.zeros((N + 1, N + 1), dtype=np.int32)
-        self.rolls = {s: Rolling(s) for s in (5, 10, 15, 20, 30, 50, 75, 100, 150, 200)}
-        self.prev = []  # last few draws as tuples
+        self.freq = np.zeros(n + 1, dtype=np.int32)
+        self.last = np.full(n + 1, -10_000, dtype=np.int32)
+        self.ewm = {d: np.zeros(n + 1) for d in (0.85, 0.90, 0.95)}
+        self.wd = np.zeros((7, n + 1), dtype=np.int32)
+        self.cooc = np.zeros((n + 1, n + 1), dtype=np.int32)
+        self.rolls = {s: Rolling(s, n) for s in (5, 10, 15, 20, 30, 50, 75, 100, 150, 200)}
+        self.prev = []
         self.prev_wd = []
 
     def update(self, nums, weekday):
         nums = tuple(int(x) for x in nums)
         self.freq[list(nums)] += 1
-        for n in nums:
-            self.last[n] = self.i
+        for x in nums:
+            self.last[x] = self.i
         for d, arr in self.ewm.items():
             arr *= d
             arr[list(nums)] += 1
@@ -96,54 +87,15 @@ class State:
             self.prev_wd.pop(0)
         self.i += 1
 
-    def hot(self, freq, k=K):
-        return _topk(freq.astype(float), k)
+    def hot(self, freq, k=None):
+        return _topk(freq.astype(float), k or self.k)
 
-    def cold(self, freq, k=K):
-        return _topk(freq.astype(float), k, prefer_old=self.last)
-
-
-def load_draws(db="predictions.sqlite"):
-    """[(date, (n1..n6)), ...] sorted. Sqlite if present, else the project Google Sheets."""
-    try:
-        con = sqlite3.connect(db)
-        df = pd.read_sql_query(
-            "SELECT RESULT_DATE, NUMBER FROM raffleDataset "
-            "WHERE RAFFLE='Bonoloto' AND NUMBER_TYPE IN ('N1','N2','N3','N4','N5','N6')",
-            con,
-        )
-        con.close()
-        if len(df) >= WARMUP * W:
-            g = df.groupby("RESULT_DATE")["NUMBER"].apply(lambda s: tuple(sorted(int(x) for x in s)))
-            out = [(pd.to_datetime(d).date(), nums) for d, nums in g.items() if len(nums) == 6]
-            if len(out) >= WARMUP:
-                return sorted(out, key=lambda x: x[0])
-    except Exception:
-        pass
-
-    frames = []
-    for url in SHEETS:
-        raw = pd.read_html(url, header=1)[0]
-        raw.drop(raw.columns[0], axis=1, inplace=True)
-        raw.columns = COLS
-        raw = raw.dropna(subset=["RESULT_DATE"])
-        raw["RESULT_DATE"] = pd.to_datetime(raw["RESULT_DATE"], dayfirst=True, errors="coerce")
-        raw = raw.dropna(subset=["RESULT_DATE"])
-        for c in COLS[1:7]:
-            raw[c] = pd.to_numeric(raw[c], errors="coerce")
-        raw = raw.dropna(subset=COLS[1:7])
-        frames.append(raw)
-    df = pd.concat(frames, ignore_index=True).drop_duplicates("RESULT_DATE")
-    out = []
-    for _, row in df.iterrows():
-        nums = tuple(sorted(int(row[c]) for c in COLS[1:7]))
-        if len(set(nums)) == 6 and all(1 <= n <= N for n in nums):
-            out.append((row["RESULT_DATE"].date(), nums))
-    return sorted(out, key=lambda x: x[0])
+    def cold(self, freq, k=None):
+        return _topk(freq.astype(float), k or self.k, prefer_old=self.last)
 
 
 def strategies(st: State, next_wd: int):
-    """name -> k-list. Uses only state (past draws)."""
+    n, k = st.n, st.k
     out = {}
     out["hot_all"] = st.hot(st.freq)
     out["cold_all"] = st.cold(st.freq)
@@ -152,7 +104,7 @@ def strategies(st: State, next_wd: int):
         out[f"cold_{s}"] = st.cold(r.freq)
     for d, arr in st.ewm.items():
         out[f"ewm_{d}"] = st.hot(arr)
-    last = st.prev[-1] if st.prev else tuple(range(1, 7))
+    last = st.prev[-1] if st.prev else tuple(range(1, k + 1))
     skip1 = st.prev[-2] if len(st.prev) > 1 else last
     skip2 = st.prev[-3] if len(st.prev) > 2 else last
     out["repeat_last"] = list(last)
@@ -160,83 +112,95 @@ def strategies(st: State, next_wd: int):
     out["skip2"] = list(skip2)
     gap = (st.i - st.last).astype(float)
     gap[0] = -1e9
-    out["overdue"] = _topk(gap, K)
-    avg_gap = np.full(N + 1, 99.0)
+    out["overdue"] = _topk(gap, k)
+    avg_gap = np.full(n + 1, 99.0)
     seen = st.freq > 0
     avg_gap[seen] = np.maximum(st.i, 1) / st.freq[seen]
     due = gap / np.maximum(avg_gap, 1.0)
     due[0] = -1
-    out["due"] = _topk(due, K)
+    out["due"] = _topk(due, k)
     out["weekday"] = st.hot(st.wd[next_wd])
     follow = st.cooc[list(last)].sum(axis=0).astype(float)
     follow[0] = -1
-    for n in last:
-        follow[n] = -1
-    out["pair_follow"] = _topk(follow, K)
-    neigh = np.zeros(N + 1)
-    for n in last:
-        if n > 1:
-            neigh[n - 1] += 1
-        if n < N:
-            neigh[n + 1] += 1
-    out["neighbors"] = _topk(neigh, K)
-    comp = np.zeros(N + 1)
-    for n in last:
-        c = 50 - n
-        if 1 <= c <= N:
+    for x in last:
+        if 0 <= x <= n:
+            follow[x] = -1
+    out["pair_follow"] = _topk(follow, k)
+    neigh = np.zeros(n + 1)
+    for x in last:
+        if x > 1:
+            neigh[x - 1] += 1
+        if x < n:
+            neigh[x + 1] += 1
+    out["neighbors"] = _topk(neigh, k)
+    comp = np.zeros(n + 1)
+    for x in last:
+        c = n + 1 - x
+        if 1 <= c <= n:
             comp[c] += 1
-    out["complement50"] = _topk(comp, K)
+    out["complement"] = _topk(comp, k)
     hot_ex = st.freq.astype(float).copy()
-    for n in last:
-        hot_ex[n] = -1
-    out["hot_avoid_last"] = _topk(hot_ex, K)
+    for x in last:
+        if 0 <= x <= n:
+            hot_ex[x] = -1
+    out["hot_avoid_last"] = _topk(hot_ex, k)
     r20, r40 = st.rolls[20].freq, st.rolls[50].freq
     mom = r20.astype(float) - (r40 - r20).astype(float)
-    out["momentum"] = _topk(mom, K)
+    out["momentum"] = _topk(mom, k)
     rev = st.freq.astype(float) / (1.0 + st.rolls[20].freq)
-    out["reversion"] = _topk(rev, K)
-    # luke-warm: appeared once in last 20
+    out["reversion"] = _topk(rev, k)
     once = (st.rolls[20].freq == 1).astype(float)
-    out["once_20"] = _topk(once, K)
-    # spaced ~avg gap 7 from hottest seed
+    out["once_20"] = _topk(once, k)
+    step = max(1, n // 7)
     seed = st.hot(st.freq, 1)[0]
-    spaced = []
-    x = seed
-    while len(spaced) < K:
-        if x not in spaced and 1 <= x <= N:
+    spaced, x = [], seed
+    while len(spaced) < k:
+        if x not in spaced and 1 <= x <= n:
             spaced.append(x)
-        x += 7
-        if x > N:
-            x = x - N
-    out["spaced7"] = spaced
+        x += step
+        if x > n:
+            x = x - n
+    out["spaced"] = spaced
     rng = np.random.RandomState(st.i + 17)
-    out["random"] = rng.choice(np.arange(1, N + 1), K, replace=False).tolist()
-    out["fixed"] = [1, 8, 15, 22, 29, 36]
-    # pools (k=10): same ranking, more coverage
-    out["hot_all_p10"] = st.hot(st.freq, 10)
-    out["hot_30_p10"] = st.hot(st.rolls[30].freq, 10)
-    out["ewm_0.9_p10"] = st.hot(st.ewm[0.90], 10)
-    out["overdue_p10"] = _topk(gap, 10)
+    out["random"] = rng.choice(np.arange(1, n + 1), k, replace=False).tolist()
+    out["fixed"] = [1 + (i * max(1, n // k)) % n for i in range(k)]
+    if n >= 20:
+        pk = min(10, n // 3)
+        out["hot_all_p10"] = st.hot(st.freq, pk)
+        out["hot_30_p10"] = st.hot(st.rolls[30].freq, pk)
+        out["ewm_0.9_p10"] = st.hot(st.ewm[0.90], pk)
+        out["overdue_p10"] = _topk(gap, pk)
     return out
 
 
-def _slice_stats(hits, k):
-    n = len(hits)
-    if n == 0:
+def _slice_stats(hits, k, n, w):
+    nd = len(hits)
+    if nd == 0:
         return None
-    mean = sum(hits) / n
+    mean = sum(hits) / nd
     return {
-        "n": n,
+        "n": nd,
         "mean": mean,
-        "exp": expected_hits(k),
-        "z": z_hits(mean, n, k),
+        "exp": expected_hits(k, n, w),
+        "z": z_hits(mean, nd, k, n, w),
         "max": max(hits),
-        "ge3": sum(1 for h in hits if h >= 3) / n,
+        "ge3": sum(1 for h in hits if h >= 3) / nd,
     }
 
 
-def hunt(draws, warmup=WARMUP, holdout=HOLDOUT):
-    st = State()
+def _windows(n_draws):
+    warmup = min(WARMUP, max(40, n_draws // 10))
+    holdout = min(HOLDOUT, max(50, n_draws // 5))
+    if warmup + holdout >= n_draws - 10:
+        warmup = max(20, n_draws // 5)
+        holdout = max(20, n_draws // 5)
+    return warmup, holdout
+
+
+def hunt(draws, n=49, w=6, warmup=None, holdout=None):
+    if warmup is None or holdout is None:
+        warmup, holdout = _windows(len(draws))
+    st = State(n, w)
     names = None
     hits = None
     ks = None
@@ -248,70 +212,83 @@ def hunt(draws, warmup=WARMUP, holdout=HOLDOUT):
         pred = strategies(st, d.weekday())
         if names is None:
             names = list(pred)
-            hits = {n: [] for n in names}
-            ks = {n: len(pred[n]) for n in names}
+            hits = {nm: [] for nm in names}
+            ks = {nm: len(pred[nm]) for nm in names}
         actual = set(nums)
-        for n, picked in pred.items():
-            hits[n].append(len(actual.intersection(picked)))
+        for nm, picked in pred.items():
+            hits[nm].append(len(actual.intersection(picked)))
         st.update(nums, d.weekday())
         test_i += 1
-    n_test = test_i
-    split = max(0, n_test - holdout)
+    split = max(0, test_i - holdout)
     rows = []
-    for n in names:
-        k = ks[n]
-        sel = _slice_stats(hits[n][:split], k)
-        conf = _slice_stats(hits[n][split:], k)
-        alls = _slice_stats(hits[n], k)
-        rows.append((n, k, sel, conf, alls))
+    for nm in names:
+        k = ks[nm]
+        sel = _slice_stats(hits[nm][:split], k, n, w)
+        conf = _slice_stats(hits[nm][split:], k, n, w)
+        alls = _slice_stats(hits[nm], k, n, w)
+        rows.append((nm, k, sel, conf, alls))
     rows.sort(key=lambda r: -(r[4]["z"] if r[4] else -999))
-    return rows, st, names, ks
+    return rows, st, names, ks, warmup, holdout
 
 
-def _fmt(s):
-    if not s:
-        return "n/a"
-    sign = "+" if s["z"] >= 0 else ""
-    return f"mean={s['mean']:.3f} exp={s['exp']:.3f} z={sign}{s['z']:.2f} max={s['max']} p3+={s['ge3']:.1%} n={s['n']}"
+def _is_winner(sel, conf):
+    return (
+        sel and conf
+        and sel["mean"] > sel["exp"] and conf["mean"] > conf["exp"]
+        and sel["z"] > 2 and conf["z"] > 1
+    )
 
 
-def next_ticket(st: State, last_date: date):
-    nxt = cf.nextBonolotoDate(last_date)
-    return nxt, strategies(st, nxt.weekday())
+def run_series(label, draws, n, w, weekdays):
+    if len(draws) < 80:
+        print(f"{label}: skip ({len(draws)} draws)")
+        return None
+    rows, st, names, _ks, warmup, holdout = hunt(draws, n, w)
+    winners = [(nm, sel, conf, alls) for nm, k, sel, conf, alls in rows if _is_winner(sel, conf)]
+    best = rows[0]
+    bsel, bconf, balls = best[2], best[3], best[4]
+    edge = "EDGE" if _is_winner(bsel, bconf) else "no edge"
+    print(
+        f"{label} n={n} w={w} draws={len(draws)} {draws[0][0]}..{draws[-1][0]} "
+        f"warmup={warmup} holdout={holdout}"
+    )
+    print(
+        f"  best {best[0]} mean={balls['mean']:.3f} exp={balls['exp']:.3f} "
+        f"z={balls['z']:+.2f} sel={bsel['z']:+.2f} conf={bconf['z']:+.2f}  {edge}"
+    )
+    nxt = cf.nextDrawDate(draws[-1][0], weekdays)
+    pred = strategies(st, nxt.weekday())
+    if winners:
+        for nm, sel, conf, alls in winners[:5]:
+            print(f"  WIN {nm} mean={alls['mean']:.3f} z={alls['z']:+.2f} sel={sel['z']:+.2f} conf={conf['z']:+.2f} next {nxt} {sorted(pred[nm])}")
+        pick = winners[0][0]
+    else:
+        pick = best[0]
+        print(f"  next {nxt} {pick}: {sorted(pred[pick])}")
+    return {"label": label, "winners": [w[0] for w in winners], "best": best[0], "z": balls["z"], "n_strats": len(names)}
 
 
 def main():
-    draws = load_draws()
-    print(f"draws={len(draws)}  {draws[0][0]} .. {draws[-1][0]}")
-    rows, st, names, ks = hunt(draws)
-    print("\nWALK-FORWARD (selection=all-but-last-500, confirm=last 500)")
-    print(f"{'strategy':<18} {'k':>2}  {'SEL z':>7} {'CONF z':>7}  all")
-    winners = []
-    for n, k, sel, conf, alls in rows:
-        sz = sel["z"] if sel else float("nan")
-        cz = conf["z"] if conf else float("nan")
-        mark = ""
-        if sel and conf and sel["mean"] > sel["exp"] and conf["mean"] > conf["exp"] and sel["z"] > 2 and conf["z"] > 1:
-            mark = " **BOTH**"
-            winners.append(n)
-        print(f"{n:<18} {k:>2}  {sz:>+7.2f} {cz:>+7.2f}  {_fmt(alls)}{mark}")
-
-    nxt, pred = next_ticket(st, draws[-1][0])
-    print(f"\nNext Bonoloto date: {nxt}")
-    if winners:
-        print("Winners (sel z>2 AND confirm beats chance):")
-        for n in winners:
-            print(f"  {n}: {sorted(pred[n])}")
-    else:
-        print("No strategy beat chance on BOTH selection and confirm.")
-        best = rows[0][0]
-        print(f"Least-bad on full sample: {best} -> {sorted(pred[best])}  (treat as random)")
-
-    # one-line ceiling
-    best_z = rows[0][4]["z"]
-    print(f"\nBonferroni ({len(names)} tests): full-sample |z| needs ~3.2. None qualified.")
-    print(f"# ponytail: {len(names)} strats, {rows[0][4]['n']} draws, best z={best_z:.2f}. "
-          f"{'edge' if winners else 'no edge'}; lottery looks random.")
+    summaries = []
+    for name, spec in raffles.GAMES.items():
+        print(f"\n=== {name} ===")
+        mains, extras = raffles.load_draws(spec)
+        summaries.append(run_series(name, mains, spec["n"], spec["w"], spec["weekdays"]))
+        extra = spec.get("extra")
+        if extra and extras:
+            summaries.append(run_series(
+                extra["name"], extras, extra["n"], extra["w"], extra.get("weekdays", spec["weekdays"])
+            ))
+    print("\n==== SUMMARY ====")
+    n_win = 0
+    for s in summaries:
+        if not s:
+            continue
+        mark = "EDGE" if s["winners"] else "no edge"
+        if s["winners"]:
+            n_win += 1
+        print(f"{s['label']:<28} best={s['best']:<16} z={s['z']:+.2f}  {mark}")
+    print(f"# ponytail: {len(raffles.GAMES)} games; {n_win} series passed sel+confirm (stars only, treat as weak).")
 
 
 if __name__ == "__main__":

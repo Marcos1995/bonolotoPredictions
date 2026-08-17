@@ -6,6 +6,7 @@ import commonFunctions as cf
 # Sat 8 Aug 2026 -> skip Sunday -> Mon 10
 assert cf.nextBonolotoDate(dt.date(2026, 8, 8)) == dt.date(2026, 8, 10)
 assert cf.nextBonolotoDate(dt.date(2026, 8, 11)) == dt.date(2026, 8, 12)
+assert cf.nextDrawDate(dt.date(2026, 8, 15), (3, 5)) == dt.date(2026, 8, 20)  # Sat -> Thu Primitiva
 
 counts = pd.Series({10: 5, 25: 4, 39: 4, 40: 3, 43: 3, 46: 2, 1: 1})
 ticket = cf.topUniqueNumbers(counts, k=6, low=1, high=49)
@@ -21,6 +22,7 @@ for s, expected in [("9/08/2026", dt.date(2026, 8, 9)), ("11/08/2026", dt.date(2
 import edgeHunt as eh
 
 assert abs(eh.expected_hits(6) - 6 * 6 / 49) < 1e-12
+assert abs(eh.expected_hits(5, 50, 5) - 0.5) < 1e-12
 assert abs(eh.var_hits(6) - 6 * (6 / 49) * (43 / 49) * (43 / 48)) < 1e-12
 assert abs(eh.z_hits(eh.expected_hits(6), 1000)) < 1e-12
 assert len({1, 2, 3, 4, 5, 6} & {4, 5, 6, 7, 8, 9}) == 3
@@ -30,5 +32,10 @@ st.last[:] = 5
 st.last[2] = 0  # num 2 unseen longest
 got = eh._topk((st.i - st.last).astype(float), 3)
 assert got[0] == 2, got
+
+import raffles
+assert {"Bonoloto", "Primitiva", "Euromillones", "ElGordo", "Eurodreams"} <= set(raffles.GAMES)
+assert raffles.GAMES["Euromillones"]["w"] == 5
+assert raffles.GAMES["Euromillones"]["n"] == 50
 
 print("ok")

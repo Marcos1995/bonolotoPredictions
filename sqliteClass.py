@@ -77,7 +77,10 @@ class db:
         if sourceDf is None or targetTable is None:
             return
 
-        commonFunctions.printInfo(sourceDf, colorama.Fore.BLUE)
+        if len(sourceDf) > 20:
+            commonFunctions.printInfo(f"{len(sourceDf)} rows -> {targetTable}", colorama.Fore.BLUE)
+        else:
+            commonFunctions.printInfo(sourceDf, colorama.Fore.BLUE)
 
         values = ""
 

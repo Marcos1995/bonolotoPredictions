@@ -1,6 +1,7 @@
 import sqliteClass
 import commonFunctions as cf
 import webScraper
+import raffles
 # --------------------------------
 import pandas as pd
 import datetime as dt
@@ -22,82 +23,44 @@ class predictData:
             predictionsTable=self.predictionsTable
         )
 
-        self.raffleProperties = {
-            "Bonoloto": [
-                "https://docs.google.com/spreadsheets/u/0/d/175SqVQ3E7PFZ0ebwr2o98Kb6YEAwSUykGFh6ascEfI0/pubhtml/sheet?headers=false&gid=1",  # 1988 - 2012
-                "https://docs.google.com/spreadsheets/u/0/d/175SqVQ3E7PFZ0ebwr2o98Kb6YEAwSUykGFh6ascEfI0/pubhtml/sheet?headers=false&gid=0"  # 2013 - Present
-            ]
-        }
-
-        self.raffle = self.url = ""
-
+        self.raffle = ""
         self.raffleDesc = "RAFFLE"
         self.dateDesc = "RESULT_DATE"
         self.unpivotedTableTitleDesc = "NUMBER_TYPE"
         self.unpivotedTableValueDesc = "NUMBER"
-
         self.unpivotColumnsDesc = ["N1", "N2", "N3", "N4", "N5", "N6", "Complementario", "Reintegro"]
-        self.allColumnsDesc = [self.dateDesc] + self.unpivotColumnsDesc
         self.sortUnpivotedDf = [self.dateDesc, self.unpivotedTableTitleDesc, self.unpivotedTableValueDesc]
         self.getDataset()
 
+    def _max_date(self, raffle):
+        query = f"""
+            SELECT COALESCE(MAX({self.dateDesc}), '1970-01-01') AS {self.dateDesc}
+            FROM {self.datasetTable}
+            WHERE {self.raffleDesc} = '{raffle}'
+        """
+        return dt.datetime.strptime(
+            self.sqlite.executeQuery(query)[self.dateDesc][0], "%Y-%m-%d"
+        ).date()
+
     def getDataset(self):
-
-        for raffle, url in self.raffleProperties.items():
+        for raffle, spec in raffles.GAMES.items():
             self.raffle = raffle
-
-            if isinstance(url, str):
-                url = [url]
-
-            totalDf = pd.DataFrame()
-
-            for urlLink in url:
-                self.url = urlLink
-                tables = pd.read_html(self.url, header=1)
-                df = tables[0]
-                df.drop(df.columns[0], axis=1, inplace=True)
-                df.columns = self.allColumnsDesc
-                df = df.dropna(subset=[self.dateDesc])
-                df[self.dateDesc] = pd.to_datetime(df[self.dateDesc], dayfirst=True, errors="coerce")
-                df = df.dropna(subset=[self.dateDesc])
-                df[self.dateDesc] = df[self.dateDesc].dt.date
-                for col in self.unpivotColumnsDesc:
-                    df[col] = pd.to_numeric(df[col], errors="coerce")
-                df = df.dropna(subset=self.unpivotColumnsDesc)
-                df[self.unpivotColumnsDesc] = df[self.unpivotColumnsDesc].round().astype(int)
-                totalDf = pd.concat([totalDf, df], ignore_index=True)
-
-            query = f"""
-                SELECT
-                    COALESCE(MAX({self.dateDesc}), '1970-01-01') AS {self.dateDesc}
-                FROM {self.datasetTable}
-                WHERE {self.raffleDesc} = '{self.raffle}'
-            """
-
-            cf.printInfo(desc=query, color=colorama.Fore.GREEN)
-            maxDate = dt.datetime.strptime(
-                self.sqlite.executeQuery(query)[self.dateDesc][0], "%Y-%m-%d"
-            ).date()
-            totalDf = totalDf[totalDf[self.dateDesc] > maxDate]
-
-            if totalDf.empty:
-                cf.printInfo("No new data from Google Sheets. Scraping official website for latest results...", colorama.Fore.YELLOW)
+            long_df = raffles.to_long(spec, raffle)
+            max_date = self._max_date(raffle)
+            if long_df.empty:
+                cf.printInfo(f"{raffle}: CSV empty", colorama.Fore.YELLOW)
+                continue
+            long_df[self.dateDesc] = pd.to_datetime(long_df[self.dateDesc]).dt.date
+            new_df = long_df[long_df[self.dateDesc] > max_date]
+            if new_df.empty:
+                cf.printInfo(f"{raffle}: no new CSV rows (max={max_date})", colorama.Fore.YELLOW)
             else:
-                totalDf = pd.melt(
-                    totalDf,
-                    id_vars=self.dateDesc, value_vars=self.unpivotColumnsDesc,
-                    var_name=self.unpivotedTableTitleDesc, value_name=self.unpivotedTableValueDesc
-                )
-                totalDf = totalDf.sort_values(by=self.sortUnpivotedDf)
-                totalDf.insert(loc=0, column=self.raffleDesc, value=self.raffle)
-                self.insertData(sourceDf=totalDf)
-                maxDate = dt.datetime.strptime(
-                    self.sqlite.executeQuery(query)[self.dateDesc][0], "%Y-%m-%d"
-                ).date()
-                cf.printInfo("Checking official website for any more recent results...", colorama.Fore.YELLOW)
-
-            self.scrapeLatestResults(maxDate)
-            # ponytail: edgeHunt 45 strats x 8911 draws; best hot_100 0.752 vs 0.735 (z=2.16) failed holdout. No edge.
+                cf.printInfo(f"{raffle}: inserting {new_df[self.dateDesc].nunique()} new draws", colorama.Fore.GREEN)
+                self.insertData(sourceDf=new_df.sort_values(by=self.sortUnpivotedDf))
+                max_date = self._max_date(raffle)
+            if raffle == "Bonoloto":
+                self.scrapeLatestResults(max_date)
+        # ponytail: multi-game Lotoideas CSV ingest + edgeHunt; no sel+confirm edge on any game.
 
     def scrapeLatestResults(self, maxDate):
         try:
@@ -161,20 +124,26 @@ class predictData:
             cf.printInfo(f"Error during web scraping: {e}. Proceeding with existing data...", colorama.Fore.RED)
 
     def insertData(self, sourceDf: pd.DataFrame):
-
-        query = f"DELETE FROM {self.tempDatasetTable}"
-        self.sqlite.executeQuery(query)
-        self.sqlite.insertIntoFromPandasDf(sourceDf=sourceDf, targetTable=self.tempDatasetTable)
-
-        query = f"""
-            INSERT INTO {self.datasetTable} ({self.raffleDesc}, {self.dateDesc}, {self.unpivotedTableTitleDesc}, {self.unpivotedTableValueDesc})
-            SELECT '{self.raffle}' as {self.raffleDesc}, tmp.{self.dateDesc}, tmp.{self.unpivotedTableTitleDesc}, tmp.{self.unpivotedTableValueDesc}
-            FROM {self.tempDatasetTable} tmp
-            LEFT JOIN {self.datasetTable} t
-            ON t.{self.raffleDesc} = tmp.{self.raffleDesc}
-            AND t.{self.dateDesc} = tmp.{self.dateDesc}
-            AND t.{self.unpivotedTableTitleDesc} = tmp.{self.unpivotedTableTitleDesc}
-            WHERE t.{self.dateDesc} IS NULL
-        """
-        self.sqlite.executeQuery(query)
-        self.sqlite.executeQuery(f"DELETE FROM {self.tempDatasetTable}")
+        # ponytail: pandas to_sql; string-concat INSERT dies on ~100k historic rows
+        import sqlite3
+        df = sourceDf.copy()
+        df[self.dateDesc] = df[self.dateDesc].astype(str)
+        con = sqlite3.connect(self.dbFileName)
+        try:
+            df.to_sql(self.tempDatasetTable, con, if_exists="replace", index=False)
+            con.execute(
+                f"""
+                INSERT INTO {self.datasetTable} ({self.raffleDesc}, {self.dateDesc}, {self.unpivotedTableTitleDesc}, {self.unpivotedTableValueDesc})
+                SELECT '{self.raffle}', tmp.{self.dateDesc}, tmp.{self.unpivotedTableTitleDesc}, tmp.{self.unpivotedTableValueDesc}
+                FROM {self.tempDatasetTable} tmp
+                LEFT JOIN {self.datasetTable} t
+                  ON t.{self.raffleDesc} = tmp.{self.raffleDesc}
+                 AND t.{self.dateDesc} = tmp.{self.dateDesc}
+                 AND t.{self.unpivotedTableTitleDesc} = tmp.{self.unpivotedTableTitleDesc}
+                WHERE t.{self.dateDesc} IS NULL
+                """
+            )
+            con.execute(f"DELETE FROM {self.tempDatasetTable}")
+            con.commit()
+        finally:
+            con.close()
