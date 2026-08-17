@@ -97,7 +97,7 @@ class predictData:
                 cf.printInfo("Checking official website for any more recent results...", colorama.Fore.YELLOW)
 
             self.scrapeLatestResults(maxDate)
-            # ponytail: 21 strategies, 30-draw walk-forward, none beat chance (best 0.90 vs 0.74; 95% bar ~1.01). No predictor.
+            # ponytail: edgeHunt 45 strats x 8911 draws; best hot_100 0.752 vs 0.735 (z=2.16) failed holdout. No edge.
 
     def scrapeLatestResults(self, maxDate):
         try:

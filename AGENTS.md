@@ -18,4 +18,4 @@ Source: https://github.com/DietrichGebert/ponytail · kit synced by telegram-cur
 1. Read `PROJECT.md`.
 2. Climb the Ponytail ladder before writing.
 3. Ship with a short commit + push when the task is done.
-4. Keep the final status short and human-readable.
+4. Final reply: max 5 clear lines. `HECHO`/`FALLO` + what changed + commit.

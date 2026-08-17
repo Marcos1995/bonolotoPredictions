@@ -18,4 +18,17 @@ for s, expected in [("9/08/2026", dt.date(2026, 8, 9)), ("11/08/2026", dt.date(2
     got = pd.to_datetime(s, dayfirst=True).date()
     assert got == expected, (s, got)
 
+import edgeHunt as eh
+
+assert abs(eh.expected_hits(6) - 6 * 6 / 49) < 1e-12
+assert abs(eh.var_hits(6) - 6 * (6 / 49) * (43 / 49) * (43 / 48)) < 1e-12
+assert abs(eh.z_hits(eh.expected_hits(6), 1000)) < 1e-12
+assert len({1, 2, 3, 4, 5, 6} & {4, 5, 6, 7, 8, 9}) == 3
+st = eh.State()
+st.i = 10
+st.last[:] = 5
+st.last[2] = 0  # num 2 unseen longest
+got = eh._topk((st.i - st.last).astype(float), 3)
+assert got[0] == 2, got
+
 print("ok")

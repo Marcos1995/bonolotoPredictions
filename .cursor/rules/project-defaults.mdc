@@ -10,5 +10,5 @@ alwaysApply: true
 - Follow `PROJECT.md` and `AGENTS.md` when present.
 - Ponytail is always on (see `.cursor/rules/ponytail.mdc`): minimum code that works; never cut validation, security, or accessibility.
 - After finishing requested work: `git add -A`, short commit, push to the default remote branch (unless told not to).
-- Keep final user-facing summaries short and plain: what changed + commit message, or the failure cause.
+- Final reply: max 5 clear lines. `HECHO`/`FALLO` + what changed + commit. No essays or file dumps.
 - Default model for telegram-cursor-bot / SDK agents: `grok-4.6` with effort `high`.
