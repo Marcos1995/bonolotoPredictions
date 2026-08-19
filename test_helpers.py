@@ -38,4 +38,39 @@ assert {"Bonoloto", "Primitiva", "Euromillones", "ElGordo", "Eurodreams"} <= set
 assert raffles.GAMES["Euromillones"]["w"] == 5
 assert raffles.GAMES["Euromillones"]["n"] == 50
 
+# --- tournament additions ---
+import numpy as np
+
+# Markov transition counts on a toy sequence
+st2 = eh.State(n=5, k=2)
+d0 = dt.date(2026, 1, 5)
+for j, nums in enumerate([(1, 2), (2, 3), (3, 4)]):
+    st2.update(nums, d0 + dt.timedelta(days=j))
+assert st2.trans[1][2] == 1 and st2.trans[2][3] == 2 and st2.trans_n[2] == 2
+preds = eh.strategies(st2, d0 + dt.timedelta(days=3))
+assert preds["markov"] == [3, 4], preds["markov"]
+
+# every strategy returns unique in-range numbers
+for nm, picked in preds.items():
+    assert len(picked) == len(set(picked)), nm
+    assert all(1 <= x <= 5 for x in picked), (nm, picked)
+
+# Borda rank-sum vote
+assert eh.borda([[1, 2], [2, 3]], 2) == [2, 1]
+
+# anti-lookahead: harness must predict draw t knowing only draws < t
+A, B = (1, 2, 3, 4, 5, 6), (10, 20, 30, 40, 44, 48)
+toy = [(dt.date(2026, 1, 1), A), (dt.date(2026, 1, 2), B)]
+rows, _st, _ml, _top5, _wu, _ho = eh.hunt(toy, n=49, w=6, warmup=1, holdout=1, use_ml=False)
+rl = {nm: alls for nm, k, sel, conf, alls in rows}
+assert rl["repeat_last"]["mean"] == 0.0  # it predicted A; actual was B; no leak
+assert rl["hot_all"]["mean"] == 0.0
+
+# ML feature builder: finite matrix, one row per number
+f = eh.ml_features(st2, d0 + dt.timedelta(days=3))
+assert f.shape == (5, 12) and np.isfinite(f).all()
+if eh.HAS_SKLEARN:
+    mlt = eh.MLTier(5, 2)
+    assert mlt.predict(st2, d0) == {}  # no models before first fit
+
 print("ok")
