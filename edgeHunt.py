@@ -1,6 +1,7 @@
 """Walk-forward tournament across all games: does ANY signal beat hypergeometric chance?
 
-Zoo: hot/cold windows, EWM + slow "bayes" decays, overdue/due, weekday/month,
+Zoo: hot/cold windows, EWM + slow "bayes" decays, overdue/due, group overdue
+(decade/odd-even/sum/span), weekday/month,
 Markov transitions, positional/delta/sum-band shapes, era-consistency bias,
 a deliberately silly family (mirror, last digits, anti-birthday, year-ago...),
 an sklearn ML tier (logistic + gradient boosting, walk-forward refits) and an
@@ -75,6 +76,63 @@ def borda(pick_lists, k):
         for pos, x in enumerate(pl):
             score[x] = score.get(x, 0.0) + (len(pl) - pos)
     return sorted(score, key=lambda x: (-score[x], x))[:k]
+
+
+def _fill_from_groups(last, k, n, group_of):
+    """k numbers from coldest groups first (group last-hit = max last of members)."""
+    groups = {}
+    for x in range(1, n + 1):
+        groups.setdefault(group_of(x), []).append(x)
+    order = sorted(groups, key=lambda g: (max(int(last[x]) for x in groups[g]), g))
+    picked = []
+    for g in order:
+        for x in sorted(groups[g], key=lambda x: (int(last[x]), x)):
+            picked.append(int(x))
+            if len(picked) >= k:
+                return picked
+    return picked
+
+
+def _stale_tercile_bounds(values):
+    """(lo, hi) of the tercile whose last hit is oldest. None if too short."""
+    if len(values) < 3:
+        return None
+    arr = np.asarray(values, dtype=float)
+    a, b = np.percentile(arr, [100.0 / 3.0, 200.0 / 3.0])
+    last_i = [-1, -1, -1]
+    for t, v in enumerate(arr):
+        last_i[0 if v <= a else 1 if v <= b else 2] = t
+    which = min(range(3), key=lambda i: last_i[i])
+    if which == 0:
+        return -1e18, float(a)
+    if which == 1:
+        return float(a), float(b)
+    return float(b), 1e18
+
+
+def _nudge_into_band(pick, cand, lo, hi, fn):
+    """Swap members until fn(pick) is in [lo, hi]. ponytail: 30 greedy swaps, not global opt."""
+    pick = list(pick)
+    rest = [c for c in cand if c not in pick]
+    for _ in range(30):
+        s = fn(pick)
+        if lo <= s <= hi or not rest:
+            return pick
+        want_down = s > hi
+        moved = False
+        for i, old in enumerate(pick):
+            for j, new in enumerate(rest):
+                ns = fn(pick[:i] + [new] + pick[i + 1:])
+                if (want_down and ns < s) or ((not want_down) and ns > s):
+                    pick[i] = new
+                    rest[j] = old
+                    moved = True
+                    break
+            if moved:
+                break
+        if not moved:
+            break
+    return pick
 
 
 class Rolling:
@@ -187,6 +245,21 @@ def strategies(st: State, next_date):
     due = gap / np.maximum(avg_gap, 1.0)
     due[0] = -1
     out["due"] = _topk(due, k)
+    out["decade_overdue"] = _fill_from_groups(st.last, k, n, lambda x: (x - 1) // 10)
+    nums = np.arange(n + 1)
+    odd_sc, even_sc = gap.copy(), gap.copy()
+    odd_sc[nums % 2 == 0] = -1e9
+    even_sc[nums % 2 == 1] = -1e9
+    out["odd_overdue"] = _topk(odd_sc, k)
+    out["even_overdue"] = _topk(even_sc, k)
+    pool = _topk(gap, min(n, 3 * k))
+    sb = _stale_tercile_bounds(st.sums)
+    out["sum_overdue"] = _nudge_into_band(out["overdue"], pool, *sb, sum) if sb else list(out["overdue"])
+    spans = [max(ns) - min(ns) for _d, ns in st.hist]
+    pb = _stale_tercile_bounds(spans)
+    out["span_overdue"] = (
+        _nudge_into_band(out["overdue"], pool, *pb, lambda p: max(p) - min(p)) if pb else list(out["overdue"])
+    )
     out["weekday"] = st.hot(st.wd[next_date.weekday()])
     out["month"] = st.hot(st.mo[next_date.month - 1])
     follow = st.cooc[list(last)].sum(axis=0).astype(float)

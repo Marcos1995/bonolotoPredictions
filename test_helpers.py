@@ -66,6 +66,20 @@ rl = {nm: alls for nm, k, sel, conf, alls in rows}
 assert rl["repeat_last"]["mean"] == 0.0  # it predicted A; actual was B; no leak
 assert rl["hot_all"]["mean"] == 0.0
 
+# group overdue: decade 1-10 last-hit oldest -> ticket from that decade
+st3 = eh.State(n=30, k=6)
+st3.i = 20
+st3.last[:] = 15
+st3.last[1:11] = 0
+gpreds = eh.strategies(st3, dt.date(2026, 1, 1))
+assert all(1 <= x <= 10 for x in gpreds["decade_overdue"]), gpreds["decade_overdue"]
+assert all(x % 2 == 1 for x in gpreds["odd_overdue"]), gpreds["odd_overdue"]
+assert all(x % 2 == 0 for x in gpreds["even_overdue"]), gpreds["even_overdue"]
+lo, hi = eh._stale_tercile_bounds([10, 10, 10, 50, 50, 50, 90, 90, 90])
+assert hi <= 50, (lo, hi)  # high tercile is newest -> stale is low
+nudged = eh._nudge_into_band([15, 16, 17, 18, 19, 20], list(range(1, 21)), 0, 40, sum)
+assert sum(nudged) <= 40, nudged
+
 # ML feature builder: finite matrix, one row per number
 f = eh.ml_features(st2, d0 + dt.timedelta(days=3))
 assert f.shape == (5, 12) and np.isfinite(f).all()
