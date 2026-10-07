@@ -1,0 +1,11 @@
+---
+description: Vista en el navegador y GitHub Pages
+alwaysApply: true
+---
+
+# Vista HTML
+
+- El repo debe abrirse en el navegador: HTML real (normalmente `index.html` en la raíz) que muestre la app o una demo usable.
+- Repo público: la web es `https://<owner>.github.io/<repo>/` (Pages desde `main` en `/`); inclúyela en HECHO. `github.com` es el código.
+- Cualquier UI (crear o retocar, incluida un dashboard): skill `web-design`. Diseña Google Stitch; tú integras. Por defecto expresivo verde: titular grande y la cifra principal sobre un bloque `#18E667`. Cada sección cambia de gesto (tipo, color, imagen) con una transición; el ranking lleva descripción y miniatura. Interruptor sol/luna siempre (el punto marca el lado activo; por defecto el del sistema). Si hay ruta o lugares, un mapa (OpenStreetMap, sin API de pago). Cada vez que se cita un lugar con web real, el nombre enlaza a esa web (no inventes la URL); un nombre que solo es una web enlaza a ella. En el ranking, cada fila tiene Ver mapa (lleva al mapa, resalta ese punto y abre el popup) y Ruta (Google Maps; destino = ese punto; el origen lo elige quien viaja). El popup repite el nombre (enlace a la web si la hay) y Ruta. Esos botones (fila y popup) son fondo `#18E667` y texto `#032612`, en claro y en oscuro.
+- Nunca htmlpreview, githack, Vercel, Netlify ni otros hosts de preview.

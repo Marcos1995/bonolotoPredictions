@@ -1,0 +1,12 @@
+---
+description: Context and token discipline for every task
+alwaysApply: true
+---
+
+# Context lean
+
+- Unknown area: `graphify query "..."` before broad greps; `graphify-out/GRAPH_REPORT.md` only for whole-architecture questions. Never open `graph.json`/`graph.html` or diff `graphify-out/`.
+- Grep/glob first, then read only the files you will touch. Never re-read unchanged files or re-list the tree.
+- Reference paths instead of pasting file contents. Keep only failing lines of command output.
+- Verify with the smallest check that proves the change. Reuse existing helpers instead of near-duplicates.
+- Terse replies: no filler, hedging, repeated diffs or restating the plan. Keep code, paths and errors exact.

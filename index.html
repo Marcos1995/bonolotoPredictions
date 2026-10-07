@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bonoloto · Análisis Estadístico de 9.409 Sorteos</title>
+  <!-- Google Fonts: Public Sans (300, 400, 600, 700, 800, 900) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Public Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            brand: {
+              green: '#18E667',
+              darkgreen: '#032612',
+              btn: '#0A3D22',
+              surface: '#F4F7F4',
+              card: '#FFFFFF',
+              border: '#E1E8E2',
+              muted: '#4A5B50',
+              accentLight: '#E8FAEE',
+              deepbg: '#04170C',
+            }
+          },
+          borderRadius: {
+            'custom': '14px',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Transiciones suaves de gestos visuales */
+    .section-reveal {
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+    }
+    .custom-card {
+      border-radius: 14px;
+      border: 1px solid #E1E8E2;
+    }
+    .active-pill {
+      background-color: #032612;
+      color: #18E667;
+      font-weight: 700;
+    }
+    .theme-pill {
+      position: fixed;
+      z-index: 40;
+      top: .6rem;
+      right: .6rem;
+      width: 3.5rem;
+      height: 1.85rem;
+      border-radius: 999px;
+      border: 1px solid #032612;
+      background: #fff;
+      padding: 0;
+      cursor: pointer;
+    }
+    .theme-pill .ico { position: absolute; top: .28rem; width: 1.1rem; height: 1.1rem; }
+    .theme-pill .sun { left: .28rem; color: #032612; }
+    .theme-pill .moon { right: .28rem; color: #032612; }
+    .theme-thumb {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 999px;
+      background: #18E667;
+      transition: transform .2s ease;
+    }
+    html[data-theme="dark"] .theme-thumb { transform: translateX(1.6rem); }
+    html[data-theme="dark"] .theme-pill { background: #102418; border-color: #18E667; }
+    html[data-theme="dark"] .theme-pill .ico { color: #e7f6ec; }
+    .section-reveal h1 { transform-origin: left center; }
+    @media (prefers-reduced-motion: no-preference) {
+      .section-reveal { animation: rise .5s ease; }
+      .section-reveal h1 { animation: grow .5s ease; }
+    }
+    @keyframes rise { from { transform: translateY(16px); } to { transform: none; } }
+    @keyframes grow { from { transform: scale(.96); } to { transform: scale(1); } }
+    :focus-visible { outline: 2px solid #032612; outline-offset: 3px; }
+    html[data-theme="dark"] body { background: #07140d; color: #e7f6ec; }
+    html[data-theme="dark"] .bg-white { background-color: #102418 !important; }
+    html[data-theme="dark"] .bg-\[\#F8FAF8\] { background-color: #0c1f14 !important; }
+    html[data-theme="dark"] .bg-\[\#EBF5ED\],
+    html[data-theme="dark"] .bg-\[\#EAF2EC\],
+    html[data-theme="dark"] .bg-\[\#E8F8EC\],
+    html[data-theme="dark"] .bg-\[\#F2FAF4\],
+    html[data-theme="dark"] .bg-\[\#F1F6F2\],
+    html[data-theme="dark"] .bg-\[\#EDF8F0\],
+    html[data-theme="dark"] .bg-\[\#F2F5F3\],
+    html[data-theme="dark"] .bg-\[\#EEF4EF\],
+    html[data-theme="dark"] .bg-\[\#EAEFEA\],
+    html[data-theme="dark"] .bg-\[\#F0F5F1\],
+    html[data-theme="dark"] .bg-\[\#E2ECE4\],
+    html[data-theme="dark"] .bg-\[\#E4F8EB\] { background-color: #163024 !important; }
+    html[data-theme="dark"] .text-\[\#032612\],
+    html[data-theme="dark"] .text-\[\#122017\],
+    html[data-theme="dark"] .text-\[\#142C1E\],
+    html[data-theme="dark"] .text-\[\#2A4734\],
+    html[data-theme="dark"] .text-\[\#2C4635\],
+    html[data-theme="dark"] .text-\[\#183925\],
+    html[data-theme="dark"] .text-\[\#184428\],
+    html[data-theme="dark"] .text-\[\#0B4021\] { color: #e7f6ec !important; }
+    html[data-theme="dark"] .text-\[\#4A6353\],
+    html[data-theme="dark"] .text-\[\#52695B\],
+    html[data-theme="dark"] .text-\[\#5A7363\],
+    html[data-theme="dark"] .text-\[\#526B5C\],
+    html[data-theme="dark"] .text-\[\#506859\],
+    html[data-theme="dark"] .text-\[\#5E7866\],
+    html[data-theme="dark"] .text-\[\#627D6B\],
+    html[data-theme="dark"] .text-\[\#526D5B\],
+    html[data-theme="dark"] .text-\[\#546E5E\],
+    html[data-theme="dark"] .text-\[\#245233\],
+    html[data-theme="dark"] .text-\[\#3E5546\],
+    html[data-theme="dark"] .text-\[\#44634F\],
+    html[data-theme="dark"] .text-\[\#284733\],
+    html[data-theme="dark"] .text-\[\#6B8573\],
+    html[data-theme="dark"] .text-\[\#698271\],
+    html[data-theme="dark"] .text-\[\#294533\] { color: #b7d4c2 !important; }
+    html[data-theme="dark"] .border-\[\#E1E8E2\],
+    html[data-theme="dark"] .border-\[\#DDE7DF\],
+    html[data-theme="dark"] .border-\[\#D8E6DB\],
+    html[data-theme="dark"] .border-\[\#D3E3D6\],
+    html[data-theme="dark"] .border-\[\#C6E8CD\],
+    html[data-theme="dark"] .border-\[\#D5E0D7\],
+    html[data-theme="dark"] .border-\[\#CBDCCE\] { border-color: #1e3d2c !important; }
+    html[data-theme="dark"] .bg-\[\#18E667\],
+    html[data-theme="dark"] .bg-\[\#18E667\] .text-\[\#032612\] { color: #032612 !important; }
+    html[data-theme="dark"] #kpi-hero { background-color: #18E667 !important; color: #032612 !important; }
+    html[data-theme="dark"] #kpi-hero .text-\[\#032612\],
+    html[data-theme="dark"] #kpi-hero .text-\[\#032612\]\/75 { color: #032612 !important; }
+    html[data-theme="dark"] .on-ink { color: #18E667 !important; }
+    html[data-theme="dark"] .bg-\[\#E2F7E7\] { background-color: #18E667 !important; color: #032612 !important; }
+    html[data-theme="dark"] .bar-azar { background: #d5efe0 !important; }
+    @media (prefers-reduced-motion: reduce) {
+      .section-reveal, .section-reveal h1, .theme-thumb { animation: none; transition: none; }
+      .animate-pulse { animation: none !important; }
+    }
+  </style>
+  <script>
+    (function () {
+      var s = localStorage.getItem("tema");
+      var t = s || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", t);
+    })();
+  </script>
+</head>
+<body class="bg-[#F8FAF8] text-[#122017] font-sans antialiased selection:bg-[#18E667] selection:text-[#032612] min-h-screen">
+  <button type="button" id="theme-toggle" class="theme-pill" aria-label="Cambiar entre tema claro y oscuro">
+    <svg class="ico sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    <svg class="ico moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 14.5A8.5 8.5 0 1 1 9.5 3 7 7 0 0 0 21 14.5z"/></svg>
+    <span class="theme-thumb"></span>
+  </button>
+
+  <!-- MOTIVO DECORATIVO SUPERIOR: Patrón numérico sutil de lotería -->
+  <div class="w-full bg-[#EBF5ED] border-b border-[#D8E6DB] py-2 pl-4 pr-16 text-center overflow-hidden">
+    <div class="inline-flex items-center gap-3 text-xs uppercase tracking-widest text-[#245233] font-mono font-medium">
+      <span class="inline-block w-2 h-2 rounded-full bg-[#18E667]"></span>
+      Histórico de <a href="https://www.loteriasyapuestas.es/es/bonoloto" class="underline">Bonoloto</a>
+    </div>
+  </div>
+
+  <main class="max-w-4xl mx-auto px-4 py-8 sm:px-6 md:px-8 space-y-12">
+
+    <!-- SECCIÓN 1: CABECERA Y HALLAZGO CENTRAL -->
+    <header class="section-reveal pt-4 pb-2 border-b border-[#DDE7DF] relative">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pr-14 sm:pr-0">
+        <!-- Kicker -->
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E8F8EC] border border-[#C6E8CD] text-xs font-semibold text-[#0B4021] font-mono">
+          <svg class="w-3.5 h-3.5 text-[#18E667] fill-current" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>
+          Bonoloto · 9.409 sorteos · 28 feb 1988 – 6 oct 2026
+        </span>
+
+        <!-- Chip de fuente -->
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-[#D5E0D7] text-xs text-[#3E5546] font-medium shadow-xs">
+          <svg class="w-3.5 h-3.5 text-[#2A663E]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          Fuente: Hojas públicas Lotoideas
+        </span>
+      </div>
+
+      <!-- Motivo decorativo de sección: Glifo geométrico de rejilla 7x7 (49 números) -->
+      <div class="absolute right-0 top-12 opacity-10 pointer-events-none hidden sm:block">
+        <svg width="120" height="120" viewBox="0 0 70 70" fill="#032612">
+          <circle cx="5" cy="5" r="3"/><circle cx="15" cy="5" r="3"/><circle cx="25" cy="5" r="3"/><circle cx="35" cy="5" r="3"/><circle cx="45" cy="5" r="3"/><circle cx="55" cy="5" r="3"/><circle cx="65" cy="5" r="3"/>
+          <circle cx="5" cy="15" r="3"/><circle cx="15" cy="15" r="3"/><circle cx="25" cy="15" r="3"/><circle cx="35" cy="15" r="3"/><circle cx="45" cy="15" r="3"/><circle cx="55" cy="15" r="3"/><circle cx="65" cy="15" r="3"/>
+          <circle cx="5" cy="25" r="3"/><circle cx="15" cy="25" r="3"/><circle cx="25" cy="25" r="3"/><circle cx="35" cy="25" r="3"/><circle cx="45" cy="25" r="3"/><circle cx="55" cy="25" r="3"/><circle cx="65" cy="25" r="3"/>
+          <circle cx="5" cy="35" r="3"/><circle cx="15" cy="35" r="3"/><circle cx="25" cy="35" r="3"/><circle cx="35" cy="35" r="3"/><circle cx="45" cy="35" r="3"/><circle cx="55" cy="35" r="3"/><circle cx="65" cy="35" r="3"/>
+          <circle cx="5" cy="45" r="3"/><circle cx="15" cy="45" r="3"/><circle cx="25" cy="45" r="3"/><circle cx="35" cy="45" r="3"/><circle cx="45" cy="45" r="3"/><circle cx="55" cy="45" r="3"/><circle cx="65" cy="45" r="3"/>
+          <circle cx="5" cy="55" r="3"/><circle cx="15" cy="55" r="3"/><circle cx="25" cy="55" r="3"/><circle cx="35" cy="55" r="3"/><circle cx="45" cy="55" r="3"/><circle cx="55" cy="55" r="3"/><circle cx="65" cy="55" r="3"/>
+          <circle cx="5" cy="65" r="3"/><circle cx="15" cy="65" r="3"/><circle cx="25" cy="65" r="3"/><circle cx="35" cy="65" r="3"/><circle cx="45" cy="65" r="3"/><circle cx="55" cy="65" r="3"/><circle cx="65" cy="65" r="3"/>
+        </svg>
+      </div>
+
+      <!-- H1 display ultra negrita -->
+      <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-[#032612] tracking-tight leading-[1.08] mb-4 max-w-3xl">
+        Los calientes suman 0,017 aciertos de más
+      </h1>
+
+      <p class="text-base sm:text-lg text-[#2A4734] leading-relaxed max-w-2xl font-normal">
+        Es la mejor de seis reglas. El azar deja <span class="font-bold text-[#032612] bg-[#E2F7E7] px-1.5 py-0.5 rounded">0,735 aciertos por boleto</span>. Esto no es un premio.
+      </p>
+    </header>
+
+    <!-- SECCIÓN 2: FILA DE 4 KPIS -->
+    <section class="section-reveal">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xs font-bold uppercase tracking-wider text-[#4A6353] font-mono">Indicadores clave de distribución</h2>
+        <span class="text-xs text-[#6B8573]">Media observada vs. Modelo estocástico</span>
+      </div>
+
+      <!-- Grid responsive: 1 col móvil -> 2 col tablet -> 4 col escritorio -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <!-- KPI 1 HERO: Fondo sólido #18E667, texto #032612 -->
+        <article id="kpi-hero" class="bg-[#18E667] text-[#032612] p-5 rounded-[14px] shadow-sm flex flex-col justify-between border-2 border-[#12C856] relative overflow-hidden">
+          <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-[#032612]/5 rounded-full pointer-events-none"></div>
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs uppercase font-extrabold tracking-wider text-[#032612]/75 font-mono">Extra de los calientes</span>
+              <span class="p-1.5 rounded-lg bg-[#032612] text-[#18E667]">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+              </span>
+            </div>
+            <div class="flex items-baseline gap-1 my-1">
+              <span class="text-4xl sm:text-5xl font-black tracking-tight text-[#032612]">+0,017</span>
+            </div>
+            <p class="text-xs font-bold text-[#032612]/80 uppercase tracking-wide">aciertos / sorteo</p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-[#032612]/15">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#032612] text-[#18E667] text-xs font-bold on-ink">
+              <span>▲</span>
+              <span>0,017 frente al azar</span>
+            </span>
+          </div>
+        </article>
+
+        <!-- KPI 2: Con seguidos -->
+        <article class="bg-white p-5 rounded-[14px] border border-[#E1E8E2] shadow-xs flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs uppercase font-bold tracking-wider text-[#4A6353] font-mono">Números seguidos</span>
+              <span class="p-1.5 rounded-lg bg-[#F0F5F1] text-[#1C4229]">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/></svg>
+              </span>
+            </div>
+            <div class="text-3xl sm:text-4xl font-extrabold text-[#032612] my-1" id="seguidos-num">49,4%</div>
+            <p class="text-xs text-[#52695B]">con al menos una pareja seguida</p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-[#F0F4F1]">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#F1F6F2] text-[#254A32] text-xs font-semibold">
+              <span class="text-[#8B2E2E]" id="seguidos-arrow">▼</span>
+              <span id="seguidos-pill">0,1% bajo el azar (49,5%)</span>
+            </span>
+          </div>
+        </article>
+
+        <!-- KPI 3: 3 pares y 3 impares -->
+        <article class="bg-white p-5 rounded-[14px] border border-[#E1E8E2] shadow-xs flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs uppercase font-bold tracking-wider text-[#4A6353] font-mono">Simetría Par/Impar</span>
+              <span class="p-1.5 rounded-lg bg-[#F0F5F1] text-[#1C4229]">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+              </span>
+            </div>
+            <div class="text-3xl sm:text-4xl font-extrabold text-[#032612] my-1" id="sim-num">33,6%</div>
+            <p class="text-xs text-[#52695B]">con 3 pares y 3 impares exactos</p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-[#F0F4F1]">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#EDF8F0] text-[#13542B] text-xs font-semibold">
+              <span class="text-[#0E6C34]" id="sim-arrow">▲</span>
+              <span id="sim-pill">0,3% sobre azar (33,3%)</span>
+            </span>
+          </div>
+        </article>
+
+        <!-- KPI 4: Combinaciones repetidas -->
+        <article class="bg-white p-5 rounded-[14px] border border-[#E1E8E2] shadow-xs flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs uppercase font-bold tracking-wider text-[#4A6353] font-mono">Repeticiones</span>
+              <span class="p-1.5 rounded-lg bg-[#F0F5F1] text-[#1C4229]">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              </span>
+            </div>
+            <div class="text-3xl sm:text-4xl font-extrabold text-[#032612] my-1">4</div>
+            <p class="text-xs text-[#52695B]">sextetos repetidos en 9.409 sorteos</p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-[#F0F4F1]">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#F2F5F3] text-[#334D3C] text-xs font-semibold">
+              <span>▲</span>
+              <span id="rep-pill">4 frente a unas 3 que espera el azar</span>
+            </span>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- SECCIÓN 4 (Colocada para control temporal interactivo de los datos): CONTROL SEGMENTADO -->
+    <section class="section-reveal bg-[#EAF2EC] p-3 rounded-[14px] border border-[#D3E3D6] flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div class="flex items-center gap-2 text-xs font-semibold text-[#184428]">
+        <svg class="w-4 h-4 text-[#168E42]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span>Horizonte de cómputo estadístico:</span>
+      </div>
+
+      <!-- Botonera segmentada -->
+      <div id="filter-container" class="inline-flex p-1 bg-white rounded-xl border border-[#CBDCCE] shadow-xs w-full sm:w-auto" role="tablist">
+        <button type="button" onclick="setPeriod('all')" id="btn-period-all" class="flex-1 sm:flex-initial px-4 py-1.5 rounded-lg text-xs transition-all active-pill">
+          Todo (9.409)
+        </button>
+        <button type="button" onclick="setPeriod('200')" id="btn-period-200" class="flex-1 sm:flex-initial px-4 py-1.5 rounded-lg text-xs font-medium text-[#486351] hover:text-[#032612] transition-all">
+          Últimos 200
+        </button>
+        <button type="button" onclick="setPeriod('year')" id="btn-period-year" class="flex-1 sm:flex-initial px-4 py-1.5 rounded-lg text-xs font-medium text-[#486351] hover:text-[#032612] transition-all">
+          Último año
+        </button>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 3: DOS GRÁFICOS ESTADÍSTICOS -->
+    <section class="section-reveal space-y-8">
+      
+      <!-- Gráfico 1: Barras de distribución par / impar -->
+      <div class="bg-white p-6 rounded-[14px] border border-[#E1E8E2] shadow-xs">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-2">
+          <h3 class="text-lg sm:text-xl font-black text-[#032612]">
+            Lo normal es 3 y 3, porque así lo dice el combinatorio
+          </h3>
+          <!-- Leyenda -->
+          <div class="flex items-center gap-4 text-xs font-medium">
+            <span class="inline-flex items-center gap-1.5">
+              <span class="w-3 h-3 rounded-xs bg-[#18E667] border border-[#10B850]"></span>
+              <span id="oe-legend-n">Observado (9.409)</span>
+            </span>
+            <span class="inline-flex items-center gap-1.5 text-[#546E5E]">
+              <span class="w-3 h-3 rounded-xs bg-[#032612]"></span>
+              Teórico (Azar)
+            </span>
+          </div>
+        </div>
+        
+        <p class="text-xs text-[#5A7363] mb-6">
+          De 0 a 6 impares en el boleto. La barra oscura es la combinatoria; la verde es el histórico.
+        </p>
+
+        <div id="oe-rows" class="space-y-3.5 max-w-2xl mx-auto pt-2" role="img" aria-label="Impares observados frente al azar"></div>
+
+        <!-- Caption de una sola línea -->
+        <div class="mt-5 pt-3 border-t border-[#EEF2EF] text-xs text-[#526B5C]">
+          Cada barra verde es el histórico; la oscura es C(25, impares)·C(24, pares) / C(49, 6). El control de arriba cambia esta gráfica, no el backtest.
+        </div>
+      </div>
+
+      <div id="comparacion" class="bg-white p-6 rounded-[14px] border border-[#E1E8E2] shadow-xs">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-2">
+          <h3 class="text-lg sm:text-xl font-black text-[#032612]">
+            Ninguna regla se separa lo bastante para cobrar
+          </h3>
+          <!-- Leyenda -->
+          <div class="flex items-center gap-3 text-xs font-medium">
+            <span class="inline-flex items-center gap-1.5 text-[#032612]">
+              <span class="w-3 h-3 rounded-full bg-[#18E667] border border-[#032612]"></span>
+              Rendimiento regla
+            </span>
+            <span class="inline-flex items-center gap-1.5 text-[#B3261E]">
+              <span class="w-4 h-0.5 border-t-2 border-dashed border-[#B3261E]"></span>
+              Línea del azar (0,735)
+            </span>
+          </div>
+        </div>
+
+        <p class="text-xs text-[#5A7363] mb-5">
+          Aciertos medios en 9.109 sorteos de prueba. Cada regla solo ve los sorteos anteriores. Las barras están ampliadas alrededor de 0,73 para que se vea la diferencia.
+        </p>
+
+        <!-- Visualización con línea de referencia central de 0,735 -->
+        <div class="relative py-4 space-y-4">
+          <!-- Línea vertical de referencia del azar posicionada al 60% del ancho relativo -->
+          <div class="absolute top-0 bottom-0 left-[62%] w-px border-l-2 border-dashed border-[#B3261E] z-10 hidden sm:block">
+            <span class="absolute -top-3 -translate-x-1/2 bg-[#B3261E] text-white text-[9px] font-mono px-1 rounded">0,735</span>
+          </div>
+
+          <!-- Regla 1: Calientes (0,752) -->
+          <div class="space-y-1">
+            <div class="flex justify-between text-xs font-semibold">
+              <span class="text-[#032612]">1. Calientes (últimos 100 sorteos)</span>
+              <span class="font-mono text-[#032612] font-bold">0,752 aciertos <span class="text-[#15803D] text-[10px] font-bold">(+0,017)</span></span>
+            </div>
+            <div class="w-full bg-[#EEF4EF] rounded-full h-3 overflow-hidden">
+              <div class="bg-[#18E667] h-3 rounded-full" style="width: 76.5%;"></div>
+            </div>
+          </div>
+
+          <!-- Regla 2: Repetir ayer (0,734) -->
+          <div class="space-y-1">
+            <div class="flex justify-between text-xs font-semibold">
+              <span class="text-[#2C4635]">2. Repetir ayer (sorteo previo)</span>
+              <span class="font-mono text-[#2C4635]">0,734 aciertos <span class="text-[#991B1B] text-[10px]">(-0,001)</span></span>
+            </div>
+            <div class="w-full bg-[#EEF4EF] rounded-full h-3 overflow-hidden">
+              <div class="bg-[#8BD8A4] h-3 rounded-full" style="width: 61.2%;"></div>
+            </div>
+          </div>
+
+          <!-- Regla 3: 3 y 3 (0,732) -->
+          <div class="space-y-1">
+            <div class="flex justify-between text-xs font-semibold">
+              <span class="text-[#2C4635]">3. 3 pares y 3 impares fijos</span>
+              <span class="font-mono text-[#2C4635]">0,732 aciertos <span class="text-[#991B1B] text-[10px]">(-0,003)</span></span>
+            </div>
+            <div class="w-full bg-[#EEF4EF] rounded-full h-3 overflow-hidden">
+              <div class="bg-[#8BD8A4] h-3 rounded-full" style="width: 59.8%;"></div>
+            </div>
+          </div>
+
+          <!-- Regla 4: Frecuencia total (0,731) -->
+          <div class="space-y-1">
+            <div class="flex justify-between text-xs font-semibold">
+              <span class="text-[#2C4635]">4. Frecuencia total histórica</span>
+              <span class="font-mono text-[#2C4635]">0,731 aciertos <span class="text-[#991B1B] text-[10px]">(-0,004)</span></span>
+            </div>
+            <div class="w-full bg-[#EEF4EF] rounded-full h-3 overflow-hidden">
+              <div class="bg-[#8BD8A4] h-3 rounded-full" style="width: 58.5%;"></div>
+            </div>
+          </div>
+
+          <!-- Regla 5: Fríos (0,730) -->
+          <div class="space-y-1">
+            <div class="flex justify-between text-xs font-semibold">
+              <span class="text-[#2C4635]">5. Fríos (los menos salidos)</span>
+              <span class="font-mono text-[#2C4635]">0,730 aciertos <span class="text-[#991B1B] text-[10px]">(-0,005)</span></span>
+            </div>
+            <div class="w-full bg-[#EEF4EF] rounded-full h-3 overflow-hidden">
+              <div class="bg-[#8BD8A4] h-3 rounded-full" style="width: 57.2%;"></div>
+            </div>
+          </div>
+
+          <!-- Regla 6: Retrasados (0,727) -->
+          <div class="space-y-1">
+            <div class="flex justify-between text-xs font-semibold">
+              <span class="text-[#2C4635]">6. Retrasados (mayor ausencia)</span>
+              <span class="font-mono text-[#2C4635]">0,727 aciertos <span class="text-[#991B1B] text-[10px]">(-0,008)</span></span>
+            </div>
+            <div class="w-full bg-[#EEF4EF] rounded-full h-3 overflow-hidden">
+              <div class="bg-[#8BD8A4] h-3 rounded-full" style="width: 54.0%;"></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Caption -->
+        <div class="mt-4 pt-3 border-t border-[#EEF2EF] text-xs text-[#526B5C]">
+          0,752 frente a 0,735 es un extra de 0,017 aciertos por sorteo. No es un premio de 6. Con seis reglas medidas, quedarse con la mejor infla un poco el z.
+        </div>
+      </div>
+
+    </section>
+
+    <!-- SECCIÓN 5: RANKING DETALLADO DE REGLAS (Sin mapas, solo discos verdes) -->
+    <section class="section-reveal">
+      <div class="mb-4">
+        <h2 class="text-xl sm:text-2xl font-black text-[#032612] tracking-tight">
+          Ranking de las 6 reglas analizadas
+        </h2>
+        <p class="text-xs sm:text-sm text-[#4E6656]">
+          Prueba ciega desde el sorteo 300 hasta el 6 oct 2026. El azar, jugando 6 números, deja 0,735 aciertos.
+        </p>
+      </div>
+
+      <div class="space-y-2.5">
+        
+        <!-- Fila 1: Calientes -->
+        <div class="bg-white p-4 rounded-[14px] border border-[#CDE5D2] shadow-xs flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <!-- Miniatura: disco verde con número de posición -->
+            <div class="w-9 h-9 rounded-full bg-[#18E667] text-[#032612] font-black text-sm flex items-center justify-center shrink-0 border border-[#0EBD4E]">
+              1
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h4 class="text-sm font-extrabold text-[#032612]">Calientes</h4>
+                <span class="text-[10px] font-bold font-mono px-1.5 py-0.5 rounded bg-[#E4F8EB] text-[#0D622D]">z = 2,17</span>
+              </div>
+              <p class="text-xs text-[#526D5A]">Los 6 números con mayor salida en los últimos 100 sorteos.</p>
+            </div>
+          </div>
+          <div class="text-right shrink-0">
+            <span class="text-base font-black text-[#032612] font-mono">0,752</span>
+            <span class="block text-[10px] text-[#16803D] font-semibold">▲ +0,017</span>
+          </div>
+        </div>
+
+        <!-- Fila 2: Repetir ayer -->
+        <div class="bg-white p-4 rounded-[14px] border border-[#E1E8E2] shadow-xs flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full bg-[#E2ECE4] text-[#22442F] font-bold text-sm flex items-center justify-center shrink-0">
+              2
+            </div>
+            <div>
+              <h4 class="text-sm font-bold text-[#142C1E]">Repetir ayer</h4>
+              <p class="text-xs text-[#5E7866]">Jugar exactamente los 6 números que salieron en el sorteo anterior.</p>
+            </div>
+          </div>
+          <div class="text-right shrink-0">
+            <span class="text-base font-bold text-[#22442F] font-mono">0,734</span>
+            <span class="block text-[10px] text-[#8C3E3E]">▼ -0,001</span>
+          </div>
+        </div>
+
+        <!-- Fila 3: 3 y 3 -->
+        <div class="bg-white p-4 rounded-[14px] border border-[#E1E8E2] shadow-xs flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full bg-[#E2ECE4] text-[#22442F] font-bold text-sm flex items-center justify-center shrink-0">
+              3
+            </div>
+            <div>
+              <h4 class="text-sm font-bold text-[#142C1E]">3 y 3</h4>
+              <p class="text-xs text-[#5E7866]">Equilibrio exacto de 3 pares y 3 impares en cada apuesta.</p>
+            </div>
+          </div>
+          <div class="text-right shrink-0">
+            <span class="text-base font-bold text-[#22442F] font-mono">0,732</span>
+            <span class="block text-[10px] text-[#8C3E3E]">▼ -0,003</span>
+          </div>
+        </div>
+
+        <!-- Fila 4: Frecuencia total -->
+        <div class="bg-white p-4 rounded-[14px] border border-[#E1E8E2] shadow-xs flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full bg-[#E2ECE4] text-[#22442F] font-bold text-sm flex items-center justify-center shrink-0">
+              4
+            </div>
+            <div>
+              <h4 class="text-sm font-bold text-[#142C1E]">Frecuencia total</h4>
+              <p class="text-xs text-[#5E7866]">Los 6 números que acumulan más salidas en el histórico completo.</p>
+            </div>
+          </div>
+          <div class="text-right shrink-0">
+            <span class="text-base font-bold text-[#22442F] font-mono">0,731</span>
+            <span class="block text-[10px] text-[#8C3E3E]">▼ -0,004</span>
+          </div>
+        </div>
+
+        <!-- Fila 5: Fríos -->
+        <div class="bg-white p-4 rounded-[14px] border border-[#E1E8E2] shadow-xs flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full bg-[#E2ECE4] text-[#22442F] font-bold text-sm flex items-center justify-center shrink-0">
+              5
+            </div>
+            <div>
+              <h4 class="text-sm font-bold text-[#142C1E]">Fríos</h4>
+              <p class="text-xs text-[#5E7866]">Los 6 números que menos veces han aparecido en la ventana móvil.</p>
+            </div>
+          </div>
+          <div class="text-right shrink-0">
+            <span class="text-base font-bold text-[#22442F] font-mono">0,730</span>
+            <span class="block text-[10px] text-[#8C3E3E]">▼ -0,005</span>
+          </div>
+        </div>
+
+        <!-- Fila 6: Retrasados -->
+        <div class="bg-white p-4 rounded-[14px] border border-[#E1E8E2] shadow-xs flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full bg-[#E2ECE4] text-[#22442F] font-bold text-sm flex items-center justify-center shrink-0">
+              6
+            </div>
+            <div>
+              <h4 class="text-sm font-bold text-[#142C1E]">Retrasados</h4>
+              <p class="text-xs text-[#5E7866]">Los 6 números con mayor cantidad de jornadas sin aparecer.</p>
+            </div>
+          </div>
+          <div class="text-right shrink-0">
+            <span class="text-base font-bold text-[#22442F] font-mono">0,727</span>
+            <span class="block text-[10px] text-[#8C3E3E]">▼ -0,008</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECCIÓN 6: BLOQUE DE COLOR DISTINTO CON GESTO ENORME, 6 BOLAS Y LA ÚNICA ACCIÓN PRINCIPAL -->
+    <section class="section-reveal bg-[#041E0F] text-[#E8FAEE] p-6 sm:p-8 rounded-[14px] border-2 border-[#18E667]/40 shadow-xl relative overflow-hidden">
+      
+      <!-- Motivo decorativo de fondo: Anillo concéntrico de bombo -->
+      <div class="absolute -right-16 -top-16 w-64 h-64 rounded-full border-8 border-[#18E667]/10 pointer-events-none"></div>
+
+      <div class="relative z-10 max-w-2xl">
+        <span class="inline-block px-3 py-1 rounded-full bg-[#18E667]/20 text-[#18E667] text-xs font-mono font-bold uppercase tracking-wider mb-3">
+          Ensayo para el próximo sorteo · 7 oct 2026
+        </span>
+
+        <h3 class="text-2xl sm:text-3xl font-black text-white tracking-tight mb-2">
+          La apuesta simulada según los Calientes
+        </h3>
+
+        <!-- Las seis bolas con tipo enorme -->
+        <div class="my-6">
+          <div class="grid grid-cols-3 sm:grid-cols-6 gap-3" id="bolas">
+            <!-- Bola 16 -->
+            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#18E667] text-[#032612] font-black text-2xl sm:text-3xl flex items-center justify-center shadow-lg border-2 border-white/80 mx-auto">
+              16
+            </div>
+            <!-- Bola 18 -->
+            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#18E667] text-[#032612] font-black text-2xl sm:text-3xl flex items-center justify-center shadow-lg border-2 border-white/80 mx-auto">
+              18
+            </div>
+            <!-- Bola 23 -->
+            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#18E667] text-[#032612] font-black text-2xl sm:text-3xl flex items-center justify-center shadow-lg border-2 border-white/80 mx-auto">
+              23
+            </div>
+            <!-- Bola 31 -->
+            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#18E667] text-[#032612] font-black text-2xl sm:text-3xl flex items-center justify-center shadow-lg border-2 border-white/80 mx-auto">
+              31
+            </div>
+            <!-- Bola 33 -->
+            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#18E667] text-[#032612] font-black text-2xl sm:text-3xl flex items-center justify-center shadow-lg border-2 border-white/80 mx-auto">
+              33
+            </div>
+            <!-- Bola 49 -->
+            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#18E667] text-[#032612] font-black text-2xl sm:text-3xl flex items-center justify-center shadow-lg border-2 border-white/80 mx-auto">
+              49
+            </div>
+          </div>
+        </div>
+
+        <p class="text-sm sm:text-base text-[#B0D5BC] leading-relaxed mb-6 font-normal">
+          Calientes de los últimos 100 sorteos. Laya eligió mostrar esta regla. <strong class="text-white">16 y 18 van seguidos</strong>: eso pasa en la mitad de los sorteos.
+        </p>
+
+        <!-- ÚNICA ACCIÓN PRINCIPAL: Botón #0A3D22 con texto claro -->
+        <div>
+          <a id="main-cta" href="#comparacion" class="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-[14px] bg-[#0A3D22] text-[#E8FAEE] hover:bg-[#0D4D2B] border border-[#18E667]/40 text-sm sm:text-base font-bold shadow-lg">
+            <span>Ver la comparación con el azar</span>
+            <svg class="w-5 h-5 text-[#18E667]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 7: OTRO GESTO DISTINTO (SUMAS, CHI-CUADRADO Y URNA DE REINTEGRO) -->
+    <section class="section-reveal bg-white p-6 sm:p-8 rounded-[14px] border border-[#E1E8E2] shadow-xs">
+      
+      <div class="flex items-center justify-between mb-4">
+        <span class="text-xs uppercase font-bold tracking-widest text-[#245A36] font-mono">Test de uniformidad global</span>
+        <!-- Motivo decorativo de sección: Micro-gráfico de campana gaussiana -->
+        <svg class="w-14 h-6 text-[#18E667]" fill="none" stroke="currentColor" viewBox="0 0 100 40">
+          <path d="M 0 38 Q 30 38 45 10 T 50 6 T 55 10 Q 70 38 100 38" stroke-width="2.5" fill="none" stroke="currentColor"/>
+        </svg>
+      </div>
+
+      <h3 class="text-xl sm:text-2xl font-black text-[#032612] mb-6">
+        Comportamiento estocástico y ley de los grandes números
+      </h3>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- Tarjeta A: Suma media -->
+        <div class="bg-[#F8FAF8] p-4 rounded-xl border border-[#E1E8E2]">
+          <div class="text-xs text-[#526D5B] font-medium mb-1">Suma media observada</div>
+          <div class="flex items-baseline gap-2 mb-2">
+            <span class="text-3xl font-extrabold text-[#032612]">150,7</span>
+            <span class="text-xs text-[#526D5B]">vs. 150,0 azar</span>
+          </div>
+          <div class="w-full bg-[#E3EDE5] h-2 rounded-full overflow-hidden mb-2">
+            <div class="bg-[#18E667] h-2 rounded-full" style="width: 50.4%;"></div>
+          </div>
+          <p class="text-xs text-[#627D6B] leading-relaxed">
+            La suma de 6 bolas entre 1 y 49 oscila entre 21 y 279, con centro matemático exacto en 150. Desviación residual mínima de +0,46%.
+          </p>
+        </div>
+
+        <!-- Tarjeta B: Chi-cuadrado números 1 al 49 -->
+        <div class="bg-[#F8FAF8] p-4 rounded-xl border border-[#E1E8E2]">
+          <div class="text-xs text-[#526D5B] font-medium mb-1">Ajuste de frecuencias (1 al 49)</div>
+          <div class="flex items-baseline gap-2 mb-2">
+            <span class="text-3xl font-extrabold text-[#032612]">p = 0,94</span>
+            <span class="text-xs text-[#136A34] font-semibold">χ² parejo</span>
+          </div>
+          <div class="w-full bg-[#E3EDE5] h-2 rounded-full overflow-hidden mb-2">
+            <div class="bg-[#032612] h-2 rounded-full" style="width: 94%;"></div>
+          </div>
+          <p class="text-xs text-[#627D6B] leading-relaxed">
+            Los números del 1 al 49 salen parejos. Un valor p=0,94 indica que no hay ninguna evidencia de números sesgados mecánicamente en los bombos.
+          </p>
+        </div>
+
+        <!-- Tarjeta C: Urna de reintegro (0 al 9) -->
+        <div class="bg-[#F8FAF8] p-4 rounded-xl border border-[#E1E8E2]">
+          <div class="text-xs text-[#526D5B] font-medium mb-1">Urna del reintegro (0 al 9)</div>
+          <div class="flex items-baseline gap-2 mb-2">
+            <span class="text-3xl font-extrabold text-[#032612]">10,0%</span>
+            <span class="text-xs text-[#136A34] font-semibold">1/10 c/u</span>
+          </div>
+          <div class="w-full bg-[#E3EDE5] h-2 rounded-full overflow-hidden mb-2">
+            <div class="bg-[#18E667] h-2 rounded-full" style="width: 100%;"></div>
+          </div>
+          <p class="text-xs text-[#627D6B] leading-relaxed">
+            <span id="rein-copy">El reintegro es otra urna, del 0 al 9. La cifra más baja es el 6 (9,2%) y la más alta el 7 (10,6%). Con diez cifras, esa diferencia cabe en el azar. No entra en el intento.</span>
+          </p>
+        </div>
+
+      </div>
+      <p id="extremos" class="mt-6 text-sm text-[#183925] leading-relaxed">Los que más salen: 33 (1.218), 10 (1.204), 22 (1.196), 46 (1.196), 2 (1.188), 34 (1.187). Los que menos: 29 (1.089), 5 (1.101), 14 (1.104), 38 (1.110), 4 (1.111). Lo esperado, si fueran iguales, es 1.152 veces cada uno.</p>
+    </section>
+    <footer class="section-reveal pt-8 pb-12 border-t border-[#DDE7DF] text-xs text-[#506859] space-y-3">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <p class="font-semibold text-[#183925]">
+          Fuente: Lotoideas · Datos históricos computados hasta el 6 de octubre de 2026.
+        </p>
+          <span class="font-mono text-[11px] text-[#698271]">Walk-forward · hipergeométrica 6/49</span>
+      </div>
+      <p class="leading-relaxed">
+        El análisis no incluye el número complementario ni el desglose de premios en euros. Las simulaciones de las seis reglas miden exclusivamente aciertos brutos sobre los 6 números principales de la combinación ganadora.
+      </p>
+      <div class="p-3 rounded-lg bg-[#EAEFEA] border border-[#D5E0D7] text-[#294533] font-medium">
+        <strong>Aviso legal:</strong> Este documento es un estudio meramente analítico y matemático. No es un consejo de apuesta ni una recomendación de juego. El juego puede generar adicción. Juega con responsabilidad.
+      </div>
+    </footer>
+
+  </main>
+
+  <script>
+    const pct = (x) => (x * 100).toLocaleString("es-ES", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + "%";
+    const num = (x, d = 3) => x.toLocaleString("es-ES", { minimumFractionDigits: d, maximumFractionDigits: d });
+    let DATA = null;
+
+    function renderOdds(pack) {
+      const rows = pack.pares_impares;
+      const max = Math.max(...rows.map((r) => Math.max(r.obs, r.azar)), 0.01);
+      const host = document.getElementById("oe-rows");
+      host.innerHTML = rows.map((r) => {
+        const peak = r.impares === 3;
+        const wO = (r.obs / max * 100).toFixed(1);
+        const wA = (r.azar / max * 100).toFixed(1);
+        return `<div class="grid grid-cols-12 items-center gap-2 text-xs ${peak ? "bg-[#F2FAF4] p-2 rounded-lg border border-[#D5EBD9]" : ""}">
+          <span class="col-span-3 sm:col-span-2 font-mono font-semibold text-[#284733]">${r.impares} impares</span>
+          <div class="col-span-6 sm:col-span-8 flex flex-col gap-1">
+            <div class="flex items-center gap-2">
+              <div class="min-w-0 flex-1"><div class="h-3 rounded-r bg-[#18E667]" style="width:${wO}%"></div></div>
+              <span class="shrink-0 font-mono text-[11px] text-[#032612] font-semibold">${pct(r.obs)}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="min-w-0 flex-1"><div class="bar-azar h-2 rounded-r bg-[#032612]" style="width:${wA}%"></div></div>
+              <span class="shrink-0 font-mono text-[10px] text-[#556D5F]">${pct(r.azar)} azar</span>
+            </div>
+          </div>
+          <span class="col-span-3 sm:col-span-2 text-right text-[11px] text-[#44634F] font-mono">${r.sorteos.toLocaleString("es-ES")} casos</span>
+        </div>`;
+      }).join("");
+      document.getElementById("oe-legend-n").textContent = "Observado (" + pack.sorteos.toLocaleString("es-ES") + ")";
+      const mid = rows.find((r) => r.impares === 3);
+      const dpp = mid.obs - mid.azar;
+      document.getElementById("sim-num").textContent = pct(mid.obs);
+      document.getElementById("sim-pill").textContent = pct(Math.abs(dpp)) + " frente al azar (" + pct(mid.azar) + ")";
+      document.getElementById("sim-arrow").textContent = dpp >= 0 ? "▲" : "▼";
+      const azS = DATA.seguidos.azar_al_menos_uno;
+      const dS = pack.seguidos - azS;
+      document.getElementById("seguidos-arrow").textContent = dS >= 0 ? "▲" : "▼";
+      document.getElementById("seguidos-pill").textContent = pct(Math.abs(dS)) + (dS >= 0 ? " sobre" : " bajo") + " el azar (" + pct(azS) + ")";
+      document.getElementById("seguidos-num").textContent = pct(pack.seguidos);
+    }
+
+    function setPeriod(period) {
+      const map = { all: "todo", "200": "d200", year: "anyo" };
+      ["all", "200", "year"].forEach((id) => {
+        const btn = document.getElementById("btn-period-" + id);
+        btn.classList.remove("active-pill");
+        btn.classList.add("text-[#486351]", "font-medium");
+        btn.setAttribute("aria-selected", "false");
+      });
+      const on = document.getElementById("btn-period-" + period);
+      on.classList.add("active-pill");
+      on.classList.remove("text-[#486351]", "font-medium");
+      on.setAttribute("aria-selected", "true");
+      if (DATA) renderOdds(DATA.ventanas[map[period]]);
+    }
+
+    function boot(data) {
+      DATA = data;
+      const expRep = data.sorteos * (data.sorteos - 1) / (2 * data.universo);
+      document.getElementById("rep-pill").textContent = data.repeticiones_exactas + " frente a unas " + num(expRep, 1) + " que espera el azar";
+      const host = document.getElementById("bolas");
+      host.innerHTML = data.intento.numeros.map((n) =>
+        `<div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#18E667] text-[#032612] font-black text-2xl sm:text-3xl flex items-center justify-center shadow-lg border-2 border-white/80 mx-auto">${n}</div>`
+      ).join("");
+      const freq = data.frecuencia.slice().sort((a, b) => b.count - a.count);
+      const exp = data.chi2.esperado_por_numero;
+      const line = (rows) => rows.map((r) => r.n + " (" + r.count.toLocaleString("es-ES") + ")").join(", ");
+      document.getElementById("extremos").textContent =
+        "Los que más salen: " + line(freq.slice(0, 6)) + ". Los que menos: " + line(freq.slice(-6).reverse()) +
+        ". Lo esperado, si fueran iguales, es " + exp.toLocaleString("es-ES") + " veces cada uno.";
+      const reins = data.reintegro.filas;
+      const total = reins.reduce((s, r) => s + r.count, 0);
+      const ranked = reins.slice().sort((a, b) => a.count - b.count);
+      const lo = ranked[0], hi = ranked[ranked.length - 1];
+      document.getElementById("rein-copy").textContent =
+        "El reintegro es otra urna, del 0 al 9. La más baja es el " + lo.n + " (" + pct(lo.count / total) + ") y la más alta el " + hi.n + " (" + pct(hi.count / total) + "). Con diez cifras, esa diferencia cabe en el azar. No entra en el intento.";
+      renderOdds(data.ventanas.todo);
+    }
+
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+      const next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", next);
+      localStorage.setItem("tema", next);
+    });
+
+    fetch("data/bonoloto.json").then((r) => r.json()).then(boot);
+  </script>
+</body>
+
+</html>

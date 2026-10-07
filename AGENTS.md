@@ -1,21 +1,20 @@
 <!-- managed-by-telegram-cursor-bot:agent-kit -->
 # Agent rules
 
-This project uses **Ponytail** (lazy senior: minimum code that works, never cut safety).
+## Think → Simple → Surgical → Verify (Karpathy)
 
-## Always on
+1. Di tus supuestos; ante dos lecturas, elige la razonable y dilo (headless: no preguntes).
+2. Mínimo código que resuelve lo pedido. Nada especulativo. Si lo simple da lo mismo, lo simple.
+3. Toca solo lo necesario, respeta el estilo, limpia solo lo que tu cambio dejó sin uso.
+4. Define "hecho" y compruébalo con el check más pequeño.
 
-- `.cursor/rules/ponytail.mdc`
-- `.cursor/rules/project-defaults.mdc`
-- `.cursor/rules/visual.mdc`
-- Skills: `.cursor/skills/ponytail`, `ponytail-review`, `ship`, `fix-bug`
-- Agents: `.cursor/agents/implementer.md`, `reviewer.md`
+## Flujo
 
-Source: https://github.com/DietrichGebert/ponytail · kit synced by telegram-cursor-bot
+- Memoria = `PROJECT.md`: léelo primero; si cambia qué hace, stack, comandos o estructura, actualiza `## Estado` en el mismo commit. `graphify-out/` se regenera solo.
+- Elección no trivial: skill `laya` (decide el modelo local Laya, queda en `docs/DECISIONES.md`). Sin APIs de pago.
+- Juicios en el producto (enrutar, puntuar, extraer, verificar): skill `jev`. Laya local, mismas primitivas que Jev; sin API de TypeSafe.
+- Cualquier UI (página, dashboard o cambio visual): skill `web-design`. Diseña Google Stitch; tú integras.
+- Librería o API externa: mira la versión instalada (lockfile) y su doc oficial antes de usarla. Bug o test roto: skill `debug`.
+- Hecho = `git add -A` + commit corto + push. Respuesta: máx. 5 líneas, `HECHO`/`FALLO`, sin relleno.
 
-## How to work
-
-1. Read `PROJECT.md`.
-2. Climb the Ponytail ladder before writing.
-3. Ship with a short commit + push when the task is done.
-4. Final reply: max 5 clear lines. `HECHO`/`FALLO` + what changed + commit.
+Kit synced by telegram-cursor-bot
