@@ -568,6 +568,42 @@
       "source_location": "L5"
     },
     {
+      "id": "raffles_load_draws",
+      "label": "load_draws()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "commonFunctions.py",
+      "file_type": "code",
+      "norm_label": "load_draws()",
+      "source_file": "raffles.py",
+      "source_location": "L80"
+    },
+    {
+      "id": "raffles_load_rows",
+      "label": "load_rows()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "commonFunctions.py",
+      "file_type": "code",
+      "norm_label": "load_rows()",
+      "source_file": "raffles.py",
+      "source_location": "L47"
+    },
+    {
+      "id": "raffles_to_long",
+      "label": "to_long()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "commonFunctions.py",
+      "file_type": "code",
+      "norm_label": "to_long()",
+      "source_file": "raffles.py",
+      "source_location": "L98"
+    },
+    {
       "id": "bestprediction_generate_best_prediction",
       "label": "generate_best_prediction()",
       "_callable": true,
@@ -1429,7 +1465,7 @@
       "file_type": "code",
       "norm_label": "build()",
       "source_file": "analyze_web.py",
-      "source_location": "L335"
+      "source_location": "L384"
     },
     {
       "id": "analyze_web_chi2_uniform",
@@ -1528,6 +1564,30 @@
       "source_location": "L80"
     },
     {
+      "id": "analyze_web_patrones",
+      "label": "patrones()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "analyze_web.py",
+      "file_type": "code",
+      "norm_label": "patrones()",
+      "source_file": "analyze_web.py",
+      "source_location": "L335"
+    },
+    {
+      "id": "analyze_web_patrones_min_gap",
+      "label": "min_gap()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "analyze_web.py",
+      "file_type": "code",
+      "norm_label": "min_gap()",
+      "source_file": "analyze_web.py",
+      "source_location": "L363"
+    },
+    {
       "id": "analyze_web_picks_now",
       "label": "picks_now()",
       "_callable": true,
@@ -1561,7 +1621,7 @@
       "file_type": "code",
       "norm_label": "_repeats()",
       "source_file": "analyze_web.py",
-      "source_location": "L404"
+      "source_location": "L460"
     },
     {
       "id": "analyze_web_score_past",
@@ -1658,42 +1718,6 @@
       "norm_label": "z_mean()",
       "source_file": "analyze_web.py",
       "source_location": "L29"
-    },
-    {
-      "id": "raffles_load_draws",
-      "label": "load_draws()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "analyze_web.py",
-      "file_type": "code",
-      "norm_label": "load_draws()",
-      "source_file": "raffles.py",
-      "source_location": "L80"
-    },
-    {
-      "id": "raffles_load_rows",
-      "label": "load_rows()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "analyze_web.py",
-      "file_type": "code",
-      "norm_label": "load_rows()",
-      "source_file": "raffles.py",
-      "source_location": "L47"
-    },
-    {
-      "id": "raffles_to_long",
-      "label": "to_long()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "analyze_web.py",
-      "file_type": "code",
-      "norm_label": "to_long()",
-      "source_file": "raffles.py",
-      "source_location": "L98"
     },
     {
       "id": "maximumhitspredictor_main",
@@ -2278,6 +2302,39 @@
       "norm_label": "lotoideas historic csvs (same source as the bonoloto google sheet) + sqlite...",
       "source_file": "raffles.py",
       "source_location": "L1"
+    },
+    {
+      "id": "raffles_rationale_48",
+      "label": "[(date, main_tuple, extra_tuple), ...] sorted. Main balls validated 1..n.",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "commonFunctions.py",
+      "file_type": "rationale",
+      "norm_label": "[(date, main_tuple, extra_tuple), ...] sorted. main balls validated 1..n.",
+      "source_file": "raffles.py",
+      "source_location": "L48"
+    },
+    {
+      "id": "raffles_rationale_81",
+      "label": "Main series + optional extra series (e.g. Euromillones stars).",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "commonFunctions.py",
+      "file_type": "rationale",
+      "norm_label": "main series + optional extra series (e.g. euromillones stars).",
+      "source_file": "raffles.py",
+      "source_location": "L81"
+    },
+    {
+      "id": "raffles_rationale_99",
+      "label": "RAFFLE / RESULT_DATE / NUMBER_TYPE / NUMBER rows for sqlite ingest.",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "commonFunctions.py",
+      "file_type": "rationale",
+      "norm_label": "raffle / result_date / number_type / number rows for sqlite ingest.",
+      "source_file": "raffles.py",
+      "source_location": "L99"
     },
     {
       "id": "test_helpers_rationale_1",
@@ -3661,37 +3718,15 @@
       "source_location": "L325"
     },
     {
-      "id": "raffles_rationale_48",
-      "label": "[(date, main_tuple, extra_tuple), ...] sorted. Main balls validated 1..n.",
+      "id": "analyze_web_rationale_336",
+      "label": "Decenas, terminaciones y distancias, frente a la combinatoria.",
       "_origin": "ast",
       "community": 6,
       "community_name": "analyze_web.py",
       "file_type": "rationale",
-      "norm_label": "[(date, main_tuple, extra_tuple), ...] sorted. main balls validated 1..n.",
-      "source_file": "raffles.py",
-      "source_location": "L48"
-    },
-    {
-      "id": "raffles_rationale_81",
-      "label": "Main series + optional extra series (e.g. Euromillones stars).",
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "analyze_web.py",
-      "file_type": "rationale",
-      "norm_label": "main series + optional extra series (e.g. euromillones stars).",
-      "source_file": "raffles.py",
-      "source_location": "L81"
-    },
-    {
-      "id": "raffles_rationale_99",
-      "label": "RAFFLE / RESULT_DATE / NUMBER_TYPE / NUMBER rows for sqlite ingest.",
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "analyze_web.py",
-      "file_type": "rationale",
-      "norm_label": "raffle / result_date / number_type / number rows for sqlite ingest.",
-      "source_file": "raffles.py",
-      "source_location": "L99"
+      "norm_label": "decenas, terminaciones y distancias, frente a la combinatoria.",
+      "source_file": "analyze_web.py",
+      "source_location": "L336"
     },
     {
       "id": "maximumhitspredictor_py_dataframe",
@@ -4325,7 +4360,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L336",
+      "source_location": "L385",
       "weight": 1.0
     },
     {
@@ -4337,7 +4372,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L337",
+      "source_location": "L386",
       "weight": 1.0
     },
     {
@@ -4349,7 +4384,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L339",
+      "source_location": "L388",
       "weight": 1.0
     },
     {
@@ -4361,7 +4396,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L340",
+      "source_location": "L389",
       "weight": 1.0
     },
     {
@@ -4373,7 +4408,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L341",
+      "source_location": "L390",
       "weight": 1.0
     },
     {
@@ -4385,7 +4420,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L345",
+      "source_location": "L394",
       "weight": 1.0
     },
     {
@@ -4397,7 +4432,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L349",
+      "source_location": "L398",
       "weight": 1.0
     },
     {
@@ -4409,7 +4444,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L350",
+      "source_location": "L399",
       "weight": 1.0
     },
     {
@@ -4421,7 +4456,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L351",
+      "source_location": "L400",
       "weight": 1.0
     },
     {
@@ -4433,7 +4468,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L352",
+      "source_location": "L401",
       "weight": 1.0
     },
     {
@@ -4445,7 +4480,19 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L354",
+      "source_location": "L403",
+      "weight": 1.0
+    },
+    {
+      "source": "analyze_web_build",
+      "target": "analyze_web_patrones",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "analyze_web.py",
+      "source_location": "L421",
       "weight": 1.0
     },
     {
@@ -4457,7 +4504,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L377",
+      "source_location": "L427",
       "weight": 1.0
     },
     {
@@ -4469,7 +4516,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L387",
+      "source_location": "L437",
       "weight": 1.0
     },
     {
@@ -4481,7 +4528,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L390",
+      "source_location": "L440",
       "weight": 1.0
     },
     {
@@ -4554,6 +4601,18 @@
       "context": "call",
       "source_file": "analyze_web.py",
       "source_location": "L84",
+      "weight": 1.0
+    },
+    {
+      "source": "analyze_web_patrones",
+      "target": "analyze_web_comb",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "analyze_web.py",
+      "source_location": "L350",
       "weight": 1.0
     },
     {
@@ -5886,6 +5945,18 @@
       "context": "call",
       "source_file": "analyze_web.py",
       "source_location": "L97",
+      "weight": 1.0
+    },
+    {
+      "source": "analyze_web_patrones",
+      "target": "analyze_web_patrones_min_gap",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "analyze_web.py",
+      "source_location": "L363",
       "weight": 1.0
     },
     {
@@ -7290,7 +7361,7 @@
     },
     {
       "source": "analyze_web",
-      "target": "analyze_web_build",
+      "target": "analyze_web_patrones",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -7312,13 +7383,24 @@
     },
     {
       "source": "analyze_web",
+      "target": "analyze_web_build",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "analyze_web.py",
+      "source_location": "L384",
+      "weight": 1.0
+    },
+    {
+      "source": "analyze_web",
       "target": "analyze_web_repeats",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "analyze_web.py",
-      "source_location": "L404",
+      "source_location": "L460",
       "weight": 1.0
     },
     {
@@ -9346,6 +9428,17 @@
       "weight": 1.0
     },
     {
+      "source": "analyze_web_rationale_336",
+      "target": "analyze_web_patrones",
+      "relation": "rationale_for",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "analyze_web.py",
+      "source_location": "L336",
+      "weight": 1.0
+    },
+    {
       "source": "bestprediction_rationale_1",
       "target": "bestprediction",
       "relation": "rationale_for",
@@ -10406,5 +10499,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "bfc9fbed3421d41bf3df98d6a6789dcfff9669e0"
+  "built_at_commit": "46a7e5ffccfde0cfcf1baf25aa4465c491ef72cc"
 }

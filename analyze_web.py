@@ -332,6 +332,55 @@ def _score_past(draws):
     }
 
 
+def patrones(draws):
+    """Decenas, terminaciones y distancias, frente a la combinatoria."""
+    n = len(draws)
+    groups = [
+        ("1-9", list(range(1, 10))),
+        ("10-19", list(range(10, 20))),
+        ("20-29", list(range(20, 30))),
+        ("30-39", list(range(30, 40))),
+        ("40-49", list(range(40, 50))),
+    ]
+    decenas = []
+    for name, balls in groups:
+        bset = set(balls)
+        k = len(balls)
+        counts = [len(bset & set(nums)) for _d, nums in draws]
+        p0 = comb(N - k, W) / SPACE
+        p1 = comb(k, 1) * comb(N - k, W - 1) / SPACE
+        decenas.append({
+            "decena": name,
+            "bolas": k,
+            "por_sorteo": round(sum(counts) / n, 3),
+            "azar": round(W * k / N, 3),
+            "con_uno": round(sum(c >= 1 for c in counts) / n, 4),
+            "azar_uno": round(1 - p0, 4),
+            "con_dos": round(sum(c >= 2 for c in counts) / n, 4),
+            "azar_dos": round(1 - p0 - p1, 4),
+        })
+
+    def min_gap(nums):
+        s = sorted(nums)
+        return min(b - a for a, b in zip(s, s[1:]))
+
+    mg = [min_gap(nums) for _d, nums in draws]
+    p_cerca = 1 - comb(N - (W - 1) * 2, W) / SPACE
+    distinct_ends = comb(9, 5) * 4 * (5 ** 5) + comb(9, 6) * (5 ** 6)
+    same_end = sum(
+        1 for _d, nums in draws if len({x % 10 for x in nums}) < W
+    ) / n
+    return {
+        "decenas": decenas,
+        "seguidos": round(sum(g == 1 for g in mg) / n, 4),
+        "a_lo_sumo_2": round(sum(g <= 2 for g in mg) / n, 4),
+        "azar_a_lo_sumo_2": round(p_cerca, 4),
+        "misma_terminacion": round(same_end, 4),
+        "azar_misma_terminacion": round(1 - distinct_ends / SPACE, 4),
+        "bombo": "Las normas meten 49 bolas del mismo material y peso en un bombo físico, y el reintegro en otro de 10.",
+    }
+
+
 def build():
     draws, reins = load()
     freq, exp = freq_table(draws)
@@ -369,6 +418,7 @@ def build():
         "seguidos": cons,
         "sumas": sums,
         "formas": formas,
+        "patrones": patrones(draws),
         "reintegro": rein,
         "estrategias": strategies,
         "mejor_z": best["z"],
@@ -398,6 +448,12 @@ def build():
         f"sorteos={payload['sorteos']} {payload['desde']}..{payload['hasta']} proximo={payload['proximo']} "
         f"mejor={best['nombre']} z={best['z']} forma3={formas['acierto_3_y_3']} "
         f"ultimo={formas['ultimo']} hueco={formas['hueco_medio']}/{formas['hueco_azar']}"
+    )
+    p = payload["patrones"]
+    print("decenas", [(d["decena"], d["por_sorteo"], d["azar"], d["con_uno"]) for d in p["decenas"]])
+    print(
+        f"seguidos={p['seguidos']} cerca2={p['a_lo_sumo_2']}/{p['azar_a_lo_sumo_2']} "
+        f"terminacion={p['misma_terminacion']}/{p['azar_misma_terminacion']}"
     )
 
 

@@ -19,6 +19,6 @@
 - Ponytail siempre activo (ver AGENTS.md)
 
 ## Estado
-- 2026-10-07: la página compara formas (3 y 3, huecos, seguidos) y seis reglas simples contra el azar, siempre sin mirar el sorteo que se puntúa. El JSON lo regenera `.github/workflows/analisis.yml`.
+- 2026-10-07: la página compara formas, decenas, terminaciones y distancias con la combinatoria. El sorteo es un bombo físico; las frecuencias no se separan de bolas iguales.
 
 

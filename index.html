@@ -685,8 +685,8 @@
           <div class="w-full bg-[#E3EDE5] h-2 rounded-full overflow-hidden mb-2">
             <div class="bg-[#032612] h-2 rounded-full" style="width: 94%;"></div>
           </div>
-          <p class="text-xs text-[#627D6B] leading-relaxed">
-            Los números del 1 al 49 salen parejos. Un valor p=0,94 indica que no hay ninguna evidencia de números sesgados mecánicamente en los bombos.
+          <p id="bombo-nota" class="text-xs text-[#627D6B] leading-relaxed">
+            El sorteo usa un bombo físico, según las <a href="https://www.boe.es/buscar/doc.php?id=BOE-A-2000-18839" class="underline">normas</a>: 49 bolas del mismo material y peso, y el reintegro en otro de 10. Los números salen parejos (p=0,94): los 40 no salen más que los 20 ni que los 30. Hay 10 bolas en cada decena, así que en el 77% de los sorteos aparece al menos un número de los 40, y lo mismo con las demás decenas.
           </p>
         </div>
 
@@ -805,7 +805,10 @@
       const line = (rows) => rows.map((r) => r.n + " (" + r.count.toLocaleString("es-ES") + ")").join(", ");
       document.getElementById("extremos").textContent =
         "Los que más salen: " + line(freq.slice(0, 6)) + ". Los que menos: " + line(freq.slice(-6).reverse()) +
-        ". Lo esperado, si fueran iguales, es " + exp.toLocaleString("es-ES") + " veces cada uno.";
+        ". Lo esperado, si fueran iguales, es " + exp.toLocaleString("es-ES") + " veces cada uno. " +
+        "Los 40 salen " + data.patrones.decenas[4].por_sorteo.toLocaleString("es-ES") + " veces por sorteo; el azar dice " + data.patrones.decenas[4].azar.toLocaleString("es-ES") + ". " +
+        "Dos números pegados salen en el " + pct(data.patrones.seguidos) + " de los sorteos. A distancia 1 o 2, en el " + pct(data.patrones.a_lo_sumo_2) + " (el azar, " + pct(data.patrones.azar_a_lo_sumo_2) + "). " +
+        "Misma terminación, en el " + pct(data.patrones.misma_terminacion) + " (el azar, " + pct(data.patrones.azar_misma_terminacion) + ").";
       const reins = data.reintegro.filas;
       const total = reins.reduce((s, r) => s + r.count, 0);
       const ranked = reins.slice().sort((a, b) => a.count - b.count);
