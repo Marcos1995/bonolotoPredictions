@@ -259,6 +259,79 @@ def slice_pack(draws):
     }
 
 
+def shape_check(draws):
+    """La forma (cuántos impares, hueco, amplitud) se juzga con el pasado solo."""
+    odds = [sum(1 for x in nums if x % 2) for _d, nums in draws]
+    hist = [0] * 7
+    hit3 = hit_mode = 0
+    for i, k in enumerate(odds):
+        if i >= WARMUP:
+            mode = max(range(7), key=lambda j: (hist[j], -abs(j - 3)))
+            hit_mode += k == mode
+            hit3 += k == 3
+        hist[k] += 1
+    n_test = len(draws) - WARMUP
+    prior = [0] * 7
+    for k in odds[:-1]:
+        prior[k] += 1
+    last_nums = draws[-1][1]
+    last_k = odds[-1]
+
+    def span(nums):
+        s = sorted(nums)
+        return s[-1] - s[0]
+
+    spans = [span(nums) for _d, nums in draws]
+    mass = 0
+    exp_span = 0.0
+    for s in range(W - 1, N):
+        c = (N - s) * comb(s - 1, W - 2)
+        mass += c
+        exp_span += s * c
+    exp_span /= mass
+
+    high_n, low_n = 25, 24
+    highs = Counter(sum(1 for x in nums if x >= 25) for _d, nums in draws)
+    altos = []
+    for h in range(W + 1):
+        p = comb(high_n, h) * comb(low_n, W - h) / SPACE
+        altos.append({
+            "altos": h,
+            "sorteos": highs[h],
+            "obs": round(highs[h] / len(draws), 4),
+            "azar": round(p, 4),
+        })
+    return {
+        "pruebas": n_test,
+        "acierto_3_y_3": round(hit3 / n_test, 4),
+        "acierto_moda_del_pasado": round(hit_mode / n_test, 4),
+        "ultimo": {
+            "fecha": draws[-1][0].isoformat(),
+            "numeros": list(last_nums),
+            "impares": last_k,
+            "moda_con_el_pasado": max(range(7), key=lambda j: prior[j]),
+            "era_3_y_3": last_k == 3,
+        },
+        "amplitud_media": round(sum(spans) / len(spans), 1),
+        "amplitud_azar": round(exp_span, 1),
+        "hueco_medio": round(sum(spans) / len(spans) / (W - 1), 2),
+        "hueco_azar": round(exp_span / (W - 1), 2),
+        "altos": altos,
+        "con_el_pasado": _score_past(draws),
+    }
+
+
+def _score_past(draws):
+    """Boletos armados solo con sorteos anteriores al último, contra ese último."""
+    actual = set(draws[-1][1])
+    picks = picks_now(draws[:-1])
+    return {
+        "fecha": draws[-1][0].isoformat(),
+        "salio": list(draws[-1][1]),
+        "reglas": {k: {"numeros": v, "aciertos": len(actual & set(v))} for k, v in picks.items()},
+    }
+
+
 def build():
     draws, reins = load()
     freq, exp = freq_table(draws)
@@ -274,6 +347,7 @@ def build():
         "anyo": slice_pack([d for d in draws if d[0] >= year_cut]),
     }
     sums = sum_stats(draws)
+    formas = shape_check(draws)
     rein = reintegro_stats(reins)
     strategies = backtest(draws)
     last = draws[-1][0]
@@ -294,6 +368,7 @@ def build():
         "pares_impares": oe,
         "seguidos": cons,
         "sumas": sums,
+        "formas": formas,
         "reintegro": rein,
         "estrategias": strategies,
         "mejor_z": best["z"],
@@ -321,7 +396,8 @@ def build():
     (out / "bonoloto.json").write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
     print(
         f"sorteos={payload['sorteos']} {payload['desde']}..{payload['hasta']} proximo={payload['proximo']} "
-        f"mejor={best['nombre']} z={best['z']} seguidos={cons['con_al_menos_uno']} modal={modal['impares']}/{modal['pares']}"
+        f"mejor={best['nombre']} z={best['z']} forma3={formas['acierto_3_y_3']} "
+        f"ultimo={formas['ultimo']} hueco={formas['hueco_medio']}/{formas['hueco_azar']}"
     )
 
 

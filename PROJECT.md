@@ -14,11 +14,11 @@
 - Dev: abrir `index.html` (o `py -3.11 -m http.server`)
 
 ## Notas para el agente
-- El análisis público es Bonoloto 6/49. Las reglas no miran el futuro. Laya eligió abrir con los calientes; el extra hay que decirlo en aciertos, no como premio.
+- El análisis público es Bonoloto 6/49. Cada boleto se juzga solo con sorteos anteriores. Lo fiable es la forma (3 y 3), no un número caliente o frío.
 - No tocar `predictions.sqlite` ni subirlo.
 - Ponytail siempre activo (ver AGENTS.md)
 
 ## Estado
-- 2026-10-07: página con histórico, pares/impares, seguidos, frecuencias y backtest de seis reglas contra el azar. El JSON lo regenera `.github/workflows/analisis.yml`.
+- 2026-10-07: la página compara formas (3 y 3, huecos, seguidos) y seis reglas simples contra el azar, siempre sin mirar el sorteo que se puntúa. El JSON lo regenera `.github/workflows/analisis.yml`.
 
 
