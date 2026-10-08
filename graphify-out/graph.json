@@ -628,6 +628,18 @@
       "source_location": "L43"
     },
     {
+      "id": "patternoptimizer_main",
+      "label": "main()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "commonFunctions.py",
+      "file_type": "code",
+      "norm_label": "main()",
+      "source_file": "patternOptimizer.py",
+      "source_location": "L496"
+    },
+    {
       "id": "raffles_csv",
       "label": "_csv()",
       "_callable": true,
@@ -1204,18 +1216,6 @@
       "source_location": "L650"
     },
     {
-      "id": "patternoptimizer_main",
-      "label": "main()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "PatternOptimizer",
-      "file_type": "code",
-      "norm_label": "main()",
-      "source_file": "patternOptimizer.py",
-      "source_location": "L496"
-    },
-    {
       "id": "patternoptimizer_patternoptimizer_create_cache_table",
       "label": "._create_cache_table()",
       "_callable": true,
@@ -1549,7 +1549,7 @@
       "file_type": "code",
       "norm_label": "build()",
       "source_file": "analyze_web.py",
-      "source_location": "L693"
+      "source_location": "L706"
     },
     {
       "id": "analyze_web_calientes_ventanas",
@@ -1561,7 +1561,7 @@
       "file_type": "code",
       "norm_label": "calientes_ventanas()",
       "source_file": "analyze_web.py",
-      "source_location": "L625"
+      "source_location": "L645"
     },
     {
       "id": "analyze_web_cargar_premios",
@@ -1852,6 +1852,18 @@
       "source_location": "L509"
     },
     {
+      "id": "analyze_web_ranked",
+      "label": "_ranked()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "analyze_web.py",
+      "file_type": "code",
+      "norm_label": "_ranked()",
+      "source_file": "analyze_web.py",
+      "source_location": "L625"
+    },
+    {
       "id": "analyze_web_reintegro_stats",
       "label": "reintegro_stats()",
       "_callable": true,
@@ -1873,7 +1885,7 @@
       "file_type": "code",
       "norm_label": "_repeats()",
       "source_file": "analyze_web.py",
-      "source_location": "L782"
+      "source_location": "L794"
     },
     {
       "id": "analyze_web_score_past",
@@ -1946,6 +1958,18 @@
       "norm_label": "sum_stats()",
       "source_file": "analyze_web.py",
       "source_location": "L192"
+    },
+    {
+      "id": "analyze_web_tickets",
+      "label": "_tickets()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "analyze_web.py",
+      "file_type": "code",
+      "norm_label": "_tickets()",
+      "source_file": "analyze_web.py",
+      "source_location": "L639"
     },
     {
       "id": "analyze_web_topk",
@@ -2448,6 +2472,17 @@
       "source_location": "L1"
     },
     {
+      "id": "patternoptimizer",
+      "label": "patternOptimizer.py",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "commonFunctions.py",
+      "file_type": "code",
+      "norm_label": "patternoptimizer.py",
+      "source_file": "patternOptimizer.py",
+      "source_location": "L1"
+    },
+    {
       "id": "predictionbacktester",
       "label": "predictionBacktester.py",
       "_origin": "ast",
@@ -2544,6 +2579,17 @@
       "file_type": "rationale",
       "norm_label": "overdue number backtester ========================= predicts lottery numbers...",
       "source_file": "overdueBacktester.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "patternoptimizer_rationale_1",
+      "label": "Pattern-Based Strategy Optimizer ================================ Recursively\u2026",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "commonFunctions.py",
+      "file_type": "rationale",
+      "norm_label": "pattern-based strategy optimizer ================================ recursively...",
+      "source_file": "patternOptimizer.py",
       "source_location": "L1"
     },
     {
@@ -3620,17 +3666,6 @@
       "source_location": "L76"
     },
     {
-      "id": "patternoptimizer",
-      "label": "patternOptimizer.py",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "PatternOptimizer",
-      "file_type": "code",
-      "norm_label": "patternoptimizer.py",
-      "source_file": "patternOptimizer.py",
-      "source_location": "L1"
-    },
-    {
       "id": "patternoptimizer_py_dataframe",
       "label": "DataFrame",
       "_origin": "ast",
@@ -3640,17 +3675,6 @@
       "norm_label": "dataframe",
       "source_file": "",
       "source_location": ""
-    },
-    {
-      "id": "patternoptimizer_rationale_1",
-      "label": "Pattern-Based Strategy Optimizer ================================ Recursively\u2026",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "PatternOptimizer",
-      "file_type": "rationale",
-      "norm_label": "pattern-based strategy optimizer ================================ recursively...",
-      "source_file": "patternOptimizer.py",
-      "source_location": "L1"
     },
     {
       "id": "patternoptimizer_rationale_131",
@@ -4071,15 +4095,15 @@
       "source_location": "L610"
     },
     {
-      "id": "analyze_web_rationale_626",
-      "label": "Un a\u00f1o. Los k calientes se parten en grupos de 3 y se juega cada pareja de\u2026",
+      "id": "analyze_web_rationale_646",
+      "label": "Un a\u00f1o y diez ventanas. Una regla vale si gana en muchas, no en una.",
       "_origin": "ast",
       "community": 6,
       "community_name": "analyze_web.py",
       "file_type": "rationale",
-      "norm_label": "un ano. los k calientes se parten en grupos de 3 y se juega cada pareja de...",
+      "norm_label": "un ano y diez ventanas. una regla vale si gana en muchas, no en una.",
       "source_file": "analyze_web.py",
-      "source_location": "L626"
+      "source_location": "L646"
     },
     {
       "id": "analyze_web_rationale_68",
@@ -4388,6 +4412,42 @@
       "type": "external"
     },
     {
+      "id": "hashlib",
+      "label": "hashlib",
+      "_origin": "semantic",
+      "community": 1,
+      "community_name": "commonFunctions.py",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "hashlib",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "itertools",
+      "label": "itertools",
+      "_origin": "semantic",
+      "community": 1,
+      "community_name": "commonFunctions.py",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "itertools",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "json",
+      "label": "json",
+      "_origin": "semantic",
+      "community": 1,
+      "community_name": "commonFunctions.py",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "json",
+      "source_file": "",
+      "type": "external"
+    },
+    {
       "id": "numpy",
       "label": "numpy",
       "_origin": "semantic",
@@ -4556,42 +4616,6 @@
       "type": "external"
     },
     {
-      "id": "hashlib",
-      "label": "hashlib",
-      "_origin": "semantic",
-      "community": 4,
-      "community_name": "PatternOptimizer",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "hashlib",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "itertools",
-      "label": "itertools",
-      "_origin": "semantic",
-      "community": 4,
-      "community_name": "PatternOptimizer",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "itertools",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "json",
-      "label": "json",
-      "_origin": "semantic",
-      "community": 4,
-      "community_name": "PatternOptimizer",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "json",
-      "source_file": "",
-      "type": "external"
-    },
-    {
       "id": "concurrent_futures",
       "label": "concurrent_futures",
       "_origin": "semantic",
@@ -4674,7 +4698,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L694",
+      "source_location": "L707",
       "weight": 1.0
     },
     {
@@ -4686,7 +4710,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L697",
+      "source_location": "L710",
       "weight": 1.0
     },
     {
@@ -4698,7 +4722,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L698",
+      "source_location": "L711",
       "weight": 1.0
     },
     {
@@ -4710,7 +4734,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L700",
+      "source_location": "L713",
       "weight": 1.0
     },
     {
@@ -4722,7 +4746,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L701",
+      "source_location": "L714",
       "weight": 1.0
     },
     {
@@ -4734,7 +4758,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L702",
+      "source_location": "L715",
       "weight": 1.0
     },
     {
@@ -4746,7 +4770,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L706",
+      "source_location": "L719",
       "weight": 1.0
     },
     {
@@ -4758,7 +4782,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L710",
+      "source_location": "L723",
       "weight": 1.0
     },
     {
@@ -4770,7 +4794,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L711",
+      "source_location": "L724",
       "weight": 1.0
     },
     {
@@ -4782,7 +4806,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L712",
+      "source_location": "L725",
       "weight": 1.0
     },
     {
@@ -4794,7 +4818,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L713",
+      "source_location": "L726",
       "weight": 1.0
     },
     {
@@ -4806,7 +4830,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L715",
+      "source_location": "L728",
       "weight": 1.0
     },
     {
@@ -4818,7 +4842,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L734",
+      "source_location": "L747",
       "weight": 1.0
     },
     {
@@ -4830,7 +4854,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L740",
+      "source_location": "L753",
       "weight": 1.0
     },
     {
@@ -4842,7 +4866,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L741",
+      "source_location": "L754",
       "weight": 1.0
     },
     {
@@ -4854,7 +4878,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L751",
+      "source_location": "L764",
       "weight": 1.0
     },
     {
@@ -4866,31 +4890,31 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L754",
+      "source_location": "L767",
       "weight": 1.0
     },
     {
       "source": "analyze_web_calientes_ventanas",
-      "target": "analyze_web_parejas",
+      "target": "analyze_web_ranked",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L645",
+      "source_location": "L672",
       "weight": 1.0
     },
     {
       "source": "analyze_web_calientes_ventanas",
-      "target": "analyze_web_pool",
+      "target": "analyze_web_tickets",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L645",
+      "source_location": "L672",
       "weight": 1.0
     },
     {
@@ -4902,7 +4926,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L646",
+      "source_location": "L675",
       "weight": 1.0
     },
     {
@@ -4914,7 +4938,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L651",
+      "source_location": "L679",
       "weight": 1.0
     },
     {
@@ -5182,6 +5206,30 @@
       "weight": 1.0
     },
     {
+      "source": "analyze_web_ranked",
+      "target": "analyze_web_topk",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "analyze_web.py",
+      "source_location": "L635",
+      "weight": 1.0
+    },
+    {
+      "source": "analyze_web_ranked",
+      "target": "analyze_web_scores",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "analyze_web.py",
+      "source_location": "L636",
+      "weight": 1.0
+    },
+    {
       "source": "analyze_web_score_past",
       "target": "analyze_web_picks_now",
       "relation": "calls",
@@ -5275,6 +5323,18 @@
       "context": "call",
       "source_file": "analyze_web.py",
       "source_location": "L403",
+      "weight": 1.0
+    },
+    {
+      "source": "analyze_web_tickets",
+      "target": "analyze_web_parejas",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "analyze_web.py",
+      "source_location": "L642",
       "weight": 1.0
     },
     {
@@ -8150,13 +8210,35 @@
     },
     {
       "source": "analyze_web",
-      "target": "analyze_web_calientes_ventanas",
+      "target": "analyze_web_ranked",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "analyze_web.py",
       "source_location": "L625",
+      "weight": 1.0
+    },
+    {
+      "source": "analyze_web",
+      "target": "analyze_web_tickets",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "analyze_web.py",
+      "source_location": "L639",
+      "weight": 1.0
+    },
+    {
+      "source": "analyze_web",
+      "target": "analyze_web_calientes_ventanas",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "analyze_web.py",
+      "source_location": "L645",
       "weight": 1.0
     },
     {
@@ -8178,7 +8260,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "analyze_web.py",
-      "source_location": "L693",
+      "source_location": "L706",
       "weight": 1.0
     },
     {
@@ -8200,7 +8282,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "analyze_web.py",
-      "source_location": "L782",
+      "source_location": "L794",
       "weight": 1.0
     },
     {
@@ -10283,14 +10365,14 @@
       "weight": 1.0
     },
     {
-      "source": "analyze_web_rationale_626",
+      "source": "analyze_web_rationale_646",
       "target": "analyze_web_calientes_ventanas",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "analyze_web.py",
-      "source_location": "L626",
+      "source_location": "L646",
       "weight": 1.0
     },
     {
@@ -11377,5 +11459,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "688ffe0286477119799fee837a55c5139e9332b9"
+  "built_at_commit": "98449febf608da2b6790bb043169f8397d1134dc"
 }

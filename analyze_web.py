@@ -622,71 +622,84 @@ def _euros(tabla, boletos):
     return total
 
 
+def _ranked(past, window, modo):
+    chunk = past[-window:]
+    if modo == "retrasados":
+        last = {}
+        for i, (_d, nums) in enumerate(chunk):
+            for n in nums:
+                last[n] = i
+        gap = [0] * (N + 1)
+        for n in range(1, N + 1):
+            gap[n] = len(chunk) if n not in last else len(chunk) - 1 - last[n]
+        return _topk(gap, k=12, reverse=True)
+    return _topk(_scores(chunk), k=12, reverse=(modo == "calientes"))
+
+
+def _tickets(ranked, k):
+    if k == 6:
+        return [sorted(ranked[:6])]
+    return _parejas(ranked[:k])
+
+
 def calientes_ventanas(draws, comps, premios):
-    """Un año. Los k calientes se parten en grupos de 3 y se juega cada pareja de grupos."""
+    """Un año y diez ventanas. Una regla vale si gana en muchas, no en una."""
     last = draws[-1][0]
     idx = next(i for i, (d, _n) in enumerate(draws) if d >= last - dt.timedelta(days=364))
     start = max(idx, 1)
     n = len(draws) - start
-    pools = []
-    for k in (6, 9, 12):
-        apuestas = math.comb(k // 3, 2)
-        coste = n * apuestas * 0.50
-        ventanas = []
+    reglas_def = (
+        ("6 calientes", "calientes", 6),
+        ("6 fríos", "frios", 6),
+        ("6 retrasados", "retrasados", 6),
+        ("6 calientes y 6 fríos", "ambos", 6),
+        ("9 calientes, 3 parejas", "calientes", 9),
+        ("9 fríos, 3 parejas", "frios", 9),
+        ("12 calientes, 6 parejas", "calientes", 12),
+        ("12 fríos, 6 parejas", "frios", 12),
+    )
+    reglas = []
+    for nombre, modo, k in reglas_def:
+        saldos = []
+        cinco = cinco_c = seises = 0
         for window in range(50, 501, 50):
             cobrado = 0.0
-            sin_precio = 0
-            suma = {"3": 0, "4": 0, "5": 0, "5c": 0, "6": 0}
-            dias5 = dias6 = 0
-            premios_dias = []
             for i in range(start, len(draws)):
                 actual = draws[i][1]
                 comp = comps.get(draws[i][0])
-                tickets = _parejas(_pool(draws[:i], window, k))
-                tuvo5, tuvo6, boletos = _boletos(tickets, actual, comp)
-                dias5 += tuvo5
-                dias6 += tuvo6
-                for key, cnt in boletos.items():
-                    suma[key] += cnt
+                past = draws[:i]
+                if modo == "ambos":
+                    tickets = _tickets(_ranked(past, window, "calientes"), 6) + _tickets(_ranked(past, window, "frios"), 6)
+                else:
+                    tickets = _tickets(_ranked(past, window, modo), k)
+                _t5, _t6, boletos = _boletos(tickets, actual, comp)
+                cinco += boletos["5"]
+                cinco_c += boletos["5c"]
+                seises += boletos["6"]
                 pago = _euros(premios.get(draws[i][0].isoformat()), boletos)
                 if pago is None:
-                    sin_precio += 1
                     continue
                 cobrado += pago
-                if tuvo5 or tuvo6:
-                    premios_dias.append({
-                        "fecha": draws[i][0].isoformat(),
-                        "salio": list(actual),
-                        "dentro": 6 if tuvo6 else 5,
-                        "complementario": comp,
-                        "boletos": boletos,
-                        "euros": round(pago, 2),
-                    })
-            ventanas.append({
-                "ventana": window,
-                "boletos": suma,
-                "dias5": dias5,
-                "dias6": dias6,
-                "cobrado": round(cobrado, 2),
-                "coste": round(coste, 2),
-                "saldo": round(cobrado - coste, 2),
-                "sin_precio": sin_precio,
-                "premios": premios_dias,
-            })
-        ventanas.sort(key=lambda w: w["saldo"], reverse=True)
-        pools.append({
-            "cuantos": k,
+            apuestas = 2 if modo == "ambos" else (1 if k == 6 else math.comb(k // 3, 2))
+            saldos.append(round(cobrado - n * apuestas * 0.50, 2))
+        reglas.append({
+            "nombre": nombre,
             "apuestas": apuestas,
             "coste_dia": round(apuestas * 0.50, 2),
-            "grupos": k // 3,
-            "ventanas": ventanas[:3],
+            "en_positivo": sum(s > 0 for s in saldos),
+            "ventanas": len(saldos),
+            "mejor": max(saldos),
+            "peor": min(saldos),
+            "cincos": cinco,
+            "cinco_c": cinco_c,
+            "seises": seises,
         })
-    mejor = max((w for p in pools for w in p["ventanas"]), key=lambda w: w["saldo"])
     return {
         "sorteos": n,
         "desde": draws[start][0].isoformat(),
-        "pools": pools,
-        "rentable": mejor["saldo"] > 0,
+        "umbral": 7,
+        "reglas": reglas,
+        "rentable": any(r["en_positivo"] >= 7 for r in reglas),
     }
 
 
@@ -764,12 +777,11 @@ def build():
         f"ultimo={formas['ultimo']} hueco={formas['hueco_medio']}/{formas['hueco_azar']}"
     )
     v = payload["calientes_ventanas"]
-    for pool in v["pools"]:
-        for w in pool["ventanas"]:
-            print(
-                f"k{pool['cuantos']} w{w['ventana']} dias5={w['dias5']} dias6={w['dias6']} "
-                f"boletos={w['boletos']} cobrado={w['cobrado']} saldo={w['saldo']}"
-            )
+    for r in v["reglas"]:
+        print(
+            f"{r['nombre']} {r['en_positivo']}/{r['ventanas']} "
+            f"mejor={r['mejor']} peor={r['peor']} 5={r['cincos']} 5c={r['cinco_c']} 6={r['seises']}"
+        )
     p = payload["patrones"]
     print("orden", orden["ya_ordenadas"], "/", orden["filas"])
     print("decenas", [(d["decena"], d["bolas"], d["por_sorteo"], d["azar"], d["z"]) for d in p["decenas"]])

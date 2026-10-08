@@ -19,6 +19,6 @@
 - Ponytail siempre activo (ver AGENTS.md)
 
 ## Estado
-- 2026-10-09: los calientes se parten en grupos de 3 y se juega cada pareja. 9 números son 3 apuestas (1,50 €) y 12 son 6 (3 €). En la página, las tres ventanas que más cobran.
+- 2026-10-09: reglas de 1 a 6 apuestas (calientes, fríos, retrasados y parejas) en las 10 ventanas. Solo valdría si ganara en 7 o más. El 5+C es la séptima bola del sorteo, la misma para todo boleto.
 
 
