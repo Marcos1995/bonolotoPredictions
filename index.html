@@ -220,7 +220,7 @@
       <div class="bg-[#18E667] text-[#032612] p-6 sm:p-8 rounded-[14px] mb-4">
         <p class="text-xs uppercase tracking-widest font-mono font-bold mb-2">Último año · ventanas de 50 en 50</p>
         <h2 id="siete-title" class="text-3xl sm:text-5xl font-black tracking-tight leading-tight mb-3">Ninguna ventana recupera el euro del día</h2>
-        <p id="siete-nota" class="text-base font-semibold max-w-2xl">Cada día son dos apuestas de 0,50 € con los mismos 6 calientes: una sola no llega al mínimo de 1 €. El 3 paga 4 € por apuesta. El 4 se valora a 24,72 €, el premio del 4 oct 2026.</p>
+        <p id="siete-nota" class="text-base font-semibold max-w-2xl">Cada día son dos apuestas distintas: los 6 más vistos y los 6 siguientes. 1 €. El 3 paga 4 €. El 4 se valora a 24,72 €, el premio del 4 oct 2026.</p>
       </div>
       <div id="siete-rows" class="space-y-8"></div>
     </section>
@@ -814,7 +814,7 @@
         <div class="min-w-0">
           <h4 class="font-black text-[#032612]">${r.fecha}</h4>
           <p class="text-sm text-[#245233]">Salió ${r.salio.join(", ")} · C ${r.complementario == null ? "—" : r.complementario}</p>
-          <p class="text-sm text-[#183925]">Coincidió ${r.cuales.join(", ")}. Cobrado ${r.euros.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €.</p>
+          <p class="text-sm text-[#183925]">Puestos ${r.puesto}: ${r.numeros.join(", ")}. Coincidió ${r.cuales.join(", ")}. Cobrado ${r.euros.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €.</p>
         </div>
       </article>`;
     }
@@ -842,7 +842,7 @@
       }).join("");
       document.getElementById("siete-rows").innerHTML =
         `<div class="overflow-x-auto bg-white rounded-[14px] border border-[#D3E3D6] p-3 mb-6">
-          <table class="w-full text-sm text-[#032612]"><caption class="text-left text-xs text-[#52695B] mb-2">Días en cada casilla. 0+1+2+3+4+5+5+C+6 = ${pack.sorteos}. El dinero cuenta las dos apuestas: el 3 paga 8 € y el 4 paga 49,44 €.</caption>
+          <table class="w-full text-sm text-[#032612]"><caption class="text-left text-xs text-[#52695B] mb-2">Cada casilla cuenta apuestas, no días. 0+1+2+3+4+5+5+C+6 = ${pack.sorteos * 2}. El 3 paga 4 € y el 4 paga 24,72 €, una sola vez.</caption>
           <thead><tr><th class="text-left pr-2 py-2">Ventana</th>${head}</tr></thead><tbody>${body}</tbody></table>
         </div>` + (premios || `<p class="text-sm text-[#52695B]">Ningún día con 3 o más.</p>`);
     }

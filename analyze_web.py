@@ -505,25 +505,17 @@ def patrones(draws):
     }
 
 
-def _hot(past, window):
-    return sorted(_topk(_scores(past[-window:]), reverse=True))
+def _dos(past, window):
+    """Dos apuestas distintas: los 6 más vistos y los 6 siguientes."""
+    ranked = _topk(_scores(past[-window:]), k=12, reverse=True)
+    return sorted(ranked[:6]), sorted(ranked[6:12])
 
 
-def _contra(draws, i, window, comp):
-    jugados = _hot(draws[:i], window)
-    actual = set(draws[i][1])
-    cuales = sorted(actual & set(jugados))
+def _marca(jugados, actual, comp):
+    cuales = sorted(set(actual) & set(jugados))
     resto = [n for n in jugados if n not in actual]
     cinco_c = len(cuales) == 5 and comp is not None and resto == [comp]
-    return {
-        "fecha": draws[i][0].isoformat(),
-        "salio": list(draws[i][1]),
-        "numeros": jugados,
-        "aciertos": len(cuales),
-        "cuales": cuales,
-        "complementario": comp,
-        "cinco_c": cinco_c,
-    }
+    return cuales, cinco_c
 
 
 # 3 aciertos es fijo. El 4 usa el premio del 4 oct 2026 (24,72 €); cambia cada sorteo.
@@ -533,7 +525,7 @@ _PREMIO_5C = 43824.43
 
 
 def calientes_ventanas(draws, comps):
-    """Un año, ventanas de 50 en 50 hasta 500. Dos apuestas iguales de 0,50 € (mínimo 1 €)."""
+    """Un año. Cada día, dos apuestas distintas de 0,50 €: puestos 1-6 y 7-12."""
     last = draws[-1][0]
     idx = next(i for i, (d, _n) in enumerate(draws) if d >= last - dt.timedelta(days=364))
     start = max(idx, 1)
@@ -546,17 +538,31 @@ def calientes_ventanas(draws, comps):
         cobrado = 0.0
         premios = []
         for i in range(start, len(draws)):
-            row = _contra(draws, i, window, comps.get(draws[i][0]))
-            if row["cinco_c"]:
-                cinco_c += 1
-                pago = _PREMIO_5C * 2
-            else:
-                hist[row["aciertos"]] += 1
-                pago = _PREMIO.get(row["aciertos"], 0) * 2
-            if row["aciertos"] >= 3:
-                row["euros"] = round(pago, 2)
+            actual = draws[i][1]
+            comp = comps.get(draws[i][0])
+            boletos = _dos(draws[:i], window)
+            for puesto, jugados in (("1-6", boletos[0]), ("7-12", boletos[1])):
+                cuales, es_5c = _marca(jugados, actual, comp)
+                hits = len(cuales)
+                if es_5c:
+                    cinco_c += 1
+                    pago = _PREMIO_5C
+                else:
+                    hist[hits] += 1
+                    pago = _PREMIO.get(hits, 0)
                 cobrado += pago
-                premios.append(row)
+                if hits >= 3:
+                    premios.append({
+                        "fecha": draws[i][0].isoformat(),
+                        "salio": list(actual),
+                        "puesto": puesto,
+                        "numeros": jugados,
+                        "aciertos": hits,
+                        "cuales": cuales,
+                        "complementario": comp,
+                        "cinco_c": es_5c,
+                        "euros": round(pago, 2),
+                    })
         ventanas.append({
             "ventana": window,
             "hist": hist,

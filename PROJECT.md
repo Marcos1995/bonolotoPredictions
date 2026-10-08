@@ -19,6 +19,6 @@
 - Ponytail siempre activo (ver AGENTS.md)
 
 ## Estado
-- 2026-10-08: el último año, ventanas de 50 en 50 hasta 500. Cada día son dos apuestas iguales de 0,50 €. 3 aciertos pagan 4 € por apuesta; el 4 usa 24,72 € del escrutinio del 4 oct 2026.
+- 2026-10-08: el último año, ventanas de 50 en 50 hasta 500. Cada día, dos apuestas distintas: los 6 más vistos y los 6 siguientes. 1 €. El 3 paga 4 €; el 4, 24,72 €.
 
 
