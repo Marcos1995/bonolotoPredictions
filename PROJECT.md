@@ -19,6 +19,6 @@
 - Ponytail siempre activo (ver AGENTS.md)
 
 ## Estado
-- 2026-10-08: en 90 sorteos la página cuenta días con 0, 1, 2, 3, 4, 5, 5+complementario y 6. La lista solo muestra premios (3 o más).
+- 2026-10-08: el último año, ventanas de 50 en 50 hasta 500. Cada día son dos apuestas iguales de 0,50 €. 3 aciertos pagan 4 € por apuesta; el 4 usa 24,72 € del escrutinio del 4 oct 2026.
 
 

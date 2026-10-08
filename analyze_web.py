@@ -526,32 +526,55 @@ def _contra(draws, i, window, comp):
     }
 
 
+# 3 aciertos es fijo. El 4 usa el premio del 4 oct 2026 (24,72 €); cambia cada sorteo.
+# 5, 5+C y 6 usan ese mismo escrutinio solo si llegan a salir.
+_PREMIO = {3: 4.0, 4: 24.72, 5: 1341.56, 6: 1576467.52}
+_PREMIO_5C = 43824.43
+
+
 def calientes_ventanas(draws, comps):
-    """En 90 sorteos, cuántos días caen en 0..6 y en 5+complementario. La lista solo guarda premios (3+)."""
+    """Un año, ventanas de 50 en 50 hasta 500. Dos apuestas iguales de 0,50 € (mínimo 1 €)."""
     last = draws[-1][0]
-    d90 = last - dt.timedelta(days=89)
-    idx = next(i for i, (d, _n) in enumerate(draws) if d >= d90)
+    idx = next(i for i, (d, _n) in enumerate(draws) if d >= last - dt.timedelta(days=364))
     start = max(idx, 1)
+    n = len(draws) - start
+    coste = n * 1.0
     ventanas = []
-    for window in (50, 100, 200, 500):
+    for window in range(50, 501, 50):
         hist = [0] * 7
         cinco_c = 0
+        cobrado = 0.0
         premios = []
         for i in range(start, len(draws)):
             row = _contra(draws, i, window, comps.get(draws[i][0]))
             if row["cinco_c"]:
                 cinco_c += 1
+                pago = _PREMIO_5C * 2
             else:
                 hist[row["aciertos"]] += 1
+                pago = _PREMIO.get(row["aciertos"], 0) * 2
             if row["aciertos"] >= 3:
+                row["euros"] = round(pago, 2)
+                cobrado += pago
                 premios.append(row)
         ventanas.append({
             "ventana": window,
             "hist": hist,
             "cinco_c": cinco_c,
+            "cobrado": round(cobrado, 2),
+            "coste": coste,
+            "saldo": round(cobrado - coste, 2),
             "premios": premios,
         })
-    return {"sorteos_90": len(draws) - start, "ventanas": ventanas}
+    mejor = max(ventanas, key=lambda w: w["saldo"])
+    return {
+        "sorteos": n,
+        "desde": draws[start][0].isoformat(),
+        "coste_dia": 1.0,
+        "ventanas": ventanas,
+        "mejor": mejor["ventana"],
+        "rentable": mejor["saldo"] > 0,
+    }
 
 
 def build():
@@ -626,7 +649,7 @@ def build():
     )
     v = payload["calientes_ventanas"]
     for w in v["ventanas"]:
-        print(f"w{w['ventana']} hist={w['hist']} cinco_c={w['cinco_c']} premios={len(w['premios'])}")
+        print(f"w{w['ventana']} hist={w['hist']} 5c={w['cinco_c']} cobrado={w['cobrado']} saldo={w['saldo']}")
     p = payload["patrones"]
     print("orden", orden["ya_ordenadas"], "/", orden["filas"])
     print("decenas", [(d["decena"], d["bolas"], d["por_sorteo"], d["azar"], d["z"]) for d in p["decenas"]])
