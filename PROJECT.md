@@ -19,6 +19,6 @@
 - Ponytail siempre activo (ver AGENTS.md)
 
 ## Estado
-- 2026-10-08: un día se lista si los calientes de 50, 100, 200 o 500 acertaron al menos un número. No se filtra por premio.
+- 2026-10-08: la lista de aciertos (74 de 90) va la primera en la página. Un día entra si 50, 100, 200 o 500 acertó al menos un número.
 
 

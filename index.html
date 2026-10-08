@@ -216,6 +216,15 @@
       </p>
     </header>
 
+    <section id="siete" class="section-reveal" aria-labelledby="siete-title">
+      <div class="bg-[#18E667] text-[#032612] p-6 sm:p-8 rounded-[14px] mb-4">
+        <p class="text-xs uppercase tracking-widest font-mono font-bold mb-2">Lo primero · 50, 100, 200 y 500</p>
+        <h2 id="siete-title" class="text-3xl sm:text-5xl font-black tracking-tight leading-tight mb-3">74 de 90 sorteos acertaron al menos un número</h2>
+        <p id="siete-nota" class="text-base font-semibold max-w-2xl">Un día entra si los 6 calientes de alguna ventana acertaron al menos uno. La ventana en cero no se escribe.</p>
+      </div>
+      <div id="siete-rows" class="space-y-8"></div>
+    </section>
+
     <!-- SECCIÓN 2: FILA DE 4 KPIS -->
     <section class="section-reveal">
       <div class="flex items-center justify-between mb-4">
@@ -672,13 +681,6 @@
       </div>
     </section>
 
-    <section id="siete" class="section-reveal bg-[#F8FAF8] p-6 sm:p-8 rounded-[14px] border border-[#D3E3D6]" aria-labelledby="siete-title">
-      <p class="text-xs uppercase tracking-widest font-mono text-[#245A36] mb-2">6 calientes · ventanas de 50, 100, 200 y 500</p>
-      <h3 id="siete-title" class="text-2xl sm:text-4xl font-black text-[#032612] tracking-tight leading-tight mb-3">Días con al menos un acierto</h3>
-      <p class="text-sm text-[#245233] max-w-2xl mb-5">Un día entra si los 6 calientes de 50, de 100, de 200 o de 500 acertaron al menos un número. La ventana que no acertó no se escribe.</p>
-      <div id="siete-rows" class="space-y-8"></div>
-    </section>
-
     <!-- SECCIÓN 7: OTRO GESTO DISTINTO (SUMAS, CHI-CUADRADO Y URNA DE REINTEGRO) -->
     <section class="section-reveal bg-white p-6 sm:p-8 rounded-[14px] border border-[#E1E8E2] shadow-xs">
       
@@ -826,9 +828,11 @@
         <h4 class="text-xl font-black text-[#032612] mb-2">${titulo}</h4>
         ${rows.length ? rows.map(filaAcierto).join("") : `<p class="text-sm text-[#52695B]">${vacio}</p>`}
       </div>`;
+      document.getElementById("siete-title").textContent =
+        pack.noventa.length + " de " + pack.sorteos_90 + " sorteos acertaron al menos un número";
       document.getElementById("siete-rows").innerHTML =
-        bloque("Últimos 7 días", pack.siete, "Ningún acierto.") +
-        bloque("Últimos 90 días · " + pack.noventa.length + " de " + pack.sorteos_90 + " sorteos", pack.noventa.slice().reverse(), "Ningún acierto.");
+        bloque("Últimos 7 días · " + pack.siete.length + " con acierto", pack.siete.slice().reverse(), "Ningún acierto.") +
+        bloque("Últimos 90 días · " + pack.noventa.length + " de " + pack.sorteos_90, pack.noventa.slice().reverse(), "Ningún acierto.");
     }
 
     function renderOdds(pack) {
@@ -887,6 +891,7 @@
 
     function boot(data) {
       DATA = data;
+      renderSiete(data);
       const expRep = data.sorteos * (data.sorteos - 1) / (2 * data.universo);
       document.getElementById("rep-pill").textContent = data.repeticiones_exactas + " frente a unas " + num(expRep, 1) + " que espera el azar";
       const host = document.getElementById("bolas");
@@ -938,7 +943,6 @@
         "El reintegro es otra urna, del 0 al 9. La más baja es el " + lo.n + " (" + pct(lo.count / total) + ") y la más alta el " + hi.n + " (" + pct(hi.count / total) + "). Con diez cifras, esa diferencia cabe en el azar. No entra en el intento.";
       renderOdds(data.ventanas.todo);
       renderDecades(data.ventanas.todo);
-      renderSiete(data);
     }
 
     document.getElementById("theme-toggle").addEventListener("click", () => {
@@ -947,7 +951,7 @@
       localStorage.setItem("tema", next);
     });
 
-    fetch("data/bonoloto.json").then((r) => r.json()).then(boot);
+    fetch("data/bonoloto.json", { cache: "no-store" }).then((r) => r.json()).then(boot);
   </script>
 </body>
 
