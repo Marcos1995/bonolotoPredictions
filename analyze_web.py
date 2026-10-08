@@ -534,13 +534,13 @@ def parse_premios(html):
         if cat.startswith("1"):
             out["6"], out["6n"] = dinero, acertantes
         elif cat.startswith("2"):
-            out["5c"] = dinero
+            out["5c"], out["5cn"] = dinero, acertantes
         elif cat.startswith("3"):
-            out["5"] = dinero
+            out["5"], out["5n"] = dinero, acertantes
         elif cat.startswith("4"):
-            out["4"] = dinero
+            out["4"], out["4n"] = dinero, acertantes
         elif cat.startswith("5"):
-            out["3"] = dinero
+            out["3"], out["3n"] = dinero, acertantes
     bote = re.search(r"<dt>\s*Bote\s*</dt>\s*<dd>([^<]+)", html)
     out["bote"] = _euro_es(re.sub(r"[^\d,.\-]", "", bote.group(1))) if bote else 0.0
     if out.get("6n", 0) == 0:
@@ -554,7 +554,7 @@ def cargar_premios(fechas):
     cache = {}
     if path.exists():
         cache = json.loads(path.read_text(encoding="utf-8"))
-    faltan = [d for d in fechas if d.isoformat() not in cache]
+    faltan = [d for d in fechas if "3n" not in cache.get(d.isoformat(), {})]
 
     def uno(d):
         url = f"https://www.combinacionganadora.com/bonoloto/resultados/{d.isoformat()}/"
@@ -578,79 +578,115 @@ def cargar_premios(fechas):
     return cache
 
 
-def _pago(tabla, hits, cinco_c):
-    if not tabla or hits < 3:
+def _boletos(k, jugados, actual, comp):
+    """Cuántos boletos de 6 cobran si se juegan todas las combinaciones del grupo."""
+    pool = set(jugados)
+    overlap = len(set(actual) & pool)
+    non = k - overlap
+    c_in = comp is not None and comp in pool
+    b = {"3": 0, "4": 0, "5": 0, "5c": 0, "6": 0}
+    if overlap >= 6:
+        b["6"] = 1
+        b["5c"] = 6 if c_in else 0
+        b["5"] = 6 * (non - (1 if c_in else 0))
+        b["4"] = math.comb(6, 4) * math.comb(non, 2)
+        b["3"] = math.comb(6, 3) * math.comb(non, 3)
+    elif overlap == 5:
+        b["5c"] = 1 if c_in else 0
+        b["5"] = non - (1 if c_in else 0)
+        b["4"] = 5 * math.comb(non, 2)
+        b["3"] = 10 * math.comb(non, 3)
+    elif overlap == 4:
+        b["4"] = math.comb(non, 2)
+        b["3"] = 4 * math.comb(non, 3)
+    elif overlap == 3:
+        b["3"] = math.comb(non, 3)
+    return overlap, b
+
+
+def _euros(tabla, boletos):
+    """Cada boleto cobra el premio de ese día. Si ya había acertantes, el premio se reparte con ellos."""
+    if not any(boletos.values()):
+        return 0.0
+    if not tabla:
         return None
-    if cinco_c:
-        return tabla.get("5c")
-    if hits == 6:
-        return tabla.get("6")
-    return tabla.get(str(hits))
+    total = 0.0
+    for key, n in boletos.items():
+        if not n:
+            continue
+        unit = tabla[key]
+        ya = tabla.get(key + "n", 0)
+        total += n * unit if ya == 0 else n * ya * unit / (ya + n)
+    return total
 
 
 def calientes_ventanas(draws, comps, premios):
-    """Un año. Grupos de 6, 9 y 12 calientes. Solo el 6 es una apuesta real, de 0,50 €."""
+    """Un año. Cobertura total: todas las combinaciones de 6 dentro de los k más calientes."""
     last = draws[-1][0]
     idx = next(i for i, (d, _n) in enumerate(draws) if d >= last - dt.timedelta(days=364))
     start = max(idx, 1)
     n = len(draws) - start
-    fechas = [draws[i][0] for i in range(start, len(draws))]
-    con_premio = sum(1 for d in fechas if d.isoformat() in premios)
     pools = []
     for k in (6, 9, 12):
+        apuestas = math.comb(k, 6)
+        coste = n * apuestas * 0.50
         ventanas = []
         for window in range(50, 501, 50):
-            hist = [0] * 7
             cobrado = 0.0
             sin_precio = 0
+            suma = {"3": 0, "4": 0, "5": 0, "5c": 0, "6": 0}
+            dias5 = dias6 = 0
             premios_dias = []
             for i in range(start, len(draws)):
                 actual = draws[i][1]
                 comp = comps.get(draws[i][0])
                 jugados = _pool(draws[:i], window, k)
-                cuales = sorted(set(actual) & set(jugados))
-                hits = len(cuales)
-                resto = [x for x in jugados if x not in actual]
-                cinco_c = k == 6 and hits == 5 and comp is not None and resto == [comp]
-                hist[hits] += 1
-                if k != 6 or hits < 3:
-                    continue
-                pago = _pago(premios.get(draws[i][0].isoformat()), hits, cinco_c)
+                overlap, boletos = _boletos(k, jugados, actual, comp)
+                if overlap == 5:
+                    dias5 += 1
+                elif overlap >= 6:
+                    dias6 += 1
+                for key, cnt in boletos.items():
+                    suma[key] += cnt
+                pago = _euros(premios.get(draws[i][0].isoformat()), boletos)
                 if pago is None:
                     sin_precio += 1
                     continue
                 cobrado += pago
-                premios_dias.append({
-                    "fecha": draws[i][0].isoformat(),
-                    "salio": list(actual),
-                    "numeros": sorted(jugados),
-                    "aciertos": hits,
-                    "cuales": cuales,
-                    "complementario": comp,
-                    "cinco_c": cinco_c,
-                    "euros": round(pago, 2),
-                })
-            fila = {"ventana": window, "hist": hist, "dentro": hist[6]}
-            if k == 6:
-                coste = n * 0.50
-                fila.update({
-                    "cobrado": round(cobrado, 2),
-                    "coste": round(coste, 2),
-                    "saldo": round(cobrado - coste, 2),
-                    "sin_precio": sin_precio,
-                    "premios": premios_dias,
-                })
-            ventanas.append(fila)
-        pools.append({"cuantos": k, "ventanas": ventanas})
-    seis = pools[0]["ventanas"]
-    mejor = max(seis, key=lambda w: w["saldo"])
+                if overlap >= 5:
+                    premios_dias.append({
+                        "fecha": draws[i][0].isoformat(),
+                        "salio": list(actual),
+                        "numeros": sorted(jugados),
+                        "dentro": overlap,
+                        "complementario": comp,
+                        "boletos": boletos,
+                        "euros": round(pago, 2),
+                    })
+            ventanas.append({
+                "ventana": window,
+                "boletos": suma,
+                "dias5": dias5,
+                "dias6": dias6,
+                "cobrado": round(cobrado, 2),
+                "coste": round(coste, 2),
+                "saldo": round(cobrado - coste, 2),
+                "sin_precio": sin_precio,
+                "premios": premios_dias,
+            })
+        ventanas.sort(key=lambda w: w["saldo"], reverse=True)
+        pools.append({
+            "cuantos": k,
+            "apuestas": apuestas,
+            "coste_dia": round(apuestas * 0.50, 2),
+            "oficial": k <= 11,
+            "ventanas": ventanas[:3],
+        })
+    mejor = max((w for p in pools for w in p["ventanas"]), key=lambda w: w["saldo"])
     return {
         "sorteos": n,
-        "con_premio": con_premio,
         "desde": draws[start][0].isoformat(),
-        "apuesta": 0.50,
         "pools": pools,
-        "mejor": mejor["ventana"],
         "rentable": mejor["saldo"] > 0,
     }
 
@@ -731,10 +767,10 @@ def build():
     v = payload["calientes_ventanas"]
     for pool in v["pools"]:
         for w in pool["ventanas"]:
-            extra = ""
-            if "saldo" in w:
-                extra = f" cobrado={w['cobrado']} saldo={w['saldo']} sin_precio={w['sin_precio']}"
-            print(f"k{pool['cuantos']} w{w['ventana']} hist={w['hist']} dentro={w['dentro']}{extra}")
+            print(
+                f"k{pool['cuantos']} w{w['ventana']} dias5={w['dias5']} dias6={w['dias6']} "
+                f"boletos={w['boletos']} cobrado={w['cobrado']} saldo={w['saldo']}"
+            )
     p = payload["patrones"]
     print("orden", orden["ya_ordenadas"], "/", orden["filas"])
     print("decenas", [(d["decena"], d["bolas"], d["por_sorteo"], d["azar"], d["z"]) for d in p["decenas"]])

@@ -19,6 +19,6 @@
 - Ponytail siempre activo (ver AGENTS.md)
 
 ## Estado
-- 2026-10-08: el último año, ventanas de 50 en 50 hasta 500. Una apuesta real: los 6 más calientes, 0,50 €. El 9 y el 12 solo miden si los premiados caen dentro. El dinero es el premio publicado ese día.
+- 2026-10-08: cobertura total del último año. 9 números son 84 apuestas (42 €) y 12 son 924 (462 €). En la página, las tres ventanas que más cobran. El premio es el de ese día, repartido si ya había acertantes.
 
 

@@ -6,9 +6,9 @@
     "semantic_hash": ""
   },
   "analyze_web.py": {
-    "mtime": 1791494719.9498484,
-    "seen": 1791494902.1172864,
-    "ast_hash": "38c7494aa11b37c7472b64be32054134",
+    "mtime": 1791496946.6841137,
+    "seen": 1791497047.2156744,
+    "ast_hash": "6e3907cad93205752f81143ba965be95",
     "semantic_hash": ""
   },
   "bestPrediction.py": {
@@ -24,9 +24,9 @@
     "semantic_hash": ""
   },
   "data/bonoloto.json": {
-    "mtime": 1791494809.3514137,
-    "seen": 1791494902.1172864,
-    "ast_hash": "0ae03cd10ea5e48a894abdb93d276c9f",
+    "mtime": 1791496981.856068,
+    "seen": 1791497047.2156744,
+    "ast_hash": "2a86e82f34849e8adbe645633a98562a",
     "semantic_hash": ""
   },
   "edgeHunt.py": {
@@ -180,9 +180,9 @@
     "semantic_hash": ""
   },
   "PROJECT.md": {
-    "mtime": 1791494842.3169365,
-    "seen": 1791494902.1172864,
-    "ast_hash": "57abc1042b4f64bc2702fcee8cacd677",
+    "mtime": 1791497005.7022572,
+    "seen": 1791497047.2156744,
+    "ast_hash": "2845f2961e4a1fa7e116d4d06b436cf2",
     "semantic_hash": ""
   },
   "README.md": {
@@ -198,15 +198,15 @@
     "semantic_hash": ""
   },
   "docs/DECISIONES.md": {
-    "mtime": 1791494843.9156032,
-    "seen": 1791494902.1172864,
-    "ast_hash": "a4f0b3df23d543dea9a8f1f9b366776d",
+    "mtime": 1791497007.6532354,
+    "seen": 1791497047.2156744,
+    "ast_hash": "09378ff6728e54fd3f7d5edcc8b6587d",
     "semantic_hash": ""
   },
   "index.html": {
-    "mtime": 1791494752.4546978,
-    "seen": 1791494902.1172864,
-    "ast_hash": "0762ecc3a45b9f85948f2b770235d645",
+    "mtime": 1791497004.767195,
+    "seen": 1791497047.2156744,
+    "ast_hash": "da5a814a1bf7a08d8c28811b36699db6",
     "semantic_hash": ""
   },
   "pattern_analysis_results.txt": {
@@ -222,9 +222,9 @@
     "semantic_hash": ""
   },
   "data/premios.json": {
-    "mtime": 1791494807.96602,
-    "seen": 1791494902.1172864,
-    "ast_hash": "9a9c8d969cde1a839626569040b3c6c6",
+    "mtime": 1791496980.4913557,
+    "seen": 1791497047.2156744,
+    "ast_hash": "460889a793a4e7bd1747235ebd993b3a",
     "semantic_hash": ""
   }
 }
