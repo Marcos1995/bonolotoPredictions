@@ -9,6 +9,7 @@ import math
 import re
 import urllib.request
 from collections import Counter
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import commonFunctions as cf
@@ -505,79 +506,150 @@ def patrones(draws):
     }
 
 
-def _dos(past, window):
-    """Dos apuestas distintas: los 6 más vistos y los 6 siguientes."""
-    ranked = _topk(_scores(past[-window:]), k=12, reverse=True)
-    return sorted(ranked[:6]), sorted(ranked[6:12])
+def _pool(past, window, k):
+    return _topk(_scores(past[-window:]), k=k, reverse=True)
 
 
-def _marca(jugados, actual, comp):
-    cuales = sorted(set(actual) & set(jugados))
-    resto = [n for n in jugados if n not in actual]
-    cinco_c = len(cuales) == 5 and comp is not None and resto == [comp]
-    return cuales, cinco_c
+def _euro_es(text):
+    raw = text.replace(".", "").replace(",", ".").strip()
+    return float(raw) if raw else 0.0
 
 
-# 3 aciertos es fijo. El 4 usa el premio del 4 oct 2026 (24,72 €); cambia cada sorteo.
-# 5, 5+C y 6 usan ese mismo escrutinio solo si llegan a salir.
-_PREMIO = {3: 4.0, 4: 24.72, 5: 1341.56, 6: 1576467.52}
-_PREMIO_5C = 43824.43
+def parse_premios(html):
+    """Premio unitario publicado ese día. Si el 6 no tuvo acertantes, el 6 es el bote."""
+    rows = re.findall(
+        r'data-cat>([^<]+)</td>\s*<td>([^<]*)</td>\s*<td data-prize>([^<]*)',
+        html,
+    )
+    if not rows:
+        return None
+    out = {}
+    for cat, n, prize in rows:
+        cat = cat.strip()
+        try:
+            acertantes = int(n.replace(".", "").replace(",", ""))
+        except ValueError:
+            acertantes = 0
+        dinero = _euro_es(re.sub(r"[^\d,.\-]", "", prize))
+        if cat.startswith("1"):
+            out["6"], out["6n"] = dinero, acertantes
+        elif cat.startswith("2"):
+            out["5c"] = dinero
+        elif cat.startswith("3"):
+            out["5"] = dinero
+        elif cat.startswith("4"):
+            out["4"] = dinero
+        elif cat.startswith("5"):
+            out["3"] = dinero
+    bote = re.search(r"<dt>\s*Bote\s*</dt>\s*<dd>([^<]+)", html)
+    out["bote"] = _euro_es(re.sub(r"[^\d,.\-]", "", bote.group(1))) if bote else 0.0
+    if out.get("6n", 0) == 0:
+        out["6"] = out["bote"]
+    return out if "3" in out else None
 
 
-def calientes_ventanas(draws, comps):
-    """Un año. Cada día, dos apuestas distintas de 0,50 €: puestos 1-6 y 7-12."""
+def cargar_premios(fechas):
+    """Premios reales por fecha. Cache en data/premios.json; solo baja los que faltan."""
+    path = Path("data/premios.json")
+    cache = {}
+    if path.exists():
+        cache = json.loads(path.read_text(encoding="utf-8"))
+    faltan = [d for d in fechas if d.isoformat() not in cache]
+
+    def uno(d):
+        url = f"https://www.combinacionganadora.com/bonoloto/resultados/{d.isoformat()}/"
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        try:
+            html = urllib.request.urlopen(req, timeout=25).read().decode("utf-8", "replace")
+            return d.isoformat(), parse_premios(html)
+        except Exception:
+            return d.isoformat(), None
+
+    if faltan:
+        with ThreadPoolExecutor(max_workers=8) as pool:
+            for i, (key, parsed) in enumerate(pool.map(uno, faltan), 1):
+                if parsed:
+                    cache[key] = parsed
+                if i % 40 == 0:
+                    path.write_text(json.dumps(cache, ensure_ascii=False), encoding="utf-8")
+                    print(f"premios {i}/{len(faltan)}")
+        path.write_text(json.dumps(cache, ensure_ascii=False), encoding="utf-8")
+        print(f"premios {sum(1 for d in fechas if d.isoformat() in cache)}/{len(fechas)}")
+    return cache
+
+
+def _pago(tabla, hits, cinco_c):
+    if not tabla or hits < 3:
+        return None
+    if cinco_c:
+        return tabla.get("5c")
+    if hits == 6:
+        return tabla.get("6")
+    return tabla.get(str(hits))
+
+
+def calientes_ventanas(draws, comps, premios):
+    """Un año. Grupos de 6, 9 y 12 calientes. Solo el 6 es una apuesta real, de 0,50 €."""
     last = draws[-1][0]
     idx = next(i for i, (d, _n) in enumerate(draws) if d >= last - dt.timedelta(days=364))
     start = max(idx, 1)
     n = len(draws) - start
-    coste = n * 1.0
-    ventanas = []
-    for window in range(50, 501, 50):
-        hist = [0] * 7
-        cinco_c = 0
-        cobrado = 0.0
-        premios = []
-        for i in range(start, len(draws)):
-            actual = draws[i][1]
-            comp = comps.get(draws[i][0])
-            boletos = _dos(draws[:i], window)
-            for puesto, jugados in (("1-6", boletos[0]), ("7-12", boletos[1])):
-                cuales, es_5c = _marca(jugados, actual, comp)
+    fechas = [draws[i][0] for i in range(start, len(draws))]
+    con_premio = sum(1 for d in fechas if d.isoformat() in premios)
+    pools = []
+    for k in (6, 9, 12):
+        ventanas = []
+        for window in range(50, 501, 50):
+            hist = [0] * 7
+            cobrado = 0.0
+            sin_precio = 0
+            premios_dias = []
+            for i in range(start, len(draws)):
+                actual = draws[i][1]
+                comp = comps.get(draws[i][0])
+                jugados = _pool(draws[:i], window, k)
+                cuales = sorted(set(actual) & set(jugados))
                 hits = len(cuales)
-                if es_5c:
-                    cinco_c += 1
-                    pago = _PREMIO_5C
-                else:
-                    hist[hits] += 1
-                    pago = _PREMIO.get(hits, 0)
+                resto = [x for x in jugados if x not in actual]
+                cinco_c = k == 6 and hits == 5 and comp is not None and resto == [comp]
+                hist[hits] += 1
+                if k != 6 or hits < 3:
+                    continue
+                pago = _pago(premios.get(draws[i][0].isoformat()), hits, cinco_c)
+                if pago is None:
+                    sin_precio += 1
+                    continue
                 cobrado += pago
-                if hits >= 3:
-                    premios.append({
-                        "fecha": draws[i][0].isoformat(),
-                        "salio": list(actual),
-                        "puesto": puesto,
-                        "numeros": jugados,
-                        "aciertos": hits,
-                        "cuales": cuales,
-                        "complementario": comp,
-                        "cinco_c": es_5c,
-                        "euros": round(pago, 2),
-                    })
-        ventanas.append({
-            "ventana": window,
-            "hist": hist,
-            "cinco_c": cinco_c,
-            "cobrado": round(cobrado, 2),
-            "coste": coste,
-            "saldo": round(cobrado - coste, 2),
-            "premios": premios,
-        })
-    mejor = max(ventanas, key=lambda w: w["saldo"])
+                premios_dias.append({
+                    "fecha": draws[i][0].isoformat(),
+                    "salio": list(actual),
+                    "numeros": sorted(jugados),
+                    "aciertos": hits,
+                    "cuales": cuales,
+                    "complementario": comp,
+                    "cinco_c": cinco_c,
+                    "euros": round(pago, 2),
+                })
+            fila = {"ventana": window, "hist": hist, "dentro": hist[6]}
+            if k == 6:
+                coste = n * 0.50
+                fila.update({
+                    "cobrado": round(cobrado, 2),
+                    "coste": round(coste, 2),
+                    "saldo": round(cobrado - coste, 2),
+                    "sin_precio": sin_precio,
+                    "premios": premios_dias,
+                })
+            ventanas.append(fila)
+        pools.append({"cuantos": k, "ventanas": ventanas})
+    seis = pools[0]["ventanas"]
+    mejor = max(seis, key=lambda w: w["saldo"])
     return {
         "sorteos": n,
+        "con_premio": con_premio,
         "desde": draws[start][0].isoformat(),
-        "coste_dia": 1.0,
-        "ventanas": ventanas,
+        "apuesta": 0.50,
+        "pools": pools,
         "mejor": mejor["ventana"],
         "rentable": mejor["saldo"] > 0,
     }
@@ -585,6 +657,9 @@ def calientes_ventanas(draws, comps):
 
 def build():
     draws, reins, orden, comps = load()
+    last = draws[-1][0]
+    idx = next(i for i, (d, _n) in enumerate(draws) if d >= last - dt.timedelta(days=364))
+    premios = cargar_premios([d for d, _n in draws[max(idx, 1):]])
     freq, exp = freq_table(draws)
     counts = [row["count"] for row in freq]
     chi = chi2_uniform(counts, exp)
@@ -627,7 +702,7 @@ def build():
         "mejor_z": best["z"],
         "forma_modal": {"impares": modal["impares"], "pares": modal["pares"], "obs": modal["obs"], "azar": modal["azar"]},
         "ventanas": windows,
-        "calientes_ventanas": calientes_ventanas(draws, comps),
+        "calientes_ventanas": calientes_ventanas(draws, comps, premios),
         "boletos": picks_now(draws),
         "intento": {
             "regla": best["id"],
@@ -654,8 +729,12 @@ def build():
         f"ultimo={formas['ultimo']} hueco={formas['hueco_medio']}/{formas['hueco_azar']}"
     )
     v = payload["calientes_ventanas"]
-    for w in v["ventanas"]:
-        print(f"w{w['ventana']} hist={w['hist']} 5c={w['cinco_c']} cobrado={w['cobrado']} saldo={w['saldo']}")
+    for pool in v["pools"]:
+        for w in pool["ventanas"]:
+            extra = ""
+            if "saldo" in w:
+                extra = f" cobrado={w['cobrado']} saldo={w['saldo']} sin_precio={w['sin_precio']}"
+            print(f"k{pool['cuantos']} w{w['ventana']} hist={w['hist']} dentro={w['dentro']}{extra}")
     p = payload["patrones"]
     print("orden", orden["ya_ordenadas"], "/", orden["filas"])
     print("decenas", [(d["decena"], d["bolas"], d["por_sorteo"], d["azar"], d["z"]) for d in p["decenas"]])

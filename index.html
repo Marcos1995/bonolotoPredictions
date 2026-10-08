@@ -219,8 +219,8 @@
     <section id="siete" class="section-reveal" aria-labelledby="siete-title">
       <div class="bg-[#18E667] text-[#032612] p-6 sm:p-8 rounded-[14px] mb-4">
         <p class="text-xs uppercase tracking-widest font-mono font-bold mb-2">Último año · ventanas de 50 en 50</p>
-        <h2 id="siete-title" class="text-3xl sm:text-5xl font-black tracking-tight leading-tight mb-3">Ninguna ventana recupera el euro del día</h2>
-        <p id="siete-nota" class="text-base font-semibold max-w-2xl">Cada día son dos apuestas distintas: los 6 más vistos y los 6 siguientes. 1 €. El 3 paga 4 €. El 4 se valora a 24,72 €, el premio del 4 oct 2026.</p>
+        <h2 id="siete-title" class="text-3xl sm:text-5xl font-black tracking-tight leading-tight mb-3">Una apuesta: los 6 más calientes</h2>
+        <p id="siete-nota" class="text-base font-semibold max-w-2xl">0,50 € al día, una sola combinación. El 9 y el 12 no se juegan: solo se mira cuántos de los 6 premiados caen dentro. El dinero usa el premio publicado ese día.</p>
       </div>
       <div id="siete-rows" class="space-y-8"></div>
     </section>
@@ -814,37 +814,50 @@
         <div class="min-w-0">
           <h4 class="font-black text-[#032612]">${r.fecha}</h4>
           <p class="text-sm text-[#245233]">Salió ${r.salio.join(", ")} · C ${r.complementario == null ? "—" : r.complementario}</p>
-          <p class="text-sm text-[#183925]">Puestos ${r.puesto}: ${r.numeros.join(", ")}. Coincidió ${r.cuales.join(", ")}. Cobrado ${r.euros.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €.</p>
+          <p class="text-sm text-[#183925]">Los 6 calientes: ${r.numeros.join(", ")}. Coincidió ${r.cuales.join(", ")}. Premio de ese día: ${r.euros.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €.</p>
         </div>
       </article>`;
     }
 
     function renderSiete(data) {
       const pack = data.calientes_ventanas;
-      if (!pack || !pack.ventanas) return;
+      if (!pack || !pack.pools) return;
       const euro = (n) => n.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
-      const cols = ["0", "1", "2", "3", "4", "5", "5+C", "6", "Cobrado", "Gastado", "Saldo"];
-      const head = cols.map((c) => `<th class="px-1 py-2 text-center font-bold">${c}</th>`).join("");
-      const body = pack.ventanas.map((w) => {
-        const nums = [0, 1, 2, 3, 4].map((i) => `<td class="px-1 py-2 text-center font-mono">${w.hist[i]}</td>`).join("");
-        const saldo = (w.saldo >= 0 ? "+" : "−") + euro(Math.abs(w.saldo));
-        return `<tr class="border-t border-[#D3E3D6]"><th class="pr-2 py-2 text-left">${w.ventana}</th>${nums}<td class="px-1 py-2 text-center font-mono">${w.hist[5]}</td><td class="px-1 py-2 text-center font-mono">${w.cinco_c}</td><td class="px-1 py-2 text-center font-mono">${w.hist[6]}</td><td class="px-1 py-2 text-center font-mono">${euro(w.cobrado)}</td><td class="px-1 py-2 text-center font-mono">${euro(w.coste)}</td><td class="px-1 py-2 text-center font-mono font-bold">${saldo}</td></tr>`;
-      }).join("");
-      const mejor = pack.ventanas.find((w) => w.ventana === pack.mejor);
-      document.getElementById("siete-title").textContent = pack.rentable
-        ? "La ventana " + pack.mejor + " recupera el euro"
-        : "Ninguna ventana recupera el euro del día";
+      const seis = pack.pools.find((p) => p.cuantos === 6);
+      const mejor = seis.ventanas.find((w) => w.ventana === pack.mejor);
+      const incompleto = seis.ventanas.some((w) => w.sin_precio);
+      const saldoTxt = (mejor.saldo >= 0 ? "+" : "−") + euro(Math.abs(mejor.saldo));
+      document.getElementById("siete-title").textContent = incompleto
+        ? "Falta el premio de algún día"
+        : (pack.rentable ? "La ventana " + pack.mejor + " recupera los 0,50 €" : "Ninguna ventana recupera los 0,50 €");
       document.getElementById("siete-nota").textContent =
-        pack.sorteos + " sorteos, del " + pack.desde + ". Cada día, dos veces los mismos 6 números: 1 €. La que menos pierde es la de " + pack.mejor + ", con saldo " + (mejor.saldo >= 0 ? "+" : "−") + euro(Math.abs(mejor.saldo)) + ".";
-      const premios = pack.ventanas.filter((w) => w.premios.length).map((w) => {
+        pack.sorteos + " sorteos, del " + pack.desde + ". Una apuesta real: los 6 más calientes, 0,50 €. El premio es el publicado ese día (si el 6 no tuvo acertantes, el bote). El 9 y el 12 no se juegan. La ventana " + pack.mejor + " cierra en " + saldoTxt + ".";
+      const tabla = (pool) => {
+        const real = pool.cuantos === 6;
+        const cols = real ? ["0", "1", "2", "3", "4", "5", "6", "Cobrado", "Gastado", "Saldo"] : ["0", "1", "2", "3", "4", "5", "6"];
+        const head = cols.map((c) => `<th class="px-1 py-2 text-center font-bold">${c}</th>`).join("");
+        const body = pool.ventanas.map((w) => {
+          const nums = w.hist.map((n) => `<td class="px-1 py-2 text-center font-mono">${n}</td>`).join("");
+          const dinero = real
+            ? `<td class="px-1 py-2 text-center font-mono">${euro(w.cobrado)}</td><td class="px-1 py-2 text-center font-mono">${euro(w.coste)}</td><td class="px-1 py-2 text-center font-mono font-bold">${(w.saldo >= 0 ? "+" : "−") + euro(Math.abs(w.saldo))}</td>`
+            : "";
+          return `<tr class="border-t border-[#D3E3D6]"><th class="pr-2 py-2 text-left">${w.ventana}</th>${nums}${dinero}</tr>`;
+        }).join("");
+        const cap = real
+          ? "Apuesta real de 6 números. Cada casilla es un día. 0+…+6 = " + pack.sorteos + ". Cobrado con el escrutinio de ese día."
+          : "No es un boleto. De los " + pool.cuantos + " más calientes, cuántos de los 6 premiados caen dentro. La columna 6 es el día en que los 6 cabían en ese grupo.";
+        return `<div class="overflow-x-auto bg-white rounded-[14px] border border-[#D3E3D6] p-3">
+          <h3 class="text-xl font-black text-[#032612] mb-1">${real ? "6 números, una apuesta" : pool.cuantos + " números, solo cobertura"}</h3>
+          <table class="w-full text-sm text-[#032612]"><caption class="text-left text-xs text-[#52695B] mb-2">${cap}</caption>
+          <thead><tr><th class="text-left pr-2 py-2">Ventana</th>${head}</tr></thead><tbody>${body}</tbody></table>
+        </div>`;
+      };
+      const premios = seis.ventanas.filter((w) => w.premios.length).map((w) => {
         const rows = w.premios.slice().reverse().map(filaPremio).join("");
-        return `<div><h4 class="text-xl font-black text-[#032612] mb-2">Premios de la ventana ${w.ventana}</h4>${rows}</div>`;
+        return `<div><h4 class="text-xl font-black text-[#032612] mb-2">Días con premio, ventana ${w.ventana}</h4>${rows}</div>`;
       }).join("");
       document.getElementById("siete-rows").innerHTML =
-        `<div class="overflow-x-auto bg-white rounded-[14px] border border-[#D3E3D6] p-3 mb-6">
-          <table class="w-full text-sm text-[#032612]"><caption class="text-left text-xs text-[#52695B] mb-2">Cada casilla cuenta apuestas, no días. 0+1+2+3+4+5+5+C+6 = ${pack.sorteos * 2}. El 3 paga 4 € y el 4 paga 24,72 €, una sola vez.</caption>
-          <thead><tr><th class="text-left pr-2 py-2">Ventana</th>${head}</tr></thead><tbody>${body}</tbody></table>
-        </div>` + (premios || `<p class="text-sm text-[#52695B]">Ningún día con 3 o más.</p>`);
+        pack.pools.map(tabla).join("") + (premios || `<p class="text-sm text-[#52695B]">Ningún día con 3 o más en la apuesta de 6.</p>`);
     }
 
     function renderOdds(pack) {
