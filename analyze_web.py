@@ -3,13 +3,22 @@
 Escribe data/bonoloto.json. Fuente: hojas públicas de raffles.py (mismo origen
 que el sqlite local). Sin lookahead: cada regla usa solo sorteos anteriores.
 """
+import datetime as dt
 import json
 import math
+import re
+import urllib.request
 from collections import Counter
 from pathlib import Path
 
 import commonFunctions as cf
 import raffles
+
+LIVE_URL = "https://www.combinacionganadora.com/bonoloto/"
+_MESES = {
+    "enero": 1, "febrero": 2, "marzo": 3, "abril": 4, "mayo": 5, "junio": 6,
+    "julio": 7, "agosto": 8, "septiembre": 9, "octubre": 10, "noviembre": 11, "diciembre": 12,
+}
 
 N, W = 49, 6
 WARMUP = 300
@@ -33,6 +42,37 @@ def z_mean(mean, n_test):
     return (mean - EXP_HITS) / se if se else 0.0
 
 
+def parse_live(html):
+    """6 bolas del tablero en vivo, o None si el sorteo sigue en '?'."""
+    sorteo = re.search(r'id="sorteo"(.*)$', html, re.S)
+    chunk = sorteo.group(1) if sorteo else html
+    block = re.search(r'data-gameNumbers(.*?)</ul>', chunk, re.S)
+    if not block:
+        return None
+    body = block.group(1)
+    mains = [int(x) for x in re.findall(r'<li class="bBonoloto[^"]*">(\d{1,2})</li>', body)]
+    if len(mains) != 6 or len(set(mains)) != 6 or not all(1 <= n <= 49 for n in mains):
+        return None
+    extras = tuple(int(x) for x in re.findall(r'data-extra.*?</span>(\d+)</li>', body))
+    dm = re.search(r"(\d{1,2}) (\w+) (\d{4})</span>", chunk)
+    if not dm:
+        return None
+    month = _MESES.get(dm.group(2).lower())
+    if not month:
+        return None
+    return dt.date(int(dm.group(3)), month, int(dm.group(1))), tuple(mains), extras
+
+
+def fetch_live():
+    """SELAE responde 403 desde aquí. Este tablero publica el sorteo a los pocos minutos."""
+    req = urllib.request.Request(LIVE_URL, headers={"User-Agent": "Mozilla/5.0"})
+    try:
+        html = urllib.request.urlopen(req, timeout=20).read().decode("utf-8", "replace")
+    except Exception:
+        return None
+    return parse_live(html)
+
+
 def load():
     spec = raffles.GAMES["Bonoloto"]
     rows = raffles.load_rows(spec)
@@ -52,10 +92,23 @@ def load():
                 r = None
         if r is not None and 0 <= r <= 9:
             reins.append((d, r))
+    en_vivo = None
+    live = fetch_live()
+    if live and live[0] not in {d for d, _n in draws}:
+        d, main, extra = live
+        ordered = tuple(sorted(main))
+        if tuple(main) == ordered:
+            ya_ordenadas += 1
+        draws.append((d, ordered))
+        draws.sort(key=lambda x: x[0])
+        if len(extra) >= 2 and 0 <= extra[1] <= 9:
+            reins.append((d, extra[1]))
+        en_vivo = d.isoformat()
     orden = {
         "filas": len(draws),
         "ya_ordenadas": ya_ordenadas,
         "nota": "La hoja pública trae las seis bolas de menor a mayor. El bombo no sale así: puede salir 45, luego 8, luego 17. Ese orden de extracción no está en los datos.",
+        "en_vivo": en_vivo,
     }
     return draws, reins, orden
 
@@ -459,7 +512,7 @@ def build():
     modal = max(oe, key=lambda r: r["sorteos"])
     payload = {
         "juego": "Bonoloto",
-        "fuente": "Hojas públicas Lotoideas (mismo origen que raffles.py)",
+        "fuente": "Hojas públicas Lotoideas" + (" y el tablero en vivo del último hueco" if orden.get("en_vivo") else ""),
         "desde": draws[0][0].isoformat(),
         "hasta": last.isoformat(),
         "proximo": nxt.isoformat(),

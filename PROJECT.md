@@ -19,6 +19,6 @@
 - Ponytail siempre activo (ver AGENTS.md)
 
 ## Estado
-- 2026-10-08: la página rankea decenas y terminaciones frente a la combinatoria (el 1-9 tiene 9 bolas; el 0, 4). Las 9.410 filas de Lotoideas vienen de menor a mayor; el orden del bombo no está y no se usa.
+- 2026-10-08: el histórico público es la hoja de Lotoideas (se descarga al generar `data/bonoloto.json`; el sqlite no se publica). Si el sorteo del día ya está en el tablero en vivo y la hoja no, se añade ese hueco.
 
 
