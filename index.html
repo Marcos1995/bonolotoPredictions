@@ -219,8 +219,8 @@
     <section id="siete" class="section-reveal" aria-labelledby="siete-title">
       <div class="bg-[#18E667] text-[#032612] p-6 sm:p-8 rounded-[14px] mb-4">
         <p class="text-xs uppercase tracking-widest font-mono font-bold mb-2">Último año · ventanas de 50 en 50</p>
-        <h2 id="siete-title" class="text-3xl sm:text-5xl font-black tracking-tight leading-tight mb-3">84 apuestas para cubrir 9. 924 para cubrir 12.</h2>
-        <p id="siete-nota" class="text-base font-semibold max-w-2xl">Cobertura del 100 %: todas las combinaciones de 6. El gasto es el mismo en cada ventana, así que aquí van las tres que más cobran.</p>
+        <h2 id="siete-title" class="text-3xl sm:text-5xl font-black tracking-tight leading-tight mb-3">9 números, 3 apuestas. 12 números, 6.</h2>
+        <p id="siete-nota" class="text-base font-semibold max-w-2xl">Grupos de 3. Cada pareja de grupos es un boleto. En 12 números las parejas son 6, no 10. Aquí van las tres ventanas que más cobran.</p>
       </div>
       <div id="siete-rows" class="space-y-8"></div>
     </section>
@@ -829,9 +829,9 @@
       const saldoTxt = (mejor.w.saldo >= 0 ? "+" : "−") + euro(Math.abs(mejor.w.saldo));
       document.getElementById("siete-title").textContent = incompleto
         ? "Falta el premio de algún día"
-        : (pack.rentable ? mejor.k + " números, ventana " + mejor.w.ventana + ": " + saldoTxt : "Ni 84 ni 924 apuestas recuperan el año");
+        : (pack.rentable ? mejor.k + " números, ventana " + mejor.w.ventana + ": " + saldoTxt : "Ni 3 ni 6 apuestas recuperan el año");
       document.getElementById("siete-nota").textContent =
-        pack.sorteos + " sorteos, del " + pack.desde + ". 9 números son 84 apuestas, 42 € al día. 12 números son 924 apuestas, 462 € al día; Bonoloto no vende ese múltiple (el tope es 11). El premio es el de ese día. La que más cobra es la ventana " + mejor.w.ventana + " de " + mejor.k + " números, con saldo " + saldoTxt + ".";
+        pack.sorteos + " sorteos, del " + pack.desde + ". 9 números: 3 grupos y 3 apuestas, 1,50 € al día. 12 números: 4 grupos y 6 apuestas, 3 € al día. La que menos pierde es la ventana " + mejor.w.ventana + " de " + mejor.k + " números, saldo " + saldoTxt + ".";
       const tabla = (pool) => {
         const cols = ["Días con 5", "Días con 6", "Boletos 6", "5+C", "5", "4", "3", "Cobrado", "Gastado", "Saldo"];
         const head = cols.map((c) => `<th class="px-1 py-2 text-center font-bold">${c}</th>`).join("");
@@ -841,9 +841,7 @@
           return `<tr class="border-t border-[#D3E3D6]"><th class="pr-2 py-2 text-left">${w.ventana}</th><td class="px-1 py-2 text-center font-mono">${w.dias5}</td><td class="px-1 py-2 text-center font-mono">${w.dias6}</td><td class="px-1 py-2 text-center font-mono">${b["6"]}</td><td class="px-1 py-2 text-center font-mono">${b["5c"]}</td><td class="px-1 py-2 text-center font-mono">${b["5"]}</td><td class="px-1 py-2 text-center font-mono">${b["4"]}</td><td class="px-1 py-2 text-center font-mono">${b["3"]}</td><td class="px-1 py-2 text-center font-mono">${euro(w.cobrado)}</td><td class="px-1 py-2 text-center font-mono">${euro(w.coste)}</td><td class="px-1 py-2 text-center font-mono font-bold">${saldo}</td></tr>`;
         }).join("");
         const titulo = pool.cuantos + " números, " + pool.apuestas + (pool.apuestas === 1 ? " apuesta" : " apuestas") + ", " + euro(pool.coste_dia) + " al día";
-        const cap = pool.oficial
-          ? "Las tres ventanas que más cobran. Se juegan las " + pool.apuestas + " combinaciones cada día."
-          : "Las tres ventanas que más cobran. 924 simples de 0,50 €. No existe un múltiple oficial de 12.";
+        const cap = "Las tres ventanas que más cobran. " + pool.grupos + " grupos de 3, y cada pareja es una apuesta de 0,50 €.";
         return `<div class="overflow-x-auto bg-white rounded-[14px] border border-[#D3E3D6] p-3">
           <h3 class="text-xl font-black text-[#032612] mb-1">${titulo}</h3>
           <table class="w-full text-sm text-[#032612]"><caption class="text-left text-xs text-[#52695B] mb-2">${cap}</caption>

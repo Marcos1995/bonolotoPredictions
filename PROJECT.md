@@ -19,6 +19,6 @@
 - Ponytail siempre activo (ver AGENTS.md)
 
 ## Estado
-- 2026-10-08: cobertura total del último año. 9 números son 84 apuestas (42 €) y 12 son 924 (462 €). En la página, las tres ventanas que más cobran. El premio es el de ese día, repartido si ya había acertantes.
+- 2026-10-09: los calientes se parten en grupos de 3 y se juega cada pareja. 9 números son 3 apuestas (1,50 €) y 12 son 6 (3 €). En la página, las tres ventanas que más cobran.
 
 

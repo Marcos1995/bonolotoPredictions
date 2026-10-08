@@ -7,3 +7,4 @@
 2026-10-08 · Dos boletos distintos, puestos 1-6 y 7-12 · el usuario rechazó jugar la misma combinación dos veces · descartado: misma, forma · laya 0.36 · confianza: baja
 2026-10-08 · Una apuesta de los 6 más calientes; 9 y 12 solo cobertura · el usuario rechazó dos boletos y el premio estimado · premios reales de cada día · descartado: misma, 1-6 y 7-12, estimación · laya — · confianza: —
 2026-10-08 · Cobertura total: 84 apuestas en 9 números y 924 en 12 · el usuario pidió el 100 % de las combinaciones de 6 y solo las tres ventanas que más cobran · descartado: mirar sin jugar, las diez ventanas · laya — · confianza: —
+2026-10-09 · Parejas de grupos de 3: 3 apuestas en 9 números y 6 en 12 · el usuario rechazó 84 y 924 por inviables; 4+3+2+1 cuenta de más, las parejas son 6 · descartado: cobertura total, 10 apuestas · laya — · confianza: —

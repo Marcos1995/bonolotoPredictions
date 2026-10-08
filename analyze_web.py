@@ -578,30 +578,32 @@ def cargar_premios(fechas):
     return cache
 
 
-def _boletos(k, jugados, actual, comp):
-    """Cuántos boletos de 6 cobran si se juegan todas las combinaciones del grupo."""
-    pool = set(jugados)
-    overlap = len(set(actual) & pool)
-    non = k - overlap
-    c_in = comp is not None and comp in pool
+def _parejas(ranked):
+    """Grupos de 3 por calor. Cada pareja de grupos es un boleto de 6."""
+    grupos = [ranked[i:i + 3] for i in range(0, len(ranked), 3)]
+    return [sorted(grupos[a] + grupos[b]) for a in range(len(grupos)) for b in range(a + 1, len(grupos))]
+
+
+def _boletos(tickets, actual, comp):
+    """Aciertos reales de cada boleto, no de todas las combinaciones del grupo."""
+    premio = set(actual)
     b = {"3": 0, "4": 0, "5": 0, "5c": 0, "6": 0}
-    if overlap >= 6:
-        b["6"] = 1
-        b["5c"] = 6 if c_in else 0
-        b["5"] = 6 * (non - (1 if c_in else 0))
-        b["4"] = math.comb(6, 4) * math.comb(non, 2)
-        b["3"] = math.comb(6, 3) * math.comb(non, 3)
-    elif overlap == 5:
-        b["5c"] = 1 if c_in else 0
-        b["5"] = non - (1 if c_in else 0)
-        b["4"] = 5 * math.comb(non, 2)
-        b["3"] = 10 * math.comb(non, 3)
-    elif overlap == 4:
-        b["4"] = math.comb(non, 2)
-        b["3"] = 4 * math.comb(non, 3)
-    elif overlap == 3:
-        b["3"] = math.comb(non, 3)
-    return overlap, b
+    tuvo5 = tuvo6 = False
+    for jugados in tickets:
+        hits = len(premio & set(jugados))
+        resto = [n for n in jugados if n not in premio]
+        if hits == 6:
+            b["6"] += 1
+            tuvo6 = True
+        elif hits == 5 and comp is not None and resto == [comp]:
+            b["5c"] += 1
+            tuvo5 = True
+        elif hits == 5:
+            b["5"] += 1
+            tuvo5 = True
+        elif hits >= 3:
+            b[str(hits)] += 1
+    return tuvo5, tuvo6, b
 
 
 def _euros(tabla, boletos):
@@ -621,14 +623,14 @@ def _euros(tabla, boletos):
 
 
 def calientes_ventanas(draws, comps, premios):
-    """Un año. Cobertura total: todas las combinaciones de 6 dentro de los k más calientes."""
+    """Un año. Los k calientes se parten en grupos de 3 y se juega cada pareja de grupos."""
     last = draws[-1][0]
     idx = next(i for i, (d, _n) in enumerate(draws) if d >= last - dt.timedelta(days=364))
     start = max(idx, 1)
     n = len(draws) - start
     pools = []
     for k in (6, 9, 12):
-        apuestas = math.comb(k, 6)
+        apuestas = math.comb(k // 3, 2)
         coste = n * apuestas * 0.50
         ventanas = []
         for window in range(50, 501, 50):
@@ -640,12 +642,10 @@ def calientes_ventanas(draws, comps, premios):
             for i in range(start, len(draws)):
                 actual = draws[i][1]
                 comp = comps.get(draws[i][0])
-                jugados = _pool(draws[:i], window, k)
-                overlap, boletos = _boletos(k, jugados, actual, comp)
-                if overlap == 5:
-                    dias5 += 1
-                elif overlap >= 6:
-                    dias6 += 1
+                tickets = _parejas(_pool(draws[:i], window, k))
+                tuvo5, tuvo6, boletos = _boletos(tickets, actual, comp)
+                dias5 += tuvo5
+                dias6 += tuvo6
                 for key, cnt in boletos.items():
                     suma[key] += cnt
                 pago = _euros(premios.get(draws[i][0].isoformat()), boletos)
@@ -653,12 +653,11 @@ def calientes_ventanas(draws, comps, premios):
                     sin_precio += 1
                     continue
                 cobrado += pago
-                if overlap >= 5:
+                if tuvo5 or tuvo6:
                     premios_dias.append({
                         "fecha": draws[i][0].isoformat(),
                         "salio": list(actual),
-                        "numeros": sorted(jugados),
-                        "dentro": overlap,
+                        "dentro": 6 if tuvo6 else 5,
                         "complementario": comp,
                         "boletos": boletos,
                         "euros": round(pago, 2),
@@ -679,7 +678,7 @@ def calientes_ventanas(draws, comps, premios):
             "cuantos": k,
             "apuestas": apuestas,
             "coste_dia": round(apuestas * 0.50, 2),
-            "oficial": k <= 11,
+            "grupos": k // 3,
             "ventanas": ventanas[:3],
         })
     mejor = max((w for p in pools for w in p["ventanas"]), key=lambda w: w["saldo"])

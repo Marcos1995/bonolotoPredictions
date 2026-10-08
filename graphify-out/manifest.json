@@ -6,9 +6,9 @@
     "semantic_hash": ""
   },
   "analyze_web.py": {
-    "mtime": 1791496946.6841137,
-    "seen": 1791497047.2156744,
-    "ast_hash": "6e3907cad93205752f81143ba965be95",
+    "mtime": 1791497682.5959947,
+    "seen": 1791497763.5458505,
+    "ast_hash": "3294d6d858b712cabce3160614ea919d",
     "semantic_hash": ""
   },
   "bestPrediction.py": {
@@ -24,9 +24,9 @@
     "semantic_hash": ""
   },
   "data/bonoloto.json": {
-    "mtime": 1791496981.856068,
-    "seen": 1791497047.2156744,
-    "ast_hash": "2a86e82f34849e8adbe645633a98562a",
+    "mtime": 1791497706.7316556,
+    "seen": 1791497763.5458505,
+    "ast_hash": "d7f0e332ed599ab7d0d2149013409dac",
     "semantic_hash": ""
   },
   "edgeHunt.py": {
@@ -180,9 +180,9 @@
     "semantic_hash": ""
   },
   "PROJECT.md": {
-    "mtime": 1791497005.7022572,
-    "seen": 1791497047.2156744,
-    "ast_hash": "2845f2961e4a1fa7e116d4d06b436cf2",
+    "mtime": 1791497698.420776,
+    "seen": 1791497763.5458505,
+    "ast_hash": "dfd4ab821c3af1d27a3a97b7158de4ea",
     "semantic_hash": ""
   },
   "README.md": {
@@ -198,15 +198,15 @@
     "semantic_hash": ""
   },
   "docs/DECISIONES.md": {
-    "mtime": 1791497007.6532354,
-    "seen": 1791497047.2156744,
-    "ast_hash": "09378ff6728e54fd3f7d5edcc8b6587d",
+    "mtime": 1791497700.0612514,
+    "seen": 1791497763.5458505,
+    "ast_hash": "03f16259d9a497a63ddc840b30fc0c61",
     "semantic_hash": ""
   },
   "index.html": {
-    "mtime": 1791497004.767195,
-    "seen": 1791497047.2156744,
-    "ast_hash": "da5a814a1bf7a08d8c28811b36699db6",
+    "mtime": 1791497732.9017203,
+    "seen": 1791497763.5458505,
+    "ast_hash": "503ec0312533237d46b4942829852418",
     "semantic_hash": ""
   },
   "pattern_analysis_results.txt": {
