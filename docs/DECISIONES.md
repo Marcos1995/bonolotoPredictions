@@ -9,3 +9,4 @@
 2026-10-08 · Cobertura total: 84 apuestas en 9 números y 924 en 12 · el usuario pidió el 100 % de las combinaciones de 6 y solo las tres ventanas que más cobran · descartado: mirar sin jugar, las diez ventanas · laya — · confianza: —
 2026-10-09 · Parejas de grupos de 3: 3 apuestas en 9 números y 6 en 12 · el usuario rechazó 84 y 924 por inviables; 4+3+2+1 cuenta de más, las parejas son 6 · descartado: cobertura total, 10 apuestas · laya — · confianza: —
 2026-10-09 · Ninguna regla de 1 a 6 apuestas vale si no gana en 7 de 10 ventanas · una ventana en positivo es suerte · descartado: publicar un solo acierto de 5 · laya — · confianza: —
+2026-10-09 · Rueda de hasta 20 apuestas sobre 9, 10 y 12 calientes · tope de 10 € al día · el 100 % del 5 en 12 números pide 46 apuestas · descartado: 84 y 924 · laya — · confianza: —

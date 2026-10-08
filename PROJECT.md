@@ -19,6 +19,6 @@
 - Ponytail siempre activo (ver AGENTS.md)
 
 ## Estado
-- 2026-10-09: reglas de 1 a 6 apuestas (calientes, fríos, retrasados y parejas) en las 10 ventanas. Solo valdría si ganara en 7 o más. El 5+C es la séptima bola del sorteo, la misma para todo boleto.
+- 2026-10-09: rueda de como mucho 20 apuestas (10 €) sobre 9, 10 o 12 calientes. El 100 % de los 5 cabe en 9 y 15 apuestas; en 12 pide 46. El año no gana en 7 de las 10 ventanas.
 
 

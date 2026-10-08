@@ -219,8 +219,8 @@
     <section id="siete" class="section-reveal" aria-labelledby="siete-title">
       <div class="bg-[#18E667] text-[#032612] p-6 sm:p-8 rounded-[14px] mb-4">
         <p class="text-xs uppercase tracking-widest font-mono font-bold mb-2">Último año · ventanas de 50 en 50</p>
-        <h2 id="siete-title" class="text-3xl sm:text-5xl font-black tracking-tight leading-tight mb-3">Hace falta ganar en muchas ventanas</h2>
-        <p id="siete-nota" class="text-base font-semibold max-w-2xl">El complementario es la séptima bola del sorteo, la misma para todos. Una sola ventana en positivo es un premio suelto.</p>
+        <h2 id="siete-title" class="text-3xl sm:text-5xl font-black tracking-tight leading-tight mb-3">Como mucho 20 apuestas, 10 € al día</h2>
+        <p id="siete-nota" class="text-base font-semibold max-w-2xl">La rueda más amplia posible sobre los calientes. El 100 % del premio gordo son todas las combinaciones de 6.</p>
       </div>
       <div id="siete-rows" class="space-y-8"></div>
     </section>
@@ -809,21 +809,25 @@
 
     function renderSiete(data) {
       const pack = data.calientes_ventanas;
-      if (!pack || !pack.reglas) return;
+      if (!pack || !pack.pools) return;
       const euro = (n) => (n >= 0 ? "+" : "−") + Math.abs(n).toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
-      const alguna = pack.reglas.find((r) => r.en_positivo >= pack.umbral);
+      const pct = (x) => (x * 100).toLocaleString("es-ES", { maximumFractionDigits: 1 }) + " %";
+      const alguna = pack.pools.find((p) => p.en_positivo >= 7);
       document.getElementById("siete-title").textContent = alguna
-        ? alguna.nombre + " gana en " + alguna.en_positivo + " de " + alguna.ventanas
-        : "Ninguna regla de pocas apuestas gana en muchas ventanas";
+        ? alguna.cuantos + " calientes, " + alguna.apuestas + " apuestas, en positivo"
+        : "Con 10 € al día, el último año no sale a cuenta";
       document.getElementById("siete-nota").textContent =
-        pack.sorteos + " sorteos, del " + pack.desde + ". El complementario es la séptima bola del bombo, siempre la misma: jugar 9 o 12 no la cambia. Un boleto cobra 5+C si cinco de sus seis números están en el premio y el sexto es esa bola. Hace falta saldo positivo en " + pack.umbral + " de las 10 ventanas.";
-      const cols = ["Al día", "En positivo", "Mejor saldo", "Peor saldo", "5", "5+C", "6"];
+        pack.sorteos + " sorteos, del " + pack.desde + ". Tope de " + pack.tope + " apuestas, 10 €. La cobertura cuenta solo si los 6 premiados caen dentro de esos calientes. Un 6 en una ventana y pérdida en las otras es un premio suelto.";
+      const cols = ["Apuestas", "Al día", "3", "4", "5", "6", "Para el 100 % del 5", "En positivo", "Mejor", "Peor"];
       const head = cols.map((c) => `<th class="px-1 py-2 text-center font-bold">${c}</th>`).join("");
-      const body = pack.reglas.map((r) => `<tr class="border-t border-[#D3E3D6]"><th class="pr-2 py-2 text-left">${r.nombre}</th><td class="px-1 py-2 text-center font-mono">${r.apuestas} · ${r.coste_dia.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €</td><td class="px-1 py-2 text-center font-mono font-bold">${r.en_positivo}/${r.ventanas}</td><td class="px-1 py-2 text-center font-mono">${euro(r.mejor)}</td><td class="px-1 py-2 text-center font-mono">${euro(r.peor)}</td><td class="px-1 py-2 text-center font-mono">${r.cincos}</td><td class="px-1 py-2 text-center font-mono">${r.cinco_c}</td><td class="px-1 py-2 text-center font-mono">${r.seises}</td></tr>`).join("");
+      const body = pack.pools.map((p) => {
+        const m5 = p.minimo["5"] == null ? "no cabe" : p.minimo["5"];
+        return `<tr class="border-t border-[#D3E3D6]"><th class="pr-2 py-2 text-left">${p.cuantos} calientes</th><td class="px-1 py-2 text-center font-mono">${p.apuestas}</td><td class="px-1 py-2 text-center font-mono">${p.coste_dia.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €</td><td class="px-1 py-2 text-center font-mono">${pct(p.cobertura["3"])}</td><td class="px-1 py-2 text-center font-mono">${pct(p.cobertura["4"])}</td><td class="px-1 py-2 text-center font-mono">${pct(p.cobertura["5"])}</td><td class="px-1 py-2 text-center font-mono">${pct(p.cobertura["6"])}</td><td class="px-1 py-2 text-center font-mono">${m5}</td><td class="px-1 py-2 text-center font-mono font-bold">${p.en_positivo}/${p.ventanas}</td><td class="px-1 py-2 text-center font-mono">${euro(p.mejor)}</td><td class="px-1 py-2 text-center font-mono">${euro(p.peor)}</td></tr>`;
+      }).join("");
       document.getElementById("siete-rows").innerHTML =
         `<div class="overflow-x-auto bg-white rounded-[14px] border border-[#D3E3D6] p-3">
-          <table class="w-full text-sm text-[#032612]"><caption class="text-left text-xs text-[#52695B] mb-2">De 1 a 6 apuestas al día. Los 5, 5+C y 6 son boletos, sumados en las 10 ventanas. Una ventana sola no cuenta.</caption>
-          <thead><tr><th class="text-left pr-2 py-2">Regla</th>${head}</tr></thead><tbody>${body}</tbody></table>
+          <table class="w-full text-sm text-[#032612]"><caption class="text-left text-xs text-[#52695B] mb-2">Cobertura si los 6 premiados están entre esos calientes. El saldo es el del último año, con el premio real de cada día. En positivo cuenta ventanas de 50 a 500.</caption>
+          <thead><tr><th class="text-left pr-2 py-2">Grupo</th>${head}</tr></thead><tbody>${body}</tbody></table>
         </div>`;
     }
 

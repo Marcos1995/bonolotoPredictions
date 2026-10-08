@@ -10,6 +10,7 @@ import re
 import urllib.request
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
+from itertools import combinations
 from pathlib import Path
 
 import commonFunctions as cf
@@ -578,12 +579,6 @@ def cargar_premios(fechas):
     return cache
 
 
-def _parejas(ranked):
-    """Grupos de 3 por calor. Cada pareja de grupos es un boleto de 6."""
-    grupos = [ranked[i:i + 3] for i in range(0, len(ranked), 3)]
-    return [sorted(grupos[a] + grupos[b]) for a in range(len(grupos)) for b in range(a + 1, len(grupos))]
-
-
 def _boletos(tickets, actual, comp):
     """Aciertos reales de cada boleto, no de todas las combinaciones del grupo."""
     premio = set(actual)
@@ -622,84 +617,166 @@ def _euros(tabla, boletos):
     return total
 
 
-def _ranked(past, window, modo):
-    chunk = past[-window:]
-    if modo == "retrasados":
-        last = {}
-        for i, (_d, nums) in enumerate(chunk):
-            for n in nums:
-                last[n] = i
-        gap = [0] * (N + 1)
-        for n in range(1, N + 1):
-            gap[n] = len(chunk) if n not in last else len(chunk) - 1 - last[n]
-        return _topk(gap, k=12, reverse=True)
-    return _topk(_scores(chunk), k=12, reverse=(modo == "calientes"))
+def _mascaras(v):
+    out = []
+    for comb in combinations(range(v), 6):
+        m = 0
+        for i in comb:
+            m |= 1 << i
+        out.append(m)
+    return out
 
 
-def _tickets(ranked, k):
-    if k == 6:
-        return [sorted(ranked[:6])]
-    return _parejas(ranked[:k])
+def _listas(uni, goal):
+    return [[i for i, w in enumerate(uni) if (t & w).bit_count() >= goal] for t in uni]
+
+
+def _coger(uni, listas, tope, usados):
+    """Añade hasta `tope` boletos que cubran combinaciones aún descubiertas."""
+    falta = set(range(len(uni)))
+    for j in usados:
+        for i in listas[j]:
+            falta.discard(i)
+    elegidos = []
+    while falta and len(elegidos) < tope:
+        mejor = None
+        mejor_n = 0
+        for j, lista in enumerate(listas):
+            if j in usados or uni[j] in elegidos:
+                continue
+            n_hit = sum(1 for i in lista if i in falta)
+            if n_hit > mejor_n:
+                mejor_n = n_hit
+                mejor = j
+        if not mejor_n:
+            break
+        elegidos.append(uni[mejor])
+        usados.add(mejor)
+        for i in listas[mejor]:
+            falta.discard(i)
+    return elegidos
+
+
+def _minimo_meta(v):
+    uni = _mascaras(v)
+    minimo = {"6": len(uni)}
+    for meta in (5, 4, 3):
+        listas = _listas(uni, meta)
+        falta = set(range(len(uni)))
+        usados = set()
+        pasos = 0
+        while falta and pasos < len(uni):
+            mejor = None
+            mejor_n = 0
+            for j, lista in enumerate(listas):
+                if j in usados:
+                    continue
+                n_hit = sum(1 for i in lista if i in falta)
+                if n_hit > mejor_n:
+                    mejor_n = n_hit
+                    mejor = j
+            if not mejor_n:
+                break
+            usados.add(mejor)
+            pasos += 1
+            for i in listas[mejor]:
+                falta.discard(i)
+        minimo[str(meta)] = pasos if not falta else None
+    return minimo
+
+
+def _rueda(v, tope):
+    uni = _mascaras(v)
+    por_meta = {meta: _listas(uni, meta) for meta in (5, 4, 3)}
+    usados = set()
+    masks = []
+    for meta in (5, 4, 3):
+        if len(masks) >= tope:
+            break
+        masks.extend(_coger(uni, por_meta[meta], tope - len(masks), usados))
+    for j, t in enumerate(uni):
+        if len(masks) >= tope:
+            break
+        if j not in usados:
+            masks.append(t)
+            usados.add(j)
+    total = len(uni)
+    cobertura = {}
+    for meta in (3, 4, 5, 6):
+        cubiertas = sum(1 for w in uni if any((t & w).bit_count() >= meta for t in masks))
+        cobertura[str(meta)] = round(cubiertas / total, 4)
+    return masks, cobertura, total
+
+
+def _aplicar(ranked, masks):
+    tickets = []
+    for m in masks:
+        tickets.append(sorted(ranked[i] for i in range(len(ranked)) if m & (1 << i)))
+    return tickets
 
 
 def calientes_ventanas(draws, comps, premios):
-    """Un año y diez ventanas. Una regla vale si gana en muchas, no en una."""
+    """Rueda de como mucho 20 apuestas sobre los 9, 10 o 12 más calientes."""
     last = draws[-1][0]
     idx = next(i for i, (d, _n) in enumerate(draws) if d >= last - dt.timedelta(days=364))
     start = max(idx, 1)
     n = len(draws) - start
-    reglas_def = (
-        ("6 calientes", "calientes", 6),
-        ("6 fríos", "frios", 6),
-        ("6 retrasados", "retrasados", 6),
-        ("6 calientes y 6 fríos", "ambos", 6),
-        ("9 calientes, 3 parejas", "calientes", 9),
-        ("9 fríos, 3 parejas", "frios", 9),
-        ("12 calientes, 6 parejas", "calientes", 12),
-        ("12 fríos, 6 parejas", "frios", 12),
-    )
-    reglas = []
-    for nombre, modo, k in reglas_def:
-        saldos = []
-        cinco = cinco_c = seises = 0
+    tope = 20
+    pools = []
+    for k in (9, 10, 12):
+        masks, cobertura, total = _rueda(k, tope)
+        minimo = _minimo_meta(k)
+        apuestas = len(masks)
+        filas = []
         for window in range(50, 501, 50):
             cobrado = 0.0
+            cinco = cinco_c = seises = dentro = 0
             for i in range(start, len(draws)):
                 actual = draws[i][1]
                 comp = comps.get(draws[i][0])
-                past = draws[:i]
-                if modo == "ambos":
-                    tickets = _tickets(_ranked(past, window, "calientes"), 6) + _tickets(_ranked(past, window, "frios"), 6)
-                else:
-                    tickets = _tickets(_ranked(past, window, modo), k)
+                ranked = _topk(_scores(draws[:i][-window:]), k=k, reverse=True)
+                if set(actual) <= set(ranked):
+                    dentro += 1
+                tickets = _aplicar(ranked, masks)
                 _t5, _t6, boletos = _boletos(tickets, actual, comp)
                 cinco += boletos["5"]
                 cinco_c += boletos["5c"]
                 seises += boletos["6"]
                 pago = _euros(premios.get(draws[i][0].isoformat()), boletos)
-                if pago is None:
-                    continue
-                cobrado += pago
-            apuestas = 2 if modo == "ambos" else (1 if k == 6 else math.comb(k // 3, 2))
-            saldos.append(round(cobrado - n * apuestas * 0.50, 2))
-        reglas.append({
-            "nombre": nombre,
+                if pago is not None:
+                    cobrado += pago
+            filas.append({
+                "saldo": round(cobrado - n * apuestas * 0.50, 2),
+                "cincos": cinco,
+                "cinco_c": cinco_c,
+                "seises": seises,
+                "dentro": dentro,
+            })
+        mejor = max(filas, key=lambda f: f["saldo"])
+        peor = min(filas, key=lambda f: f["saldo"])
+        pools.append({
+            "cuantos": k,
+            "combinaciones": total,
             "apuestas": apuestas,
             "coste_dia": round(apuestas * 0.50, 2),
-            "en_positivo": sum(s > 0 for s in saldos),
-            "ventanas": len(saldos),
-            "mejor": max(saldos),
-            "peor": min(saldos),
-            "cincos": cinco,
-            "cinco_c": cinco_c,
-            "seises": seises,
+            "cobertura": cobertura,
+            "minimo": minimo,
+            "en_positivo": sum(f["saldo"] > 0 for f in filas),
+            "ventanas": len(filas),
+            "mejor": mejor["saldo"],
+            "peor": peor["saldo"],
+            "cincos": mejor["cincos"],
+            "cinco_c": mejor["cinco_c"],
+            "seises": mejor["seises"],
+            "dentro": max(f["dentro"] for f in filas),
         })
+        print(f"rueda {k} apuestas={apuestas} cobertura={cobertura} minimo={minimo}")
     return {
         "sorteos": n,
         "desde": draws[start][0].isoformat(),
-        "umbral": 7,
-        "reglas": reglas,
-        "rentable": any(r["en_positivo"] >= 7 for r in reglas),
+        "tope": tope,
+        "pools": pools,
+        "rentable": any(p["en_positivo"] >= 7 for p in pools),
     }
 
 
@@ -777,10 +854,11 @@ def build():
         f"ultimo={formas['ultimo']} hueco={formas['hueco_medio']}/{formas['hueco_azar']}"
     )
     v = payload["calientes_ventanas"]
-    for r in v["reglas"]:
+    for p in v["pools"]:
         print(
-            f"{r['nombre']} {r['en_positivo']}/{r['ventanas']} "
-            f"mejor={r['mejor']} peor={r['peor']} 5={r['cincos']} 5c={r['cinco_c']} 6={r['seises']}"
+            f"{p['cuantos']} nums {p['apuestas']} apuestas {p['en_positivo']}/{p['ventanas']} "
+            f"mejor={p['mejor']} peor={p['peor']} dentro={p['dentro']} "
+            f"5={p['cincos']} 5c={p['cinco_c']} 6={p['seises']}"
         )
     p = payload["patrones"]
     print("orden", orden["ya_ordenadas"], "/", orden["filas"])
