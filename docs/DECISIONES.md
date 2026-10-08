@@ -10,3 +10,4 @@
 2026-10-09 · Parejas de grupos de 3: 3 apuestas en 9 números y 6 en 12 · el usuario rechazó 84 y 924 por inviables; 4+3+2+1 cuenta de más, las parejas son 6 · descartado: cobertura total, 10 apuestas · laya — · confianza: —
 2026-10-09 · Ninguna regla de 1 a 6 apuestas vale si no gana en 7 de 10 ventanas · una ventana en positivo es suerte · descartado: publicar un solo acierto de 5 · laya — · confianza: —
 2026-10-09 · Rueda de hasta 20 apuestas sobre 9, 10 y 12 calientes · tope de 10 € al día · el 100 % del 5 en 12 números pide 46 apuestas · descartado: 84 y 924 · laya — · confianza: —
+2026-10-09 · Grupos 6, 9 y 12; el 6 es una apuesta y el 9 y el 12 llegan a 20 · mostrar premios solo de las ventanas en positivo · descartado: el grupo de 10 · laya — · confianza: —

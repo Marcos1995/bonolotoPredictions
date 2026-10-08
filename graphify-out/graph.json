@@ -1513,7 +1513,7 @@
       "file_type": "code",
       "norm_label": "_aplicar()",
       "source_file": "analyze_web.py",
-      "source_location": "L711"
+      "source_location": "L683"
     },
     {
       "id": "analyze_web_backtest",
@@ -1561,7 +1561,7 @@
       "file_type": "code",
       "norm_label": "build()",
       "source_file": "analyze_web.py",
-      "source_location": "L783"
+      "source_location": "L767"
     },
     {
       "id": "analyze_web_calientes_ventanas",
@@ -1573,7 +1573,7 @@
       "file_type": "code",
       "norm_label": "calientes_ventanas()",
       "source_file": "analyze_web.py",
-      "source_location": "L718"
+      "source_location": "L690"
     },
     {
       "id": "analyze_web_cargar_premios",
@@ -1792,18 +1792,6 @@
       "source_location": "L620"
     },
     {
-      "id": "analyze_web_minimo_meta",
-      "label": "_minimo_meta()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "analyze_web.py",
-      "file_type": "code",
-      "norm_label": "_minimo_meta()",
-      "source_file": "analyze_web.py",
-      "source_location": "L660"
-    },
-    {
       "id": "analyze_web_next_ticket",
       "label": "next_ticket()",
       "_callable": true,
@@ -1921,7 +1909,7 @@
       "file_type": "code",
       "norm_label": "_repeats()",
       "source_file": "analyze_web.py",
-      "source_location": "L872"
+      "source_location": "L856"
     },
     {
       "id": "analyze_web_rueda",
@@ -1933,7 +1921,7 @@
       "file_type": "code",
       "norm_label": "_rueda()",
       "source_file": "analyze_web.py",
-      "source_location": "L688"
+      "source_location": "L660"
     },
     {
       "id": "analyze_web_score_past",
@@ -4142,15 +4130,15 @@
       "source_location": "L69"
     },
     {
-      "id": "analyze_web_rationale_719",
-      "label": "Rueda de como mucho 20 apuestas sobre los 9, 10 o 12 m\u00e1s calientes.",
+      "id": "analyze_web_rationale_691",
+      "label": "6 calientes: 1 apuesta. 9 y 12: hasta 20 apuestas, la cobertura m\u00e1s alta bajo\u2026",
       "_origin": "ast",
       "community": 6,
       "community_name": "analyze_web.py",
       "file_type": "rationale",
-      "norm_label": "rueda de como mucho 20 apuestas sobre los 9, 10 o 12 mas calientes.",
+      "norm_label": "6 calientes: 1 apuesta. 9 y 12: hasta 20 apuestas, la cobertura mas alta bajo...",
       "source_file": "analyze_web.py",
-      "source_location": "L719"
+      "source_location": "L691"
     },
     {
       "id": "maximumhitspredictor_py_dataframe",
@@ -4734,7 +4722,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L784",
+      "source_location": "L768",
       "weight": 1.0
     },
     {
@@ -4746,7 +4734,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L787",
+      "source_location": "L771",
       "weight": 1.0
     },
     {
@@ -4758,7 +4746,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L788",
+      "source_location": "L772",
       "weight": 1.0
     },
     {
@@ -4770,7 +4758,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L790",
+      "source_location": "L774",
       "weight": 1.0
     },
     {
@@ -4782,7 +4770,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L791",
+      "source_location": "L775",
       "weight": 1.0
     },
     {
@@ -4794,7 +4782,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L792",
+      "source_location": "L776",
       "weight": 1.0
     },
     {
@@ -4806,7 +4794,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L796",
+      "source_location": "L780",
       "weight": 1.0
     },
     {
@@ -4818,7 +4806,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L800",
+      "source_location": "L784",
       "weight": 1.0
     },
     {
@@ -4830,7 +4818,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L801",
+      "source_location": "L785",
       "weight": 1.0
     },
     {
@@ -4842,7 +4830,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L802",
+      "source_location": "L786",
       "weight": 1.0
     },
     {
@@ -4854,7 +4842,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L803",
+      "source_location": "L787",
       "weight": 1.0
     },
     {
@@ -4866,7 +4854,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L805",
+      "source_location": "L789",
       "weight": 1.0
     },
     {
@@ -4878,7 +4866,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L824",
+      "source_location": "L808",
       "weight": 1.0
     },
     {
@@ -4890,7 +4878,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L830",
+      "source_location": "L814",
       "weight": 1.0
     },
     {
@@ -4902,7 +4890,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L831",
+      "source_location": "L815",
       "weight": 1.0
     },
     {
@@ -4914,7 +4902,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L841",
+      "source_location": "L825",
       "weight": 1.0
     },
     {
@@ -4926,7 +4914,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L844",
+      "source_location": "L828",
       "weight": 1.0
     },
     {
@@ -4938,19 +4926,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L727",
-      "weight": 1.0
-    },
-    {
-      "source": "analyze_web_calientes_ventanas",
-      "target": "analyze_web_minimo_meta",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "analyze_web.py",
-      "source_location": "L728",
+      "source_location": "L699",
       "weight": 1.0
     },
     {
@@ -4962,7 +4938,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L737",
+      "source_location": "L709",
       "weight": 1.0
     },
     {
@@ -4974,7 +4950,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L737",
+      "source_location": "L709",
       "weight": 1.0
     },
     {
@@ -4986,7 +4962,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L740",
+      "source_location": "L710",
       "weight": 1.0
     },
     {
@@ -4998,7 +4974,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L741",
+      "source_location": "L711",
       "weight": 1.0
     },
     {
@@ -5010,7 +4986,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L745",
+      "source_location": "L714",
       "weight": 1.0
     },
     {
@@ -5119,30 +5095,6 @@
       "context": "call",
       "source_file": "analyze_web.py",
       "source_location": "L98",
-      "weight": 1.0
-    },
-    {
-      "source": "analyze_web_minimo_meta",
-      "target": "analyze_web_mascaras",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "analyze_web.py",
-      "source_location": "L661",
-      "weight": 1.0
-    },
-    {
-      "source": "analyze_web_minimo_meta",
-      "target": "analyze_web_listas",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "analyze_web.py",
-      "source_location": "L664",
       "weight": 1.0
     },
     {
@@ -5310,7 +5262,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L689",
+      "source_location": "L661",
       "weight": 1.0
     },
     {
@@ -5322,7 +5274,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L690",
+      "source_location": "L662",
       "weight": 1.0
     },
     {
@@ -5334,7 +5286,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L696",
+      "source_location": "L668",
       "weight": 1.0
     },
     {
@@ -8340,7 +8292,7 @@
     },
     {
       "source": "analyze_web",
-      "target": "analyze_web_minimo_meta",
+      "target": "analyze_web_rueda",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -8362,24 +8314,13 @@
     },
     {
       "source": "analyze_web",
-      "target": "analyze_web_rueda",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "analyze_web.py",
-      "source_location": "L688",
-      "weight": 1.0
-    },
-    {
-      "source": "analyze_web",
       "target": "analyze_web_aplicar",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "analyze_web.py",
-      "source_location": "L711",
+      "source_location": "L683",
       "weight": 1.0
     },
     {
@@ -8390,7 +8331,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "analyze_web.py",
-      "source_location": "L718",
+      "source_location": "L690",
+      "weight": 1.0
+    },
+    {
+      "source": "analyze_web",
+      "target": "analyze_web_build",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "analyze_web.py",
+      "source_location": "L767",
       "weight": 1.0
     },
     {
@@ -8406,24 +8358,13 @@
     },
     {
       "source": "analyze_web",
-      "target": "analyze_web_build",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "analyze_web.py",
-      "source_location": "L783",
-      "weight": 1.0
-    },
-    {
-      "source": "analyze_web",
       "target": "analyze_web_repeats",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "analyze_web.py",
-      "source_location": "L872",
+      "source_location": "L856",
       "weight": 1.0
     },
     {
@@ -10517,14 +10458,14 @@
       "weight": 1.0
     },
     {
-      "source": "analyze_web_rationale_719",
+      "source": "analyze_web_rationale_691",
       "target": "analyze_web_calientes_ventanas",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "analyze_web.py",
-      "source_location": "L719",
+      "source_location": "L691",
       "weight": 1.0
     },
     {
@@ -11600,5 +11541,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "98d44126f6865ee48758f0ebeedc85d4cec9d5ee"
+  "built_at_commit": "f8cf71967fee90a735646fa1347ac6e5ef8ac3ad"
 }

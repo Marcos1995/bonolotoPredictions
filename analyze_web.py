@@ -657,34 +657,6 @@ def _coger(uni, listas, tope, usados):
     return elegidos
 
 
-def _minimo_meta(v):
-    uni = _mascaras(v)
-    minimo = {"6": len(uni)}
-    for meta in (5, 4, 3):
-        listas = _listas(uni, meta)
-        falta = set(range(len(uni)))
-        usados = set()
-        pasos = 0
-        while falta and pasos < len(uni):
-            mejor = None
-            mejor_n = 0
-            for j, lista in enumerate(listas):
-                if j in usados:
-                    continue
-                n_hit = sum(1 for i in lista if i in falta)
-                if n_hit > mejor_n:
-                    mejor_n = n_hit
-                    mejor = j
-            if not mejor_n:
-                break
-            usados.add(mejor)
-            pasos += 1
-            for i in listas[mejor]:
-                falta.discard(i)
-        minimo[str(meta)] = pasos if not falta else None
-    return minimo
-
-
 def _rueda(v, tope):
     uni = _mascaras(v)
     por_meta = {meta: _listas(uni, meta) for meta in (5, 4, 3)}
@@ -716,61 +688,73 @@ def _aplicar(ranked, masks):
 
 
 def calientes_ventanas(draws, comps, premios):
-    """Rueda de como mucho 20 apuestas sobre los 9, 10 o 12 más calientes."""
+    """6 calientes: 1 apuesta. 9 y 12: hasta 20 apuestas, la cobertura más alta bajo 10 €."""
     last = draws[-1][0]
     idx = next(i for i, (d, _n) in enumerate(draws) if d >= last - dt.timedelta(days=364))
     start = max(idx, 1)
     n = len(draws) - start
-    tope = 20
     pools = []
-    for k in (9, 10, 12):
+    for k in (6, 9, 12):
+        tope = 1 if k == 6 else 20
         masks, cobertura, total = _rueda(k, tope)
-        minimo = _minimo_meta(k)
         apuestas = len(masks)
         filas = []
         for window in range(50, 501, 50):
             cobrado = 0.0
-            cinco = cinco_c = seises = dentro = 0
+            suma = {"3": 0, "4": 0, "5": 0, "5c": 0, "6": 0}
+            dias = []
             for i in range(start, len(draws)):
                 actual = draws[i][1]
                 comp = comps.get(draws[i][0])
                 ranked = _topk(_scores(draws[:i][-window:]), k=k, reverse=True)
-                if set(actual) <= set(ranked):
-                    dentro += 1
                 tickets = _aplicar(ranked, masks)
                 _t5, _t6, boletos = _boletos(tickets, actual, comp)
-                cinco += boletos["5"]
-                cinco_c += boletos["5c"]
-                seises += boletos["6"]
+                for key in suma:
+                    suma[key] += boletos[key]
                 pago = _euros(premios.get(draws[i][0].isoformat()), boletos)
-                if pago is not None:
-                    cobrado += pago
+                if pago is None:
+                    continue
+                cobrado += pago
+                if boletos["4"] or boletos["5"] or boletos["5c"] or boletos["6"]:
+                    dias.append({
+                        "fecha": draws[i][0].isoformat(),
+                        "salio": list(actual),
+                        "complementario": comp,
+                        "boletos": boletos,
+                        "euros": round(pago, 2),
+                    })
             filas.append({
+                "ventana": window,
                 "saldo": round(cobrado - n * apuestas * 0.50, 2),
-                "cincos": cinco,
-                "cinco_c": cinco_c,
-                "seises": seises,
-                "dentro": dentro,
+                "boletos": suma,
+                "premios": dias,
             })
         mejor = max(filas, key=lambda f: f["saldo"])
         peor = min(filas, key=lambda f: f["saldo"])
+        exitos = []
+        for f in filas:
+            if f["saldo"] <= 0:
+                continue
+            exitos.append({
+                "ventana": f["ventana"],
+                "saldo": f["saldo"],
+                "boletos": f["boletos"],
+                "premios": f["premios"],
+            })
         pools.append({
             "cuantos": k,
             "combinaciones": total,
             "apuestas": apuestas,
             "coste_dia": round(apuestas * 0.50, 2),
             "cobertura": cobertura,
-            "minimo": minimo,
-            "en_positivo": sum(f["saldo"] > 0 for f in filas),
+            "en_positivo": len(exitos),
             "ventanas": len(filas),
             "mejor": mejor["saldo"],
             "peor": peor["saldo"],
-            "cincos": mejor["cincos"],
-            "cinco_c": mejor["cinco_c"],
-            "seises": mejor["seises"],
-            "dentro": max(f["dentro"] for f in filas),
+            "boletos": mejor["boletos"],
+            "exitos": exitos,
         })
-        print(f"rueda {k} apuestas={apuestas} cobertura={cobertura} minimo={minimo}")
+        print(f"rueda {k} apuestas={apuestas} cobertura={cobertura} exitos={len(exitos)}")
     return {
         "sorteos": n,
         "desde": draws[start][0].isoformat(),
@@ -857,8 +841,8 @@ def build():
     for p in v["pools"]:
         print(
             f"{p['cuantos']} nums {p['apuestas']} apuestas {p['en_positivo']}/{p['ventanas']} "
-            f"mejor={p['mejor']} peor={p['peor']} dentro={p['dentro']} "
-            f"5={p['cincos']} 5c={p['cinco_c']} 6={p['seises']}"
+            f"mejor={p['mejor']} peor={p['peor']} boletos={p['boletos']} "
+            f"ventanas={[e['ventana'] for e in p['exitos']]}"
         )
     p = payload["patrones"]
     print("orden", orden["ya_ordenadas"], "/", orden["filas"])

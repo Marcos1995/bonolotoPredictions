@@ -1,17 +1,17 @@
 # Graph Report - bonolotoPredictions  (2026-10-09)
 
 ## Corpus Check
-- 33 files · ~84,741 words
+- 33 files · ~85,352 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 5 file(s) not represented in the graph (top: .mdc 2, (none) 2, .sqlite 1)
 
 ## Summary
-- 397 nodes · 603 edges · 25 communities (19 shown, 6 thin omitted)
+- 396 nodes · 599 edges · 25 communities (19 shown, 6 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 4 edges (avg confidence: 0.88)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `98d44126`
+- Built from commit: `f8cf7196`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -48,7 +48,7 @@
 5. `MaximumHitsPredictor` - 12 edges
 6. `BonolotoScraper` - 12 edges
 7. `run_series()` - 11 edges
-8. `calientes_ventanas()` - 10 edges
+8. `calientes_ventanas()` - 9 edges
 9. `hunt()` - 9 edges
 10. `OverdueBacktester` - 9 edges
 
@@ -95,7 +95,7 @@ Nodes (14): main(), MultiStrategyPredictor, Combine top 3 hot numbers with top 3
 
 ### Community 6 - "analyze_web.py"
 Cohesion: 0.06
-Nodes (60): _aplicar(), backtest(), _balance(), _boletos(), build(), calientes_ventanas(), cargar_premios(), uno() (+52 more)
+Nodes (59): _aplicar(), backtest(), _balance(), _boletos(), build(), calientes_ventanas(), cargar_premios(), uno() (+51 more)
 
 ### Community 7 - "MaximumHitsPredictor"
 Cohesion: 0.14
@@ -154,7 +154,7 @@ Nodes (3): Check, Do, Review
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `LotteryPatternAnalyzer` connect `LotteryPatternAnalyzer` to `commonFunctions.py`?**
-  _High betweenness centrality (0.128) - this node is a cross-community bridge._
+  _High betweenness centrality (0.129) - this node is a cross-community bridge._
 - **Why does `MultiStrategyPredictor` connect `MultiStrategyPredictor` to `commonFunctions.py`?**
   _High betweenness centrality (0.102) - this node is a cross-community bridge._
 - **Why does `PatternOptimizer` connect `PatternOptimizer` to `commonFunctions.py`?**

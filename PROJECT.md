@@ -19,6 +19,6 @@
 - Ponytail siempre activo (ver AGENTS.md)
 
 ## Estado
-- 2026-10-09: rueda de como mucho 20 apuestas (10 €) sobre 9, 10 o 12 calientes. El 100 % de los 5 cabe en 9 y 15 apuestas; en 12 pide 46. El año no gana en 7 de las 10 ventanas.
+- 2026-10-09: grupos de 6, 9 y 12 calientes. El 6 es 1 apuesta. El 9 y el 12, hasta 20 (10 €). La página lista las ventanas en positivo y sus premios de 4, 5, 5+C y 6.
 
 
