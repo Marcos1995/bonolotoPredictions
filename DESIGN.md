@@ -4,4 +4,4 @@ Expresivo y verde. Titular display grande (Public Sans, muy negro). La cifra pri
 
 Stitch project: 7158455239221371273
 Design system: 14794118220825759132
-Screen: 4cf602292b8849bdb20e7a69b91cb105
+Screen: fb4b2175a8504cdfbbd7ec8289dda01a

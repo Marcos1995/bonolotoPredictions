@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bonoloto · Análisis Estadístico de 9.409 Sorteos</title>
+  <title>Bonoloto · Decenas, pares y el orden del bombo</title>
   <!-- Google Fonts: Public Sans (300, 400, 600, 700, 800, 900) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -138,10 +138,15 @@
     html[data-theme="dark"] .bg-\[\#18E667\] .text-\[\#032612\] { color: #032612 !important; }
     html[data-theme="dark"] #kpi-hero { background-color: #18E667 !important; color: #032612 !important; }
     html[data-theme="dark"] #kpi-hero .text-\[\#032612\],
-    html[data-theme="dark"] #kpi-hero .text-\[\#032612\]\/75 { color: #032612 !important; }
+    html[data-theme="dark"] #kpi-hero .text-\[\#032612\]\/75,
+    html[data-theme="dark"] #kpi-hero .text-\[\#032612\]\/80 { color: #032612 !important; }
     html[data-theme="dark"] .on-ink { color: #18E667 !important; }
     html[data-theme="dark"] .bg-\[\#E2F7E7\] { background-color: #18E667 !important; color: #032612 !important; }
     html[data-theme="dark"] .bar-azar { background: #d5efe0 !important; }
+    .orden-band { background: #032612; color: #e7f6ec; }
+    .orden-band a { color: #18E667; }
+    html[data-theme="dark"] .orden-band { background: #04170c; color: #e7f6ec; }
+    .dec-thumb { background: #18E667; color: #032612; }
     @media (prefers-reduced-motion: reduce) {
       .section-reveal, .section-reveal h1, .theme-thumb { animation: none; transition: none; }
       .animate-pulse { animation: none !important; }
@@ -178,7 +183,7 @@
         <!-- Kicker -->
         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E8F8EC] border border-[#C6E8CD] text-xs font-semibold text-[#0B4021] font-mono">
           <svg class="w-3.5 h-3.5 text-[#18E667] fill-current" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>
-          Bonoloto · 9.410 sorteos · 28 feb 1988 – 7 oct 2026
+          <span id="kicker-rango">Bonoloto · 9.410 sorteos · 28 feb 1988 – 7 oct 2026</span>
         </span>
 
         <!-- Chip de fuente -->
@@ -202,12 +207,12 @@
       </div>
 
       <!-- H1 display ultra negrita -->
-      <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-[#032612] tracking-tight leading-[1.08] mb-4 max-w-3xl">
-        Lo que más sale es 3 impares y 3 pares
+      <h1 id="hallazgo" class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-[#032612] tracking-tight leading-[1.08] mb-4 max-w-3xl">
+        Los 30 salen un poco más. Del 1 al 9, un poco menos.
       </h1>
 
-      <p class="text-base sm:text-lg text-[#2A4734] leading-relaxed max-w-2xl font-normal break-words">
-        Un tercio de los sorteos. Un boleto concreto, caliente o frío, sigue siendo <span class="font-bold text-[#032612] bg-[#E2F7E7] px-1.5 py-0.5 rounded">1 entre 13.983.816</span>. El frío no «se pone al día».
+      <p id="hallazgo-nota" class="text-base sm:text-lg text-[#2A4734] leading-relaxed max-w-2xl font-normal break-words">
+        El 1-9 tiene 9 bolas y el resto 10. El azar ya descuenta eso. Un boleto concreto sigue siendo <span class="font-bold text-[#032612] bg-[#E2F7E7] px-1.5 py-0.5 rounded">1 entre 13.983.816</span>.
       </p>
     </header>
 
@@ -226,20 +231,20 @@
           <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-[#032612]/5 rounded-full pointer-events-none"></div>
           <div>
             <div class="flex items-center justify-between mb-2">
-              <span class="text-xs uppercase font-extrabold tracking-wider text-[#032612]/75 font-mono">Forma más probable</span>
+              <span id="hero-label" class="text-xs uppercase font-extrabold tracking-wider text-[#032612]/75 font-mono">Decena por encima del azar</span>
               <span class="p-1.5 rounded-lg bg-[#032612] text-[#18E667]">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
               </span>
             </div>
             <div class="flex items-baseline gap-1 my-1">
-              <span id="hero-num" class="text-4xl sm:text-5xl font-black tracking-tight text-[#032612]">33,6%</span>
+              <span id="hero-num" class="text-4xl sm:text-5xl font-black tracking-tight text-[#032612]">1,245</span>
             </div>
-            <p class="text-xs font-bold text-[#032612]/80 uppercase tracking-wide">sorteos con 3 y 3</p>
+            <p id="hero-unit" class="text-xs font-bold text-[#032612]/80 uppercase tracking-wide">números de los 30 por sorteo</p>
           </div>
           <div class="mt-4 pt-3 border-t border-[#032612]/15">
             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#032612] text-[#18E667] text-xs font-bold on-ink">
               <span>=</span>
-              <span id="hero-pill">igual que el combinatorio (33,3%)</span>
+              <span id="hero-pill">▲ +0,020 frente al azar (1,225)</span>
             </span>
           </div>
         </article>
@@ -317,7 +322,7 @@
       <!-- Botonera segmentada -->
       <div id="filter-container" class="inline-flex p-1 bg-white rounded-xl border border-[#CBDCCE] shadow-xs w-full sm:w-auto" role="tablist">
         <button type="button" onclick="setPeriod('all')" id="btn-period-all" class="flex-1 sm:flex-initial px-4 py-1.5 rounded-lg text-xs transition-all active-pill">
-          Todo (9.409)
+          Todo
         </button>
         <button type="button" onclick="setPeriod('200')" id="btn-period-200" class="flex-1 sm:flex-initial px-4 py-1.5 rounded-lg text-xs font-medium text-[#486351] hover:text-[#032612] transition-all">
           Últimos 200
@@ -358,9 +363,33 @@
 
         <!-- Caption de una sola línea -->
         <div class="mt-5 pt-3 border-t border-[#EEF2EF] text-xs text-[#526B5C]">
-          Cada barra verde es el histórico; la oscura es C(25, impares)·C(24, pares) / C(49, 6). El control de arriba cambia esta gráfica, no el backtest.
+          Cada barra verde es el histórico; la oscura es C(25, impares)·C(24, pares) / C(49, 6). El control de arriba cambia esta gráfica y las decenas, no el backtest.
         </div>
       </div>
+
+      <section id="decenas" class="bg-[#E8F8EC] p-6 sm:p-8 rounded-[14px] border border-[#C6E8CD]" aria-labelledby="decenas-title">
+        <div class="flex items-end justify-between gap-3 mb-2">
+          <h3 id="decenas-title" class="text-2xl sm:text-4xl font-black text-[#032612] tracking-tight leading-none">Qué decena sale más</h3>
+          <svg class="w-16 h-10 shrink-0 text-[#0A3D22]" viewBox="0 0 64 40" fill="currentColor" aria-hidden="true">
+            <circle cx="8" cy="20" r="5"/><circle cx="22" cy="12" r="4"/><circle cx="22" cy="28" r="4"/><circle cx="36" cy="8" r="3"/><circle cx="36" cy="20" r="3"/><circle cx="36" cy="32" r="3"/><circle cx="50" cy="20" r="6"/>
+          </svg>
+        </div>
+        <p class="text-sm text-[#245233] mb-5 max-w-xl">De la que más se pasa del azar a la que más se queda corta. El 1-9 tiene 9 bolas; las otras decenas, 10.</p>
+        <div id="decena-rows" class="space-y-3"></div>
+        <p id="decena-cap" class="mt-4 text-xs text-[#526B5C]">Bolas de esa decena por sorteo, frente a 6 × bolas / 49.</p>
+        <h4 class="mt-8 text-lg font-black text-[#032612]">Terminaciones, del 0 al 9</h4>
+        <p class="text-xs text-[#526B5C] mb-3">El 0 solo está en 10, 20, 30 y 40. El resto de cifras tiene 5 bolas.</p>
+        <div id="terminacion-rows" class="grid grid-cols-2 sm:grid-cols-5 gap-2"></div>
+      </section>
+
+      <section class="orden-band p-6 sm:p-8 rounded-[14px]" aria-labelledby="orden-title">
+        <p class="text-xs uppercase tracking-widest font-mono text-[#18E667] mb-2">Orden publicado ≠ orden del bombo</p>
+        <h3 id="orden-title" class="text-3xl sm:text-5xl font-black tracking-tight leading-[1.05] mb-4">El bombo no sale ordenado</h3>
+        <p id="orden-nota" class="text-base sm:text-lg leading-relaxed max-w-2xl">
+          Las filas públicas vienen de menor a mayor. En el bombo puede salir 45, luego 8, luego 17. Ese orden de extracción no está en los datos, así que no se mira la posición. Las <a href="https://www.boe.es/buscar/doc.php?id=BOE-A-2000-18839" class="underline">normas</a> de <a href="https://www.loteriasyapuestas.es/es/bonoloto" class="underline">Bonoloto</a> publican la combinación, no el orden de salida.
+          <span id="orden-cuenta"></span>
+        </p>
+      </section>
 
       <div id="comparacion" class="bg-white p-6 rounded-[14px] border border-[#E1E8E2] shadow-xs">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-2">
@@ -686,7 +715,7 @@
             <div class="bg-[#032612] h-2 rounded-full" style="width: 94%;"></div>
           </div>
           <p id="bombo-nota" class="text-xs text-[#627D6B] leading-relaxed">
-            El sorteo usa un bombo físico, según las <a href="https://www.boe.es/buscar/doc.php?id=BOE-A-2000-18839" class="underline">normas</a>: 49 bolas del mismo material y peso, y el reintegro en otro de 10. Los números salen parejos (p=0,94): los 40 no salen más que los 20 ni que los 30. Hay 10 bolas en cada decena, así que en el 77% de los sorteos aparece al menos un número de los 40, y lo mismo con las demás decenas.
+            El sorteo usa un bombo físico, según las <a href="https://www.boe.es/buscar/doc.php?id=BOE-A-2000-18839" class="underline">normas</a>: 49 bolas del mismo material y peso, y el reintegro en otro de 10. La combinación que publican ya va de menor a mayor. El orden en que salen las bolas no está en la hoja.
           </p>
         </div>
 
@@ -716,7 +745,7 @@
           <span class="font-mono text-[11px] text-[#698271]">Walk-forward · hipergeométrica 6/49</span>
       </div>
       <p class="leading-relaxed">
-        El análisis no incluye el número complementario ni el desglose de premios en euros. Las simulaciones de las seis reglas miden exclusivamente aciertos brutos sobre los 6 números principales de la combinación ganadora.
+        El análisis no incluye el orden de extracción del bombo, el número complementario ni el desglose de premios en euros. Las seis reglas miden aciertos sobre el conjunto de 6 números, no sobre la posición de salida.
       </p>
       <div class="p-3 rounded-lg bg-[#EAEFEA] border border-[#D5E0D7] text-[#294533] font-medium">
         <strong>Aviso legal:</strong> Este documento es un estudio meramente analítico y matemático. No es un consejo de apuesta ni una recomendación de juego. El juego puede generar adicción. Juega con responsabilidad.
@@ -729,6 +758,45 @@
     const pct = (x) => (x * 100).toLocaleString("es-ES", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + "%";
     const num = (x, d = 3) => x.toLocaleString("es-ES", { minimumFractionDigits: d, maximumFractionDigits: d });
     let DATA = null;
+
+    const fmt3 = (x) => x.toLocaleString("es-ES", { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+
+    function renderDecades(pack) {
+      const rows = pack.decenas.slice().sort((a, b) => (b.por_sorteo - b.azar) - (a.por_sorteo - a.azar));
+      document.getElementById("decena-rows").innerHTML = rows.map((r) => {
+        const d = r.por_sorteo - r.azar;
+        const arrow = d >= 0 ? "▲" : "▼";
+        const sign = d > 0 ? "+" : "−";
+        const thumb = r.decena === "1-9" ? "1" : r.decena.slice(0, 2);
+        return `<article class="grid grid-cols-[auto_minmax(0,1fr)_auto] gap-3 items-center bg-white rounded-[14px] p-3 border border-[#C6E8CD]">
+          <div class="dec-thumb w-14 h-14 rounded-full font-black text-lg flex items-center justify-center shrink-0" aria-hidden="true">${thumb}</div>
+          <div class="min-w-0">
+            <h4 class="font-black text-[#032612] text-lg leading-tight">${r.decena}</h4>
+            <p class="text-sm text-[#245233]">${r.bolas === 9 ? "9 bolas, no 10" : r.bolas + " bolas"} · ${fmt3(r.por_sorteo)} por sorteo · azar ${fmt3(r.azar)}</p>
+          </div>
+          <b class="font-mono text-sm text-[#032612] whitespace-nowrap">${arrow} ${sign}${fmt3(Math.abs(d))}</b>
+        </article>`;
+      }).join("");
+      document.getElementById("decena-cap").textContent =
+        "Bolas de esa decena por sorteo, en " + pack.sorteos.toLocaleString("es-ES") + " sorteos. El azar es 6 × bolas de la decena / 49.";
+      const ends = pack.terminaciones.slice().sort((a, b) => b.z - a.z);
+      document.getElementById("terminacion-rows").innerHTML = ends.map((r) => {
+        const d = r.por_sorteo - r.azar;
+        const arrow = d >= 0 ? "▲" : "▼";
+        const sign = d > 0 ? "+" : "−";
+        return `<div class="bg-white rounded-xl p-2 border border-[#C6E8CD]">
+          <div class="font-black text-xl text-[#032612]">${r.digito}</div>
+          <p class="text-[11px] leading-snug text-[#526B5C]">${r.bolas} bolas · ${arrow} ${sign}${fmt3(Math.abs(d))} frente a ${fmt3(r.azar)}</p>
+        </div>`;
+      }).join("");
+      const top = rows[0];
+      const gap = top.por_sorteo - top.azar;
+      const arrow = gap >= 0 ? "▲" : "▼";
+      const sign = gap > 0 ? "+" : "−";
+      document.getElementById("hero-num").textContent = fmt3(top.por_sorteo);
+      document.getElementById("hero-unit").textContent = "números de los " + top.decena + " por sorteo";
+      document.getElementById("hero-pill").textContent = arrow + " " + sign + fmt3(Math.abs(gap)) + " frente al azar (" + fmt3(top.azar) + ")";
+    }
 
     function renderOdds(pack) {
       const rows = pack.pares_impares;
@@ -778,7 +846,10 @@
       on.classList.add("active-pill");
       on.classList.remove("text-[#486351]", "font-medium");
       on.setAttribute("aria-selected", "true");
-      if (DATA) renderOdds(DATA.ventanas[map[period]]);
+      if (DATA) {
+        renderOdds(DATA.ventanas[map[period]]);
+        renderDecades(DATA.ventanas[map[period]]);
+      }
     }
 
     function boot(data) {
@@ -797,7 +868,25 @@
       document.getElementById("forma-title").textContent = "La forma decía 3 y 3. Salió " + ultimo.impares + (ultimo.impares === 1 ? " impar." : " impares.");
       document.getElementById("forma-nota").textContent =
         "Esa forma acierta el " + pct(data.formas.acierto_3_y_3) + " de los sorteos siguientes, igual que el combinatorio. El " + ultimo.fecha + " salió " + ultimo.numeros.join(", ") + ". Los calientes de entonces (" + cal.numeros.join(", ") + ") acertaron " + cal.aciertos + ". Los fríos (" + fri.numeros.join(", ") + ") acertaron " + fri.aciertos + ".";
-      document.getElementById("hero-num").textContent = pct(data.forma_modal.obs);
+      const meses = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+      const fmtFecha = (iso) => {
+        const [y, m, d] = iso.split("-");
+        return Number(d) + " " + meses[Number(m) - 1] + " " + y;
+      };
+      document.getElementById("kicker-rango").textContent =
+        "Bonoloto · " + data.sorteos.toLocaleString("es-ES") + " sorteos · " + fmtFecha(data.desde) + " – " + fmtFecha(data.hasta);
+      document.getElementById("orden-cuenta").textContent =
+        " En esta hoja, " + data.orden.ya_ordenadas.toLocaleString("es-ES") + " de " + data.orden.filas.toLocaleString("es-ES") + " sorteos ya vienen ordenados.";
+      const topD = data.patrones.decenas.slice().sort((a, b) => b.z - a.z)[0];
+      const lowD = data.patrones.decenas.slice().sort((a, b) => a.z - b.z)[0];
+      const mas = (id) => id === "1-9" ? "Del 1 al 9 sale un poco más." : "Los " + id.slice(0, 2) + " salen un poco más.";
+      const menos = (id) => id === "1-9" ? "Del 1 al 9, un poco menos." : "Los " + id.slice(0, 2) + ", un poco menos.";
+      document.getElementById("hallazgo").textContent = mas(topD.decena) + " " + menos(lowD.decena);
+      document.getElementById("hallazgo-nota").innerHTML =
+        "La decena " + lowD.decena + " tiene " + lowD.bolas + " bolas" +
+        (lowD.bolas < 10 ? "; las demás, 10" : "") +
+        ". El azar ya descuenta eso. Un boleto concreto sigue siendo <span class=\"font-bold text-[#032612] bg-[#E2F7E7] px-1.5 py-0.5 rounded\">1 entre " +
+        data.universo.toLocaleString("es-ES") + "</span>.";
       document.getElementById("hueco-nota").textContent =
         "La suma media es " + data.sumas.media.toLocaleString("es-ES") + " y el centro del azar es 150. El hueco medio entre números ya ordenados es " + data.formas.hueco_medio.toLocaleString("es-ES") + ", y la combinatoria dice " + data.formas.hueco_azar.toLocaleString("es-ES") + ". La amplitud media es " + data.formas.amplitud_media.toLocaleString("es-ES") + " frente a " + data.formas.amplitud_azar.toLocaleString("es-ES") + ".";
       const freq = data.frecuencia.slice().sort((a, b) => b.count - a.count);
@@ -805,8 +894,7 @@
       const line = (rows) => rows.map((r) => r.n + " (" + r.count.toLocaleString("es-ES") + ")").join(", ");
       document.getElementById("extremos").textContent =
         "Los que más salen: " + line(freq.slice(0, 6)) + ". Los que menos: " + line(freq.slice(-6).reverse()) +
-        ". Lo esperado, si fueran iguales, es " + exp.toLocaleString("es-ES") + " veces cada uno. " +
-        "Los 40 salen " + data.patrones.decenas[4].por_sorteo.toLocaleString("es-ES") + " veces por sorteo; el azar dice " + data.patrones.decenas[4].azar.toLocaleString("es-ES") + ". " +
+        ". Lo esperado, si fueran iguales, es " + Math.round(exp).toLocaleString("es-ES") + " veces cada uno. " +
         "Dos números pegados salen en el " + pct(data.patrones.seguidos) + " de los sorteos. A distancia 1 o 2, en el " + pct(data.patrones.a_lo_sumo_2) + " (el azar, " + pct(data.patrones.azar_a_lo_sumo_2) + "). " +
         "Misma terminación, en el " + pct(data.patrones.misma_terminacion) + " (el azar, " + pct(data.patrones.azar_misma_terminacion) + ").";
       const reins = data.reintegro.filas;
@@ -816,6 +904,7 @@
       document.getElementById("rein-copy").textContent =
         "El reintegro es otra urna, del 0 al 9. La más baja es el " + lo.n + " (" + pct(lo.count / total) + ") y la más alta el " + hi.n + " (" + pct(hi.count / total) + "). Con diez cifras, esa diferencia cabe en el azar. No entra en el intento.";
       renderOdds(data.ventanas.todo);
+      renderDecades(data.ventanas.todo);
     }
 
     document.getElementById("theme-toggle").addEventListener("click", () => {

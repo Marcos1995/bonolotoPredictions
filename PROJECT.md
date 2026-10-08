@@ -19,6 +19,6 @@
 - Ponytail siempre activo (ver AGENTS.md)
 
 ## Estado
-- 2026-10-07: la página compara formas, decenas, terminaciones y distancias con la combinatoria. El sorteo es un bombo físico; las frecuencias no se separan de bolas iguales.
+- 2026-10-08: la página rankea decenas y terminaciones frente a la combinatoria (el 1-9 tiene 9 bolas; el 0, 4). Las 9.410 filas de Lotoideas vienen de menor a mayor; el orden del bombo no está y no se usa.
 
 

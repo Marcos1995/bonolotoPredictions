@@ -37,8 +37,13 @@ def load():
     spec = raffles.GAMES["Bonoloto"]
     rows = raffles.load_rows(spec)
     draws, reins = [], []
+    ya_ordenadas = 0
     for d, main, extra in rows:
-        draws.append((d, tuple(sorted(main))))
+        raw = tuple(main)
+        ordered = tuple(sorted(main))
+        if raw == ordered:
+            ya_ordenadas += 1
+        draws.append((d, ordered))
         r = None
         if len(extra) >= 2:
             try:
@@ -47,7 +52,12 @@ def load():
                 r = None
         if r is not None and 0 <= r <= 9:
             reins.append((d, r))
-    return draws, reins
+    orden = {
+        "filas": len(draws),
+        "ya_ordenadas": ya_ordenadas,
+        "nota": "La hoja pública trae las seis bolas de menor a mayor. El bombo no sale así: puede salir 45, luego 8, luego 17. Ese orden de extracción no está en los datos.",
+    }
+    return draws, reins, orden
 
 
 def freq_table(draws):
@@ -246,6 +256,70 @@ def picks_now(draws):
     }
 
 
+DECADE_GROUPS = (
+    ("1-9", list(range(1, 10))),
+    ("10-19", list(range(10, 20))),
+    ("20-29", list(range(20, 30))),
+    ("30-39", list(range(30, 40))),
+    ("40-49", list(range(40, 50))),
+)
+
+
+def _count_z(mean, exp, var, n):
+    se = math.sqrt(var / n) if n and var > 0 else 0
+    return (mean - exp) / se if se else 0.0
+
+
+def decade_rows(draws):
+    """Cuántas bolas de cada decena por sorteo, frente a la hipergeométrica."""
+    n = len(draws)
+    rows = []
+    for name, balls in DECADE_GROUPS:
+        bset = set(balls)
+        k = len(balls)
+        counts = [len(bset & set(nums)) for _d, nums in draws]
+        mean = sum(counts) / n
+        exp = W * k / N
+        var = W * (k / N) * ((N - k) / N) * ((N - W) / (N - 1))
+        p0 = comb(N - k, W) / SPACE
+        p1 = comb(k, 1) * comb(N - k, W - 1) / SPACE
+        rows.append({
+            "decena": name,
+            "bolas": k,
+            "por_sorteo": round(mean, 3),
+            "azar": round(exp, 3),
+            "z": round(_count_z(mean, exp, var, n), 2),
+            "con_uno": round(sum(c >= 1 for c in counts) / n, 4),
+            "azar_uno": round(1 - p0, 4),
+            "con_dos": round(sum(c >= 2 for c in counts) / n, 4),
+            "azar_dos": round(1 - p0 - p1, 4),
+        })
+    return rows
+
+
+def ending_rows(draws):
+    """Terminación 0-9. El 0 solo tiene 4 bolas (10, 20, 30, 40); el resto, 5."""
+    n = len(draws)
+    c = Counter()
+    for _d, nums in draws:
+        c.update(x % 10 for x in nums)
+    rows = []
+    for digit in range(10):
+        k = 4 if digit == 0 else 5
+        exp = W * k / N
+        var = W * (k / N) * ((N - k) / N) * ((N - W) / (N - 1))
+        mean = c[digit] / n
+        rows.append({
+            "digito": digit,
+            "bolas": k,
+            "veces": c[digit],
+            "por_sorteo": round(mean, 3),
+            "azar": round(exp, 3),
+            "z": round(_count_z(mean, exp, var, n), 2),
+        })
+    return rows
+
+
 def slice_pack(draws):
     freq, exp = freq_table(draws)
     oe = odd_even(draws)
@@ -254,6 +328,8 @@ def slice_pack(draws):
         "sorteos": len(draws),
         "frecuencia": freq,
         "pares_impares": oe,
+        "decenas": decade_rows(draws),
+        "terminaciones": ending_rows(draws),
         "seguidos": cons["con_al_menos_uno"],
         "esperado_por_numero": round(exp, 1),
     }
@@ -335,30 +411,7 @@ def _score_past(draws):
 def patrones(draws):
     """Decenas, terminaciones y distancias, frente a la combinatoria."""
     n = len(draws)
-    groups = [
-        ("1-9", list(range(1, 10))),
-        ("10-19", list(range(10, 20))),
-        ("20-29", list(range(20, 30))),
-        ("30-39", list(range(30, 40))),
-        ("40-49", list(range(40, 50))),
-    ]
-    decenas = []
-    for name, balls in groups:
-        bset = set(balls)
-        k = len(balls)
-        counts = [len(bset & set(nums)) for _d, nums in draws]
-        p0 = comb(N - k, W) / SPACE
-        p1 = comb(k, 1) * comb(N - k, W - 1) / SPACE
-        decenas.append({
-            "decena": name,
-            "bolas": k,
-            "por_sorteo": round(sum(counts) / n, 3),
-            "azar": round(W * k / N, 3),
-            "con_uno": round(sum(c >= 1 for c in counts) / n, 4),
-            "azar_uno": round(1 - p0, 4),
-            "con_dos": round(sum(c >= 2 for c in counts) / n, 4),
-            "azar_dos": round(1 - p0 - p1, 4),
-        })
+    decenas = decade_rows(draws)
 
     def min_gap(nums):
         s = sorted(nums)
@@ -372,6 +425,7 @@ def patrones(draws):
     ) / n
     return {
         "decenas": decenas,
+        "terminaciones": ending_rows(draws),
         "seguidos": round(sum(g == 1 for g in mg) / n, 4),
         "a_lo_sumo_2": round(sum(g <= 2 for g in mg) / n, 4),
         "azar_a_lo_sumo_2": round(p_cerca, 4),
@@ -382,7 +436,7 @@ def patrones(draws):
 
 
 def build():
-    draws, reins = load()
+    draws, reins, orden = load()
     freq, exp = freq_table(draws)
     counts = [row["count"] for row in freq]
     chi = chi2_uniform(counts, exp)
@@ -418,6 +472,7 @@ def build():
         "seguidos": cons,
         "sumas": sums,
         "formas": formas,
+        "orden": orden,
         "patrones": patrones(draws),
         "reintegro": rein,
         "estrategias": strategies,
@@ -450,7 +505,8 @@ def build():
         f"ultimo={formas['ultimo']} hueco={formas['hueco_medio']}/{formas['hueco_azar']}"
     )
     p = payload["patrones"]
-    print("decenas", [(d["decena"], d["por_sorteo"], d["azar"], d["con_uno"]) for d in p["decenas"]])
+    print("orden", orden["ya_ordenadas"], "/", orden["filas"])
+    print("decenas", [(d["decena"], d["bolas"], d["por_sorteo"], d["azar"], d["z"]) for d in p["decenas"]])
     print(
         f"seguidos={p['seguidos']} cerca2={p['a_lo_sumo_2']}/{p['azar_a_lo_sumo_2']} "
         f"terminacion={p['misma_terminacion']}/{p['azar_misma_terminacion']}"

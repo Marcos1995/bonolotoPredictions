@@ -6,9 +6,9 @@
     "semantic_hash": ""
   },
   "analyze_web.py": {
-    "mtime": 1791409131.4873614,
-    "seen": 1791409244.2640824,
-    "ast_hash": "2c513bbcd96419313319d181cdc3c2eb",
+    "mtime": 1791479414.8410969,
+    "seen": 1791479672.2354038,
+    "ast_hash": "9ba586cb779079c11959575c2db05f78",
     "semantic_hash": ""
   },
   "bestPrediction.py": {
@@ -24,9 +24,9 @@
     "semantic_hash": ""
   },
   "data/bonoloto.json": {
-    "mtime": 1791409145.8746598,
-    "seen": 1791409244.2640824,
-    "ast_hash": "d3a273e4cc45e53656e6a1c391d0df69",
+    "mtime": 1791479522.4364867,
+    "seen": 1791479672.2354038,
+    "ast_hash": "3f746c1fc76f30f491d81a2c88dc8e3b",
     "semantic_hash": ""
   },
   "edgeHunt.py": {
@@ -174,15 +174,15 @@
     "semantic_hash": ""
   },
   "DESIGN.md": {
-    "mtime": 1791406356.1908045,
-    "seen": 1791406906.9790945,
-    "ast_hash": "98ab9e46a3e2cb85eeeb1d1fd152e8ad",
+    "mtime": 1791479565.2953553,
+    "seen": 1791479672.2354038,
+    "ast_hash": "45629bf95253f64b357f4385633afd4d",
     "semantic_hash": ""
   },
   "PROJECT.md": {
-    "mtime": 1791409191.7392704,
-    "seen": 1791409244.2640824,
-    "ast_hash": "8606db6e4992ba658faecb03b284e332",
+    "mtime": 1791479508.7741966,
+    "seen": 1791479672.2354038,
+    "ast_hash": "8e01dc71f6082dd1e15fcd1dc9aa3cb5",
     "semantic_hash": ""
   },
   "README.md": {
@@ -198,15 +198,15 @@
     "semantic_hash": ""
   },
   "docs/DECISIONES.md": {
-    "mtime": 1791406117.2977471,
-    "seen": 1791406906.9790945,
-    "ast_hash": "d7701fa7dd425fa36603b87f2992d11b",
+    "mtime": 1791479510.4114804,
+    "seen": 1791479672.2354038,
+    "ast_hash": "d40b5efe44eb146bca96188baa0cf3f5",
     "semantic_hash": ""
   },
   "index.html": {
-    "mtime": 1791409201.4968336,
-    "seen": 1791409244.2655153,
-    "ast_hash": "7cd20d8612fc45eb660aeb85cb006b91",
+    "mtime": 1791479547.677934,
+    "seen": 1791479672.2354038,
+    "ast_hash": "255f38ea19d77b31d3dc2d00945df719",
     "semantic_hash": ""
   },
   "pattern_analysis_results.txt": {
