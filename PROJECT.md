@@ -19,6 +19,6 @@
 - Ponytail siempre activo (ver AGENTS.md)
 
 ## Estado
-- 2026-10-08: los calientes se miran a 50, 100, 200 y 500 sorteos. En 7 días se ocultan los 0 aciertos. En 90 días solo se listan los premios (3 o más).
+- 2026-10-08: un día se lista si los calientes de 50, 100, 200 o 500 acertaron al menos un número. No se filtra por premio.
 
 

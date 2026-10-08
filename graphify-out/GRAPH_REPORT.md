@@ -1,7 +1,7 @@
 # Graph Report - bonolotoPredictions  (2026-10-08)
 
 ## Corpus Check
-- 32 files · ~75,230 words
+- 32 files · ~76,893 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 5 file(s) not represented in the graph (top: .mdc 2, (none) 2, .sqlite 1)
 
@@ -11,7 +11,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `29464e62`
+- Built from commit: `282e7fa9`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 

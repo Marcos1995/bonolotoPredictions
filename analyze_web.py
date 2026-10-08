@@ -505,27 +505,38 @@ def _contra(draws, i, window):
 
 
 def calientes_ventanas(draws):
-    """6 más vistos en 50, 100, 200 y 500 sorteos previos. Premio = 3 o más."""
+    """Un día entra si alguna ventana (50, 100, 200, 500) acertó al menos un número."""
     last = draws[-1][0]
     d7 = last - dt.timedelta(days=6)
     d90 = last - dt.timedelta(days=89)
     idx = next(i for i, (d, _n) in enumerate(draws) if d >= d90)
-    out = []
-    for window in (50, 100, 200, 500):
-        siete, premios = [], []
-        for i in range(max(idx, 1), len(draws)):
+    siete, noventa = [], []
+    for i in range(max(idx, 1), len(draws)):
+        aciertos = []
+        for window in (50, 100, 200, 500):
             row = _contra(draws, i, window)
-            if row["aciertos"] >= 3:
-                premios.append(row)
-            if draws[i][0] >= d7 and row["aciertos"] > 0:
-                siete.append(row)
-        out.append({
-            "ventana": window,
-            "siete": siete,
-            "premios_90": premios,
-            "sorteos_90": len(draws) - max(idx, 1),
-        })
-    return out
+            if row["aciertos"] < 1:
+                continue
+            aciertos.append({
+                "ventana": window,
+                "aciertos": row["aciertos"],
+                "cuales": row["cuales"],
+            })
+        if not aciertos:
+            continue
+        day = {
+            "fecha": draws[i][0].isoformat(),
+            "salio": list(draws[i][1]),
+            "ventanas": aciertos,
+        }
+        noventa.append(day)
+        if draws[i][0] >= d7:
+            siete.append(day)
+    return {
+        "siete": siete,
+        "noventa": noventa,
+        "sorteos_90": len(draws) - max(idx, 1),
+    }
 
 
 def build():
@@ -598,8 +609,8 @@ def build():
         f"mejor={best['nombre']} z={best['z']} forma3={formas['acierto_3_y_3']} "
         f"ultimo={formas['ultimo']} hueco={formas['hueco_medio']}/{formas['hueco_azar']}"
     )
-    for v in payload["calientes_ventanas"]:
-        print(f"w{v['ventana']} siete={len(v['siete'])} premios90={len(v['premios_90'])}/{v['sorteos_90']}")
+    v = payload["calientes_ventanas"]
+    print(f"siete={len(v['siete'])} con_acierto_90={len(v['noventa'])}/{v['sorteos_90']}")
     p = payload["patrones"]
     print("orden", orden["ya_ordenadas"], "/", orden["filas"])
     print("decenas", [(d["decena"], d["bolas"], d["por_sorteo"], d["azar"], d["z"]) for d in p["decenas"]])

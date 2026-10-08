@@ -674,8 +674,8 @@
 
     <section id="siete" class="section-reveal bg-[#F8FAF8] p-6 sm:p-8 rounded-[14px] border border-[#D3E3D6]" aria-labelledby="siete-title">
       <p class="text-xs uppercase tracking-widest font-mono text-[#245A36] mb-2">6 calientes · ventanas de 50, 100, 200 y 500</p>
-      <h3 id="siete-title" class="text-2xl sm:text-4xl font-black text-[#032612] tracking-tight leading-tight mb-3">Dónde hubo acierto, y si hubo premio</h3>
-      <p class="text-sm text-[#245233] max-w-2xl mb-5">Cada boleto son los 6 números más vistos en los sorteos previos de esa ventana. Los días con 0 aciertos no se listan. Un premio son 3 o más: eso se mira en los últimos 90 días.</p>
+      <h3 id="siete-title" class="text-2xl sm:text-4xl font-black text-[#032612] tracking-tight leading-tight mb-3">Días con al menos un acierto</h3>
+      <p class="text-sm text-[#245233] max-w-2xl mb-5">Un día entra si los 6 calientes de 50, de 100, de 200 o de 500 acertaron al menos un número. La ventana que no acertó no se escribe.</p>
       <div id="siete-rows" class="space-y-8"></div>
     </section>
 
@@ -806,31 +806,29 @@
     }
 
     function filaAcierto(r) {
+      const best = Math.max(...r.ventanas.map((v) => v.aciertos));
+      const lines = r.ventanas.map((v) =>
+        `<p class="text-sm text-[#183925]">${v.ventana}: ${v.aciertos}/6 · ${v.cuales.join(", ")}</p>`
+      ).join("");
       return `<article class="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-3 items-start bg-white rounded-[14px] p-3 border border-[#D3E3D6]">
-        <div class="dec-thumb w-16 h-16 rounded-2xl font-black text-2xl flex items-center justify-center" aria-hidden="true">${r.aciertos}<span class="text-xs font-bold">/6</span></div>
+        <div class="dec-thumb w-16 h-16 rounded-2xl font-black text-2xl flex items-center justify-center" aria-hidden="true">${best}<span class="text-xs font-bold">/6</span></div>
         <div class="min-w-0">
           <h4 class="font-black text-[#032612]">${r.fecha}</h4>
           <p class="text-sm text-[#245233]">Salió ${r.salio.join(", ")}</p>
-          <p class="text-sm text-[#183925]">Jugados: ${r.numeros.join(", ")}. Coincidió ${r.cuales.join(", ")}.</p>
+          ${lines}
         </div>
       </article>`;
     }
 
     function renderSiete(data) {
-      const blocks = data.calientes_ventanas || [];
-      document.getElementById("siete-rows").innerHTML = blocks.map((b) => {
-        const siete = b.siete.length
-          ? b.siete.map(filaAcierto).join("")
-          : `<p class="text-sm text-[#52695B]">En 7 días, ningún número coincidió.</p>`;
-        const premios = b.premios_90.length
-          ? `<p class="text-sm font-bold text-[#032612] mt-3">Premios en 90 días: ${b.premios_90.length} de ${b.sorteos_90} sorteos.</p>` + b.premios_90.map(filaAcierto).join("")
-          : `<p class="text-sm font-bold text-[#032612] mt-3">En 90 días (${b.sorteos_90} sorteos), ningún premio de 3 o más.</p>`;
-        return `<div>
-          <h4 class="text-xl font-black text-[#032612] mb-2">Últimos ${b.ventana} sorteos</h4>
-          ${siete}
-          ${premios}
-        </div>`;
-      }).join("");
+      const pack = data.calientes_ventanas || { siete: [], noventa: [], sorteos_90: 0 };
+      const bloque = (titulo, rows, vacio) => `<div>
+        <h4 class="text-xl font-black text-[#032612] mb-2">${titulo}</h4>
+        ${rows.length ? rows.map(filaAcierto).join("") : `<p class="text-sm text-[#52695B]">${vacio}</p>`}
+      </div>`;
+      document.getElementById("siete-rows").innerHTML =
+        bloque("Últimos 7 días", pack.siete, "Ningún acierto.") +
+        bloque("Últimos 90 días · " + pack.noventa.length + " de " + pack.sorteos_90 + " sorteos", pack.noventa.slice().reverse(), "Ningún acierto.");
     }
 
     function renderOdds(pack) {
