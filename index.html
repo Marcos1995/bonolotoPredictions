@@ -673,11 +673,10 @@
     </section>
 
     <section id="siete" class="section-reveal bg-[#F8FAF8] p-6 sm:p-8 rounded-[14px] border border-[#D3E3D6]" aria-labelledby="siete-title">
-      <p class="text-xs uppercase tracking-widest font-mono text-[#245A36] mb-2">Criterio real · 6 números, no 15</p>
-      <h3 id="siete-title" class="text-2xl sm:text-4xl font-black text-[#032612] tracking-tight leading-tight mb-3">Los últimos 7 sorteos, número a número</h3>
-      <p class="text-sm text-[#245233] max-w-2xl mb-5">El 33,6% cuenta sorteos con 3 impares y 3 pares. Aquí se juegan exactamente 6 números: los que más salieron en los 100 sorteos anteriores a ese día. Un acierto es uno de esos 6 que salió. El azar espera 0,73 por sorteo. El 3 y 3 es otro boleto, también de 6. No hay bolsa de 10 o 15.</p>
-      <div id="siete-rows" class="space-y-3"></div>
-      <p id="siete-sum" class="mt-4 text-sm text-[#183925]"></p>
+      <p class="text-xs uppercase tracking-widest font-mono text-[#245A36] mb-2">6 calientes · ventanas de 50, 100, 200 y 500</p>
+      <h3 id="siete-title" class="text-2xl sm:text-4xl font-black text-[#032612] tracking-tight leading-tight mb-3">Dónde hubo acierto, y si hubo premio</h3>
+      <p class="text-sm text-[#245233] max-w-2xl mb-5">Cada boleto son los 6 números más vistos en los sorteos previos de esa ventana. Los días con 0 aciertos no se listan. Un premio son 3 o más: eso se mira en los últimos 90 días.</p>
+      <div id="siete-rows" class="space-y-8"></div>
     </section>
 
     <!-- SECCIÓN 7: OTRO GESTO DISTINTO (SUMAS, CHI-CUADRADO Y URNA DE REINTEGRO) -->
@@ -806,27 +805,32 @@
       document.getElementById("hero-pill").textContent = arrow + " " + sign + fmt3(Math.abs(gap)) + " frente al azar (" + fmt3(top.azar) + ")";
     }
 
+    function filaAcierto(r) {
+      return `<article class="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-3 items-start bg-white rounded-[14px] p-3 border border-[#D3E3D6]">
+        <div class="dec-thumb w-16 h-16 rounded-2xl font-black text-2xl flex items-center justify-center" aria-hidden="true">${r.aciertos}<span class="text-xs font-bold">/6</span></div>
+        <div class="min-w-0">
+          <h4 class="font-black text-[#032612]">${r.fecha}</h4>
+          <p class="text-sm text-[#245233]">Salió ${r.salio.join(", ")}</p>
+          <p class="text-sm text-[#183925]">Jugados: ${r.numeros.join(", ")}. Coincidió ${r.cuales.join(", ")}.</p>
+        </div>
+      </article>`;
+    }
+
     function renderSiete(data) {
-      const rows = data.ultimos || [];
-      document.getElementById("siete-rows").innerHTML = rows.map((r) => {
-        const c = r.reglas.calientes;
-        const e = r.reglas.equilibrado;
-        const cuales = c.cuales.length ? c.cuales.join(", ") : "ninguno";
-        return `<article class="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-3 items-start bg-white rounded-[14px] p-3 border border-[#D3E3D6]">
-          <div class="dec-thumb w-16 h-16 rounded-2xl font-black text-2xl flex items-center justify-center" aria-hidden="true">${c.aciertos}<span class="text-xs font-bold">/6</span></div>
-          <div class="min-w-0">
-            <h4 class="font-black text-[#032612]">${r.fecha}</h4>
-            <p class="text-sm text-[#245233]">Salió ${r.salio.join(", ")} · ${r.impares} impares</p>
-            <p class="text-sm text-[#183925]">Calientes: ${c.numeros.join(", ")}. Coincidió ${cuales}.</p>
-            <p class="text-xs text-[#52695B]">3 y 3: ${e.numeros.join(", ")} · ${e.aciertos}/6</p>
-          </div>
-        </article>`;
+      const blocks = data.calientes_ventanas || [];
+      document.getElementById("siete-rows").innerHTML = blocks.map((b) => {
+        const siete = b.siete.length
+          ? b.siete.map(filaAcierto).join("")
+          : `<p class="text-sm text-[#52695B]">En 7 días, ningún número coincidió.</p>`;
+        const premios = b.premios_90.length
+          ? `<p class="text-sm font-bold text-[#032612] mt-3">Premios en 90 días: ${b.premios_90.length} de ${b.sorteos_90} sorteos.</p>` + b.premios_90.map(filaAcierto).join("")
+          : `<p class="text-sm font-bold text-[#032612] mt-3">En 90 días (${b.sorteos_90} sorteos), ningún premio de 3 o más.</p>`;
+        return `<div>
+          <h4 class="text-xl font-black text-[#032612] mb-2">Últimos ${b.ventana} sorteos</h4>
+          ${siete}
+          ${premios}
+        </div>`;
       }).join("");
-      const sum = rows.reduce((s, r) => s + r.reglas.calientes.aciertos, 0);
-      const esp = (data.aciertos_azar * rows.length).toLocaleString("es-ES", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
-      const max = rows.reduce((m, r) => Math.max(m, r.reglas.calientes.aciertos), 0);
-      document.getElementById("siete-sum").textContent =
-        "En " + rows.length + " sorteos, esos 6 calientes sumaron " + sum + " números. El azar espera unos " + esp + ". El mejor día fue " + max + " de 6. Hacen falta 3 para el premio más bajo.";
     }
 
     function renderOdds(pack) {

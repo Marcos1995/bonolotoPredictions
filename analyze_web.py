@@ -488,25 +488,44 @@ def patrones(draws):
     }
 
 
-def ultimos_siete(draws, n=7):
-    """Boleto de 6 números armado solo con el pasado, contra cada uno de los últimos sorteos."""
-    start = max(WARMUP, len(draws) - n)
-    rows = []
-    for i in range(start, len(draws)):
-        actual = set(draws[i][1])
-        picks = picks_now(draws[:i])
-        reglas = {}
-        for key in ("calientes", "equilibrado"):
-            jugados = picks[key]
-            cuales = sorted(actual & set(jugados))
-            reglas[key] = {"numeros": jugados, "aciertos": len(cuales), "cuales": cuales}
-        rows.append({
-            "fecha": draws[i][0].isoformat(),
-            "salio": list(draws[i][1]),
-            "impares": sum(1 for x in draws[i][1] if x % 2),
-            "reglas": reglas,
+def _hot(past, window):
+    return sorted(_topk(_scores(past[-window:]), reverse=True))
+
+
+def _contra(draws, i, window):
+    jugados = _hot(draws[:i], window)
+    cuales = sorted(set(draws[i][1]) & set(jugados))
+    return {
+        "fecha": draws[i][0].isoformat(),
+        "salio": list(draws[i][1]),
+        "numeros": jugados,
+        "aciertos": len(cuales),
+        "cuales": cuales,
+    }
+
+
+def calientes_ventanas(draws):
+    """6 más vistos en 50, 100, 200 y 500 sorteos previos. Premio = 3 o más."""
+    last = draws[-1][0]
+    d7 = last - dt.timedelta(days=6)
+    d90 = last - dt.timedelta(days=89)
+    idx = next(i for i, (d, _n) in enumerate(draws) if d >= d90)
+    out = []
+    for window in (50, 100, 200, 500):
+        siete, premios = [], []
+        for i in range(max(idx, 1), len(draws)):
+            row = _contra(draws, i, window)
+            if row["aciertos"] >= 3:
+                premios.append(row)
+            if draws[i][0] >= d7 and row["aciertos"] > 0:
+                siete.append(row)
+        out.append({
+            "ventana": window,
+            "siete": siete,
+            "premios_90": premios,
+            "sorteos_90": len(draws) - max(idx, 1),
         })
-    return rows
+    return out
 
 
 def build():
@@ -553,7 +572,7 @@ def build():
         "mejor_z": best["z"],
         "forma_modal": {"impares": modal["impares"], "pares": modal["pares"], "obs": modal["obs"], "azar": modal["azar"]},
         "ventanas": windows,
-        "ultimos": ultimos_siete(draws),
+        "calientes_ventanas": calientes_ventanas(draws),
         "boletos": picks_now(draws),
         "intento": {
             "regla": best["id"],
@@ -579,6 +598,8 @@ def build():
         f"mejor={best['nombre']} z={best['z']} forma3={formas['acierto_3_y_3']} "
         f"ultimo={formas['ultimo']} hueco={formas['hueco_medio']}/{formas['hueco_azar']}"
     )
+    for v in payload["calientes_ventanas"]:
+        print(f"w{v['ventana']} siete={len(v['siete'])} premios90={len(v['premios_90'])}/{v['sorteos_90']}")
     p = payload["patrones"]
     print("orden", orden["ya_ordenadas"], "/", orden["filas"])
     print("decenas", [(d["decena"], d["bolas"], d["por_sorteo"], d["azar"], d["z"]) for d in p["decenas"]])

@@ -4,6 +4,19 @@
   "graph": {},
   "nodes": [
     {
+      "id": "edgehunt_mltier",
+      "label": "MLTier",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "edgeHunt.py",
+      "file_type": "code",
+      "norm_label": "mltier",
+      "source_file": "edgeHunt.py",
+      "source_location": "L446"
+    },
+    {
       "id": "edgehunt_rolling",
       "label": "Rolling",
       "_callable": true,
@@ -147,19 +160,6 @@
       "source_location": "L18"
     },
     {
-      "id": "edgehunt_mltier",
-      "label": "MLTier",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "MLTier",
-      "file_type": "code",
-      "norm_label": "mltier",
-      "source_file": "edgeHunt.py",
-      "source_location": "L446"
-    },
-    {
       "id": "edgehunt_borda",
       "label": "borda()",
       "_callable": true,
@@ -266,6 +266,78 @@
       "norm_label": "main()",
       "source_file": "edgeHunt.py",
       "source_location": "L750"
+    },
+    {
+      "id": "edgehunt_ml_features",
+      "label": "ml_features()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "edgeHunt.py",
+      "file_type": "code",
+      "norm_label": "ml_features()",
+      "source_file": "edgeHunt.py",
+      "source_location": "L428"
+    },
+    {
+      "id": "edgehunt_mltier_fit",
+      "label": "._fit()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "edgeHunt.py",
+      "file_type": "code",
+      "norm_label": "._fit()",
+      "source_file": "edgeHunt.py",
+      "source_location": "L490"
+    },
+    {
+      "id": "edgehunt_mltier_init",
+      "label": ".__init__()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "edgeHunt.py",
+      "file_type": "code",
+      "norm_label": ".__init__()",
+      "source_file": "edgeHunt.py",
+      "source_location": "L450"
+    },
+    {
+      "id": "edgehunt_mltier_observe",
+      "label": ".observe()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "edgeHunt.py",
+      "file_type": "code",
+      "norm_label": ".observe()",
+      "source_file": "edgeHunt.py",
+      "source_location": "L478"
+    },
+    {
+      "id": "edgehunt_mltier_predict",
+      "label": ".predict()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "edgeHunt.py",
+      "file_type": "code",
+      "norm_label": ".predict()",
+      "source_file": "edgeHunt.py",
+      "source_location": "L464"
+    },
+    {
+      "id": "edgehunt_mltier_prep",
+      "label": ".prep()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "edgeHunt.py",
+      "file_type": "code",
+      "norm_label": ".prep()",
+      "source_file": "edgeHunt.py",
+      "source_location": "L460"
     },
     {
       "id": "edgehunt_nudge_into_band",
@@ -554,18 +626,6 @@
       "norm_label": "topuniquenumbers()",
       "source_file": "commonFunctions.py",
       "source_location": "L43"
-    },
-    {
-      "id": "patternoptimizer_main",
-      "label": "main()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "commonFunctions.py",
-      "file_type": "code",
-      "norm_label": "main()",
-      "source_file": "patternOptimizer.py",
-      "source_location": "L496"
     },
     {
       "id": "raffles_csv",
@@ -1144,6 +1204,18 @@
       "source_location": "L650"
     },
     {
+      "id": "patternoptimizer_main",
+      "label": "main()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "PatternOptimizer",
+      "file_type": "code",
+      "norm_label": "main()",
+      "source_file": "patternOptimizer.py",
+      "source_location": "L496"
+    },
+    {
       "id": "patternoptimizer_patternoptimizer_create_cache_table",
       "label": "._create_cache_table()",
       "_callable": true,
@@ -1465,7 +1537,19 @@
       "file_type": "code",
       "norm_label": "build()",
       "source_file": "analyze_web.py",
-      "source_location": "L512"
+      "source_location": "L531"
+    },
+    {
+      "id": "analyze_web_calientes_ventanas",
+      "label": "calientes_ventanas()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "analyze_web.py",
+      "file_type": "code",
+      "norm_label": "calientes_ventanas()",
+      "source_file": "analyze_web.py",
+      "source_location": "L507"
     },
     {
       "id": "analyze_web_chi2_uniform",
@@ -1514,6 +1598,18 @@
       "norm_label": "pairs()",
       "source_file": "analyze_web.py",
       "source_location": "L160"
+    },
+    {
+      "id": "analyze_web_contra",
+      "label": "_contra()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "analyze_web.py",
+      "file_type": "code",
+      "norm_label": "_contra()",
+      "source_file": "analyze_web.py",
+      "source_location": "L495"
     },
     {
       "id": "analyze_web_count_z",
@@ -1574,6 +1670,18 @@
       "norm_label": "freq_table()",
       "source_file": "analyze_web.py",
       "source_location": "L116"
+    },
+    {
+      "id": "analyze_web_hot",
+      "label": "_hot()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "analyze_web.py",
+      "file_type": "code",
+      "norm_label": "_hot()",
+      "source_file": "analyze_web.py",
+      "source_location": "L491"
     },
     {
       "id": "analyze_web_load",
@@ -1681,7 +1789,7 @@
       "file_type": "code",
       "norm_label": "_repeats()",
       "source_file": "analyze_web.py",
-      "source_location": "L591"
+      "source_location": "L612"
     },
     {
       "id": "analyze_web_score_past",
@@ -1766,18 +1874,6 @@
       "norm_label": "_topk()",
       "source_file": "analyze_web.py",
       "source_location": "L195"
-    },
-    {
-      "id": "analyze_web_ultimos_siete",
-      "label": "ultimos_siete()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "analyze_web.py",
-      "file_type": "code",
-      "norm_label": "ultimos_siete()",
-      "source_file": "analyze_web.py",
-      "source_location": "L491"
     },
     {
       "id": "analyze_web_z_mean",
@@ -1996,78 +2092,6 @@
       "source_location": "L126"
     },
     {
-      "id": "edgehunt_ml_features",
-      "label": "ml_features()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "MLTier",
-      "file_type": "code",
-      "norm_label": "ml_features()",
-      "source_file": "edgeHunt.py",
-      "source_location": "L428"
-    },
-    {
-      "id": "edgehunt_mltier_fit",
-      "label": "._fit()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "MLTier",
-      "file_type": "code",
-      "norm_label": "._fit()",
-      "source_file": "edgeHunt.py",
-      "source_location": "L490"
-    },
-    {
-      "id": "edgehunt_mltier_init",
-      "label": ".__init__()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "MLTier",
-      "file_type": "code",
-      "norm_label": ".__init__()",
-      "source_file": "edgeHunt.py",
-      "source_location": "L450"
-    },
-    {
-      "id": "edgehunt_mltier_observe",
-      "label": ".observe()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "MLTier",
-      "file_type": "code",
-      "norm_label": ".observe()",
-      "source_file": "edgeHunt.py",
-      "source_location": "L478"
-    },
-    {
-      "id": "edgehunt_mltier_predict",
-      "label": ".predict()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "MLTier",
-      "file_type": "code",
-      "norm_label": ".predict()",
-      "source_file": "edgeHunt.py",
-      "source_location": "L464"
-    },
-    {
-      "id": "edgehunt_mltier_prep",
-      "label": ".prep()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "MLTier",
-      "file_type": "code",
-      "norm_label": ".prep()",
-      "source_file": "edgeHunt.py",
-      "source_location": "L460"
-    },
-    {
       "id": "edgehunt",
       "label": "edgeHunt.py",
       "_origin": "ast",
@@ -2077,6 +2101,58 @@
       "norm_label": "edgehunt.py",
       "source_file": "edgeHunt.py",
       "source_location": "L1"
+    },
+    {
+      "id": "cursor_skills_jev_skill",
+      "label": "jev/SKILL.md",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "edgeHunt.py",
+      "file_type": "document",
+      "frontmatter": {
+        "name": "jev",
+        "description": "Build features that need programmable common sense (routing, ranking, extraction, scoring, verification) or replace an LLM prompt-and-parse step with a typed decision. Judgments run on local Laya, same primitives as TypeSafe&#x27;s Jev (choice, score, noul). Do not call the TypeSafe API."
+      },
+      "node_kind": "page",
+      "norm_label": "jev/skill.md",
+      "source_file": ".cursor/skills/jev/SKILL.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "cursor_skills_jev_skill_build_judgments_with_laya",
+      "label": "Build judgments with Laya",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "edgeHunt.py",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "build judgments with laya",
+      "source_file": ".cursor/skills/jev/SKILL.md",
+      "source_location": "L10"
+    },
+    {
+      "id": "cursor_skills_jev_skill_call",
+      "label": "Call",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "edgeHunt.py",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "call",
+      "source_file": ".cursor/skills/jev/SKILL.md",
+      "source_location": "L24"
+    },
+    {
+      "id": "cursor_skills_jev_skill_design",
+      "label": "Design",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "edgeHunt.py",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "design",
+      "source_file": ".cursor/skills/jev/SKILL.md",
+      "source_location": "L66"
     },
     {
       "id": "edgehunt_rationale_1",
@@ -2099,6 +2175,28 @@
       "norm_label": "swap members until fn(pick) is in [lo, hi]. ponytail: 30 greedy swaps, not...",
       "source_file": "edgeHunt.py",
       "source_location": "L114"
+    },
+    {
+      "id": "edgehunt_rationale_429",
+      "label": "Per-number feature matrix (n, 12) built only from past draws.",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "edgeHunt.py",
+      "file_type": "rationale",
+      "norm_label": "per-number feature matrix (n, 12) built only from past draws.",
+      "source_file": "edgeHunt.py",
+      "source_location": "L429"
+    },
+    {
+      "id": "edgehunt_rationale_447",
+      "label": "Per-number binary classifiers, walk-forward: predict, then observe, refit\u2026",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "edgeHunt.py",
+      "file_type": "rationale",
+      "norm_label": "per-number binary classifiers, walk-forward: predict, then observe, refit...",
+      "source_file": "edgeHunt.py",
+      "source_location": "L447"
     },
     {
       "id": "edgehunt_rationale_600",
@@ -2266,17 +2364,6 @@
       "source_location": "L1"
     },
     {
-      "id": "patternoptimizer",
-      "label": "patternOptimizer.py",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "commonFunctions.py",
-      "file_type": "code",
-      "norm_label": "patternoptimizer.py",
-      "source_file": "patternOptimizer.py",
-      "source_location": "L1"
-    },
-    {
       "id": "predictionbacktester",
       "label": "predictionBacktester.py",
       "_origin": "ast",
@@ -2373,17 +2460,6 @@
       "file_type": "rationale",
       "norm_label": "overdue number backtester ========================= predicts lottery numbers...",
       "source_file": "overdueBacktester.py",
-      "source_location": "L1"
-    },
-    {
-      "id": "patternoptimizer_rationale_1",
-      "label": "Pattern-Based Strategy Optimizer ================================ Recursively\u2026",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "commonFunctions.py",
-      "file_type": "rationale",
-      "norm_label": "pattern-based strategy optimizer ================================ recursively...",
-      "source_file": "patternOptimizer.py",
       "source_location": "L1"
     },
     {
@@ -3460,6 +3536,17 @@
       "source_location": "L76"
     },
     {
+      "id": "patternoptimizer",
+      "label": "patternOptimizer.py",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "PatternOptimizer",
+      "file_type": "code",
+      "norm_label": "patternoptimizer.py",
+      "source_file": "patternOptimizer.py",
+      "source_location": "L1"
+    },
+    {
       "id": "patternoptimizer_py_dataframe",
       "label": "DataFrame",
       "_origin": "ast",
@@ -3469,6 +3556,17 @@
       "norm_label": "dataframe",
       "source_file": "",
       "source_location": ""
+    },
+    {
+      "id": "patternoptimizer_rationale_1",
+      "label": "Pattern-Based Strategy Optimizer ================================ Recursively\u2026",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "PatternOptimizer",
+      "file_type": "rationale",
+      "norm_label": "pattern-based strategy optimizer ================================ recursively...",
+      "source_file": "patternOptimizer.py",
+      "source_location": "L1"
     },
     {
       "id": "patternoptimizer_rationale_131",
@@ -3834,15 +3932,15 @@
       "source_location": "L465"
     },
     {
-      "id": "analyze_web_rationale_492",
-      "label": "Boleto de 6 n\u00fameros armado solo con el pasado, contra cada uno de los \u00faltimos\u2026",
+      "id": "analyze_web_rationale_508",
+      "label": "6 m\u00e1s vistos en 50, 100, 200 y 500 sorteos previos. Premio = 3 o m\u00e1s.",
       "_origin": "ast",
       "community": 6,
       "community_name": "analyze_web.py",
       "file_type": "rationale",
-      "norm_label": "boleto de 6 numeros armado solo con el pasado, contra cada uno de los ultimos...",
+      "norm_label": "6 mas vistos en 50, 100, 200 y 500 sorteos previos. premio = 3 o mas.",
       "source_file": "analyze_web.py",
-      "source_location": "L492"
+      "source_location": "L508"
     },
     {
       "id": "analyze_web_rationale_67",
@@ -4043,80 +4141,6 @@
       "source_location": "L42"
     },
     {
-      "id": "cursor_skills_jev_skill",
-      "label": "jev/SKILL.md",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "MLTier",
-      "file_type": "document",
-      "frontmatter": {
-        "name": "jev",
-        "description": "Build features that need programmable common sense (routing, ranking, extraction, scoring, verification) or replace an LLM prompt-and-parse step with a typed decision. Judgments run on local Laya, same primitives as TypeSafe&#x27;s Jev (choice, score, noul). Do not call the TypeSafe API."
-      },
-      "node_kind": "page",
-      "norm_label": "jev/skill.md",
-      "source_file": ".cursor/skills/jev/SKILL.md",
-      "source_location": "L1"
-    },
-    {
-      "id": "cursor_skills_jev_skill_build_judgments_with_laya",
-      "label": "Build judgments with Laya",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "MLTier",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "build judgments with laya",
-      "source_file": ".cursor/skills/jev/SKILL.md",
-      "source_location": "L10"
-    },
-    {
-      "id": "cursor_skills_jev_skill_call",
-      "label": "Call",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "MLTier",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "call",
-      "source_file": ".cursor/skills/jev/SKILL.md",
-      "source_location": "L24"
-    },
-    {
-      "id": "cursor_skills_jev_skill_design",
-      "label": "Design",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "MLTier",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "design",
-      "source_file": ".cursor/skills/jev/SKILL.md",
-      "source_location": "L66"
-    },
-    {
-      "id": "edgehunt_rationale_429",
-      "label": "Per-number feature matrix (n, 12) built only from past draws.",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "MLTier",
-      "file_type": "rationale",
-      "norm_label": "per-number feature matrix (n, 12) built only from past draws.",
-      "source_file": "edgeHunt.py",
-      "source_location": "L429"
-    },
-    {
-      "id": "edgehunt_rationale_447",
-      "label": "Per-number binary classifiers, walk-forward: predict, then observe, refit\u2026",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "MLTier",
-      "file_type": "rationale",
-      "norm_label": "per-number binary classifiers, walk-forward: predict, then observe, refit...",
-      "source_file": "edgeHunt.py",
-      "source_location": "L447"
-    },
-    {
       "id": "math",
       "label": "math",
       "_origin": "semantic",
@@ -4221,42 +4245,6 @@
       "external": true,
       "file_type": "concept",
       "norm_label": "datetime",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "hashlib",
-      "label": "hashlib",
-      "_origin": "semantic",
-      "community": 1,
-      "community_name": "commonFunctions.py",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "hashlib",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "itertools",
-      "label": "itertools",
-      "_origin": "semantic",
-      "community": 1,
-      "community_name": "commonFunctions.py",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "itertools",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "json",
-      "label": "json",
-      "_origin": "semantic",
-      "community": 1,
-      "community_name": "commonFunctions.py",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "json",
       "source_file": "",
       "type": "external"
     },
@@ -4429,6 +4417,42 @@
       "type": "external"
     },
     {
+      "id": "hashlib",
+      "label": "hashlib",
+      "_origin": "semantic",
+      "community": 4,
+      "community_name": "PatternOptimizer",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "hashlib",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "itertools",
+      "label": "itertools",
+      "_origin": "semantic",
+      "community": 4,
+      "community_name": "PatternOptimizer",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "itertools",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "json",
+      "label": "json",
+      "_origin": "semantic",
+      "community": 4,
+      "community_name": "PatternOptimizer",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "json",
+      "source_file": "",
+      "type": "external"
+    },
+    {
       "id": "pathlib",
       "label": "pathlib",
       "_origin": "semantic",
@@ -4499,7 +4523,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L513",
+      "source_location": "L532",
       "weight": 1.0
     },
     {
@@ -4511,7 +4535,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L514",
+      "source_location": "L533",
       "weight": 1.0
     },
     {
@@ -4523,7 +4547,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L516",
+      "source_location": "L535",
       "weight": 1.0
     },
     {
@@ -4535,7 +4559,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L517",
+      "source_location": "L536",
       "weight": 1.0
     },
     {
@@ -4547,7 +4571,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L518",
+      "source_location": "L537",
       "weight": 1.0
     },
     {
@@ -4559,7 +4583,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L522",
+      "source_location": "L541",
       "weight": 1.0
     },
     {
@@ -4571,7 +4595,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L526",
+      "source_location": "L545",
       "weight": 1.0
     },
     {
@@ -4583,7 +4607,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L527",
+      "source_location": "L546",
       "weight": 1.0
     },
     {
@@ -4595,7 +4619,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L528",
+      "source_location": "L547",
       "weight": 1.0
     },
     {
@@ -4607,7 +4631,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L529",
+      "source_location": "L548",
       "weight": 1.0
     },
     {
@@ -4619,7 +4643,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L531",
+      "source_location": "L550",
       "weight": 1.0
     },
     {
@@ -4631,19 +4655,19 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L550",
+      "source_location": "L569",
       "weight": 1.0
     },
     {
       "source": "analyze_web_build",
-      "target": "analyze_web_ultimos_siete",
+      "target": "analyze_web_calientes_ventanas",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L556",
+      "source_location": "L575",
       "weight": 1.0
     },
     {
@@ -4655,7 +4679,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L557",
+      "source_location": "L576",
       "weight": 1.0
     },
     {
@@ -4667,7 +4691,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L567",
+      "source_location": "L586",
       "weight": 1.0
     },
     {
@@ -4679,7 +4703,19 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L570",
+      "source_location": "L589",
+      "weight": 1.0
+    },
+    {
+      "source": "analyze_web_calientes_ventanas",
+      "target": "analyze_web_contra",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "analyze_web.py",
+      "source_location": "L517",
       "weight": 1.0
     },
     {
@@ -4692,6 +4728,18 @@
       "context": "call",
       "source_file": "analyze_web.py",
       "source_location": "L165",
+      "weight": 1.0
+    },
+    {
+      "source": "analyze_web_contra",
+      "target": "analyze_web_hot",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "analyze_web.py",
+      "source_location": "L496",
       "weight": 1.0
     },
     {
@@ -4740,6 +4788,30 @@
       "context": "call",
       "source_file": "analyze_web.py",
       "source_location": "L73",
+      "weight": 1.0
+    },
+    {
+      "source": "analyze_web_hot",
+      "target": "analyze_web_scores",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "analyze_web.py",
+      "source_location": "L492",
+      "weight": 1.0
+    },
+    {
+      "source": "analyze_web_hot",
+      "target": "analyze_web_topk",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "analyze_web.py",
+      "source_location": "L492",
       "weight": 1.0
     },
     {
@@ -4980,18 +5052,6 @@
       "context": "call",
       "source_file": "analyze_web.py",
       "source_location": "L385",
-      "weight": 1.0
-    },
-    {
-      "source": "analyze_web_ultimos_siete",
-      "target": "analyze_web_picks_now",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "analyze_web.py",
-      "source_location": "L497",
       "weight": 1.0
     },
     {
@@ -7767,7 +7827,7 @@
     },
     {
       "source": "analyze_web",
-      "target": "analyze_web_ultimos_siete",
+      "target": "analyze_web_hot",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -7778,13 +7838,35 @@
     },
     {
       "source": "analyze_web",
+      "target": "analyze_web_contra",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "analyze_web.py",
+      "source_location": "L495",
+      "weight": 1.0
+    },
+    {
+      "source": "analyze_web",
+      "target": "analyze_web_calientes_ventanas",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "analyze_web.py",
+      "source_location": "L507",
+      "weight": 1.0
+    },
+    {
+      "source": "analyze_web",
       "target": "analyze_web_build",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "analyze_web.py",
-      "source_location": "L512",
+      "source_location": "L531",
       "weight": 1.0
     },
     {
@@ -7795,7 +7877,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "analyze_web.py",
-      "source_location": "L591",
+      "source_location": "L612",
       "weight": 1.0
     },
     {
@@ -9845,14 +9927,14 @@
       "weight": 1.0
     },
     {
-      "source": "analyze_web_rationale_492",
-      "target": "analyze_web_ultimos_siete",
+      "source": "analyze_web_rationale_508",
+      "target": "analyze_web_calientes_ventanas",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "analyze_web.py",
-      "source_location": "L492",
+      "source_location": "L508",
       "weight": 1.0
     },
     {
@@ -10927,5 +11009,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "006478cfb7c32bd0ffc42d2e54e0b9d489738a7a"
+  "built_at_commit": "29464e626236c355cafed8b1f69181110491a07b"
 }

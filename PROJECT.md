@@ -19,6 +19,6 @@
 - Ponytail siempre activo (ver AGENTS.md)
 
 ## Estado
-- 2026-10-08: el 33,6% es la parte de sorteos con 3 impares y 3 pares. La página lista los últimos 7 sorteos con el boleto de 6 calientes (los más vistos en los 100 anteriores) y cuántos coincidieron.
+- 2026-10-08: los calientes se miran a 50, 100, 200 y 500 sorteos. En 7 días se ocultan los 0 aciertos. En 90 días solo se listan los premios (3 o más).
 
 
