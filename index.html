@@ -219,8 +219,8 @@
     <section id="siete" class="section-reveal" aria-labelledby="siete-title">
       <div class="bg-[#18E667] text-[#032612] p-6 sm:p-8 rounded-[14px] mb-4">
         <p class="text-xs uppercase tracking-widest font-mono font-bold mb-2">Lo primero · 50, 100, 200 y 500</p>
-        <h2 id="siete-title" class="text-3xl sm:text-5xl font-black tracking-tight leading-tight mb-3">74 de 90 sorteos acertaron al menos un número</h2>
-        <p id="siete-nota" class="text-base font-semibold max-w-2xl">Un día entra si los 6 calientes de alguna ventana acertaron al menos uno. La ventana en cero no se escribe.</p>
+        <h2 id="siete-title" class="text-3xl sm:text-5xl font-black tracking-tight leading-tight mb-3">En 90 sorteos, cuántos días en cada acierto</h2>
+        <p id="siete-nota" class="text-base font-semibold max-w-2xl">0, 1, 2, 3, 4, 5, 5+complementario y 6. Esas casillas suman los 90. Debajo solo se listan los premios: 3 o más.</p>
       </div>
       <div id="siete-rows" class="space-y-8"></div>
     </section>
@@ -807,32 +807,39 @@
       document.getElementById("hero-pill").textContent = arrow + " " + sign + fmt3(Math.abs(gap)) + " frente al azar (" + fmt3(top.azar) + ")";
     }
 
-    function filaAcierto(r) {
-      const best = Math.max(...r.ventanas.map((v) => v.aciertos));
-      const lines = r.ventanas.map((v) =>
-        `<p class="text-sm text-[#183925]">${v.ventana}: ${v.aciertos}/6 · ${v.cuales.join(", ")}</p>`
-      ).join("");
+    function filaPremio(r) {
+      const marca = r.cinco_c ? "5+C" : r.aciertos + "/6";
       return `<article class="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-3 items-start bg-white rounded-[14px] p-3 border border-[#D3E3D6]">
-        <div class="dec-thumb w-16 h-16 rounded-2xl font-black text-2xl flex items-center justify-center" aria-hidden="true">${best}<span class="text-xs font-bold">/6</span></div>
+        <div class="dec-thumb w-16 h-16 rounded-2xl font-black text-xl flex items-center justify-center" aria-hidden="true">${marca}</div>
         <div class="min-w-0">
           <h4 class="font-black text-[#032612]">${r.fecha}</h4>
-          <p class="text-sm text-[#245233]">Salió ${r.salio.join(", ")}</p>
-          ${lines}
+          <p class="text-sm text-[#245233]">Salió ${r.salio.join(", ")} · C ${r.complementario == null ? "—" : r.complementario}</p>
+          <p class="text-sm text-[#183925]">Coincidió ${r.cuales.join(", ")}.</p>
         </div>
       </article>`;
     }
 
     function renderSiete(data) {
-      const pack = data.calientes_ventanas || { siete: [], noventa: [], sorteos_90: 0 };
-      const bloque = (titulo, rows, vacio) => `<div>
-        <h4 class="text-xl font-black text-[#032612] mb-2">${titulo}</h4>
-        ${rows.length ? rows.map(filaAcierto).join("") : `<p class="text-sm text-[#52695B]">${vacio}</p>`}
-      </div>`;
-      document.getElementById("siete-title").textContent =
-        pack.noventa.length + " de " + pack.sorteos_90 + " sorteos acertaron al menos un número";
+      const pack = data.calientes_ventanas;
+      if (!pack || !pack.ventanas) return;
+      const cols = ["0", "1", "2", "3", "4", "5", "5+C", "6"];
+      const head = cols.map((c) => `<th class="px-1 py-2 text-center font-bold">${c}</th>`).join("");
+      const body = pack.ventanas.map((w) => {
+        const cells = w.hist.map((n, i) => i === 5 ? "" : `<td class="px-1 py-2 text-center font-mono">${n}</td>`);
+        const five = `<td class="px-1 py-2 text-center font-mono">${w.hist[5]}</td><td class="px-1 py-2 text-center font-mono">${w.cinco_c}</td>`;
+        return `<tr class="border-t border-[#D3E3D6]"><th class="pr-2 py-2 text-left">${w.ventana}</th>${cells[0]}${cells[1]}${cells[2]}${cells[3]}${cells[4]}${five}${cells[6]}</tr>`;
+      }).join("");
+      const premios = pack.ventanas.map((w) => {
+        const rows = w.premios.slice().reverse();
+        const lista = rows.length ? rows.map(filaPremio).join("") : `<p class="text-sm text-[#52695B]">Ningún día con 3 o más.</p>`;
+        return `<div><h4 class="text-xl font-black text-[#032612] mb-2">Premios con los últimos ${w.ventana}</h4>${lista}</div>`;
+      }).join("");
+      document.getElementById("siete-title").textContent = "En " + pack.sorteos_90 + " sorteos, el reparto de aciertos";
       document.getElementById("siete-rows").innerHTML =
-        bloque("Últimos 7 días · " + pack.siete.length + " con acierto", pack.siete.slice().reverse(), "Ningún acierto.") +
-        bloque("Últimos 90 días · " + pack.noventa.length + " de " + pack.sorteos_90, pack.noventa.slice().reverse(), "Ningún acierto.");
+        `<div class="overflow-x-auto bg-white rounded-[14px] border border-[#D3E3D6] p-3 mb-6">
+          <table class="w-full text-sm text-[#032612]"><caption class="text-left text-xs text-[#52695B] mb-2">Días en cada casilla. 0+1+2+3+4+5+5+C+6 = ${pack.sorteos_90}. 5+C es el día con 5 aciertos cuyo sexto número fue el complementario.</caption>
+          <thead><tr><th class="text-left pr-2 py-2">Ventana</th>${head}</tr></thead><tbody>${body}</tbody></table>
+        </div>` + premios;
     }
 
     function renderOdds(pack) {

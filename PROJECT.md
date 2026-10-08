@@ -19,6 +19,6 @@
 - Ponytail siempre activo (ver AGENTS.md)
 
 ## Estado
-- 2026-10-08: la lista de aciertos (74 de 90) va la primera en la página. Un día entra si 50, 100, 200 o 500 acertó al menos un número.
+- 2026-10-08: en 90 sorteos la página cuenta días con 0, 1, 2, 3, 4, 5, 5+complementario y 6. La lista solo muestra premios (3 o más).
 
 

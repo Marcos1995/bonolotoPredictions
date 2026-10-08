@@ -77,6 +77,7 @@ def load():
     spec = raffles.GAMES["Bonoloto"]
     rows = raffles.load_rows(spec)
     draws, reins = [], []
+    comps = {}
     ya_ordenadas = 0
     for d, main, extra in rows:
         raw = tuple(main)
@@ -92,6 +93,9 @@ def load():
                 r = None
         if r is not None and 0 <= r <= 9:
             reins.append((d, r))
+        c = _comp(extra)
+        if c is not None:
+            comps[d] = c
     en_vivo = None
     live = fetch_live()
     if live and live[0] not in {d for d, _n in draws}:
@@ -103,6 +107,9 @@ def load():
         draws.sort(key=lambda x: x[0])
         if len(extra) >= 2 and 0 <= extra[1] <= 9:
             reins.append((d, extra[1]))
+        c = _comp(extra)
+        if c is not None:
+            comps[d] = c
         en_vivo = d.isoformat()
     orden = {
         "filas": len(draws),
@@ -110,7 +117,17 @@ def load():
         "nota": "La hoja pública trae las seis bolas de menor a mayor. El bombo no sale así: puede salir 45, luego 8, luego 17. Ese orden de extracción no está en los datos.",
         "en_vivo": en_vivo,
     }
-    return draws, reins, orden
+    return draws, reins, orden, comps
+
+
+def _comp(extra):
+    if not extra:
+        return None
+    try:
+        c = int(extra[0])
+    except (TypeError, ValueError):
+        return None
+    return c if 1 <= c <= 49 else None
 
 
 def freq_table(draws):
@@ -492,55 +509,53 @@ def _hot(past, window):
     return sorted(_topk(_scores(past[-window:]), reverse=True))
 
 
-def _contra(draws, i, window):
+def _contra(draws, i, window, comp):
     jugados = _hot(draws[:i], window)
-    cuales = sorted(set(draws[i][1]) & set(jugados))
+    actual = set(draws[i][1])
+    cuales = sorted(actual & set(jugados))
+    resto = [n for n in jugados if n not in actual]
+    cinco_c = len(cuales) == 5 and comp is not None and resto == [comp]
     return {
         "fecha": draws[i][0].isoformat(),
         "salio": list(draws[i][1]),
         "numeros": jugados,
         "aciertos": len(cuales),
         "cuales": cuales,
+        "complementario": comp,
+        "cinco_c": cinco_c,
     }
 
 
-def calientes_ventanas(draws):
-    """Un día entra si alguna ventana (50, 100, 200, 500) acertó al menos un número."""
+def calientes_ventanas(draws, comps):
+    """En 90 sorteos, cuántos días caen en 0..6 y en 5+complementario. La lista solo guarda premios (3+)."""
     last = draws[-1][0]
-    d7 = last - dt.timedelta(days=6)
     d90 = last - dt.timedelta(days=89)
     idx = next(i for i, (d, _n) in enumerate(draws) if d >= d90)
-    siete, noventa = [], []
-    for i in range(max(idx, 1), len(draws)):
-        aciertos = []
-        for window in (50, 100, 200, 500):
-            row = _contra(draws, i, window)
-            if row["aciertos"] < 1:
-                continue
-            aciertos.append({
-                "ventana": window,
-                "aciertos": row["aciertos"],
-                "cuales": row["cuales"],
-            })
-        if not aciertos:
-            continue
-        day = {
-            "fecha": draws[i][0].isoformat(),
-            "salio": list(draws[i][1]),
-            "ventanas": aciertos,
-        }
-        noventa.append(day)
-        if draws[i][0] >= d7:
-            siete.append(day)
-    return {
-        "siete": siete,
-        "noventa": noventa,
-        "sorteos_90": len(draws) - max(idx, 1),
-    }
+    start = max(idx, 1)
+    ventanas = []
+    for window in (50, 100, 200, 500):
+        hist = [0] * 7
+        cinco_c = 0
+        premios = []
+        for i in range(start, len(draws)):
+            row = _contra(draws, i, window, comps.get(draws[i][0]))
+            if row["cinco_c"]:
+                cinco_c += 1
+            else:
+                hist[row["aciertos"]] += 1
+            if row["aciertos"] >= 3:
+                premios.append(row)
+        ventanas.append({
+            "ventana": window,
+            "hist": hist,
+            "cinco_c": cinco_c,
+            "premios": premios,
+        })
+    return {"sorteos_90": len(draws) - start, "ventanas": ventanas}
 
 
 def build():
-    draws, reins, orden = load()
+    draws, reins, orden, comps = load()
     freq, exp = freq_table(draws)
     counts = [row["count"] for row in freq]
     chi = chi2_uniform(counts, exp)
@@ -583,7 +598,7 @@ def build():
         "mejor_z": best["z"],
         "forma_modal": {"impares": modal["impares"], "pares": modal["pares"], "obs": modal["obs"], "azar": modal["azar"]},
         "ventanas": windows,
-        "calientes_ventanas": calientes_ventanas(draws),
+        "calientes_ventanas": calientes_ventanas(draws, comps),
         "boletos": picks_now(draws),
         "intento": {
             "regla": best["id"],
@@ -610,7 +625,8 @@ def build():
         f"ultimo={formas['ultimo']} hueco={formas['hueco_medio']}/{formas['hueco_azar']}"
     )
     v = payload["calientes_ventanas"]
-    print(f"siete={len(v['siete'])} con_acierto_90={len(v['noventa'])}/{v['sorteos_90']}")
+    for w in v["ventanas"]:
+        print(f"w{w['ventana']} hist={w['hist']} cinco_c={w['cinco_c']} premios={len(w['premios'])}")
     p = payload["patrones"]
     print("orden", orden["ya_ordenadas"], "/", orden["filas"])
     print("decenas", [(d["decena"], d["bolas"], d["por_sorteo"], d["azar"], d["z"]) for d in p["decenas"]])
