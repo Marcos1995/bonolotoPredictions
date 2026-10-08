@@ -279,7 +279,7 @@
               </span>
             </div>
             <div class="text-3xl sm:text-4xl font-extrabold text-[#032612] my-1" id="sim-num">33,6%</div>
-            <p class="text-xs text-[#52695B]">con 3 pares y 3 impares exactos</p>
+            <p id="sim-unit" class="text-xs text-[#52695B]">de los sorteos salen así. No es un acierto de números</p>
           </div>
           <div class="mt-4 pt-3 border-t border-[#F0F4F1]">
             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#EDF8F0] text-[#13542B] text-xs font-semibold">
@@ -659,7 +659,7 @@
         </div>
 
         <p id="forma-nota" class="text-sm sm:text-base text-[#B0D5BC] leading-relaxed mb-6 font-normal">
-          Con los sorteos anteriores al 7 oct, la forma más vista seguía siendo 3 impares. Ese día salieron 6, 20, 21, 30, 34 y 38: un impar. Acertar la forma ocurre una de cada tres veces, ni más ni menos que el azar. Los calientes de entonces (16, 18, 23, 31, 33, 49) no coincidieron con ninguno.
+          El 33,6% es la parte de sorteos en los que salen 3 impares y 3 pares. No es un porcentaje de números acertados.
         </p>
 
         <!-- ÚNICA ACCIÓN PRINCIPAL: Botón #0A3D22 con texto claro -->
@@ -670,6 +670,14 @@
           </a>
         </div>
       </div>
+    </section>
+
+    <section id="siete" class="section-reveal bg-[#F8FAF8] p-6 sm:p-8 rounded-[14px] border border-[#D3E3D6]" aria-labelledby="siete-title">
+      <p class="text-xs uppercase tracking-widest font-mono text-[#245A36] mb-2">Criterio real · 6 números, no 15</p>
+      <h3 id="siete-title" class="text-2xl sm:text-4xl font-black text-[#032612] tracking-tight leading-tight mb-3">Los últimos 7 sorteos, número a número</h3>
+      <p class="text-sm text-[#245233] max-w-2xl mb-5">El 33,6% cuenta sorteos con 3 impares y 3 pares. Aquí se juegan exactamente 6 números: los que más salieron en los 100 sorteos anteriores a ese día. Un acierto es uno de esos 6 que salió. El azar espera 0,73 por sorteo. El 3 y 3 es otro boleto, también de 6. No hay bolsa de 10 o 15.</p>
+      <div id="siete-rows" class="space-y-3"></div>
+      <p id="siete-sum" class="mt-4 text-sm text-[#183925]"></p>
     </section>
 
     <!-- SECCIÓN 7: OTRO GESTO DISTINTO (SUMAS, CHI-CUADRADO Y URNA DE REINTEGRO) -->
@@ -798,6 +806,29 @@
       document.getElementById("hero-pill").textContent = arrow + " " + sign + fmt3(Math.abs(gap)) + " frente al azar (" + fmt3(top.azar) + ")";
     }
 
+    function renderSiete(data) {
+      const rows = data.ultimos || [];
+      document.getElementById("siete-rows").innerHTML = rows.map((r) => {
+        const c = r.reglas.calientes;
+        const e = r.reglas.equilibrado;
+        const cuales = c.cuales.length ? c.cuales.join(", ") : "ninguno";
+        return `<article class="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-3 items-start bg-white rounded-[14px] p-3 border border-[#D3E3D6]">
+          <div class="dec-thumb w-16 h-16 rounded-2xl font-black text-2xl flex items-center justify-center" aria-hidden="true">${c.aciertos}<span class="text-xs font-bold">/6</span></div>
+          <div class="min-w-0">
+            <h4 class="font-black text-[#032612]">${r.fecha}</h4>
+            <p class="text-sm text-[#245233]">Salió ${r.salio.join(", ")} · ${r.impares} impares</p>
+            <p class="text-sm text-[#183925]">Calientes: ${c.numeros.join(", ")}. Coincidió ${cuales}.</p>
+            <p class="text-xs text-[#52695B]">3 y 3: ${e.numeros.join(", ")} · ${e.aciertos}/6</p>
+          </div>
+        </article>`;
+      }).join("");
+      const sum = rows.reduce((s, r) => s + r.reglas.calientes.aciertos, 0);
+      const esp = (data.aciertos_azar * rows.length).toLocaleString("es-ES", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+      const max = rows.reduce((m, r) => Math.max(m, r.reglas.calientes.aciertos), 0);
+      document.getElementById("siete-sum").textContent =
+        "En " + rows.length + " sorteos, esos 6 calientes sumaron " + sum + " números. El azar espera unos " + esp + ". El mejor día fue " + max + " de 6. Hacen falta 3 para el premio más bajo.";
+    }
+
     function renderOdds(pack) {
       const rows = pack.pares_impares;
       const max = Math.max(...rows.map((r) => Math.max(r.obs, r.azar)), 0.01);
@@ -867,7 +898,7 @@
       document.getElementById("forma-kicker").textContent = "Sorteo del " + ultimo.fecha + ", juzgado solo con el pasado";
       document.getElementById("forma-title").textContent = "La forma decía 3 y 3. Salió " + ultimo.impares + (ultimo.impares === 1 ? " impar." : " impares.");
       document.getElementById("forma-nota").textContent =
-        "Esa forma acierta el " + pct(data.formas.acierto_3_y_3) + " de los sorteos siguientes, igual que el combinatorio. El " + ultimo.fecha + " salió " + ultimo.numeros.join(", ") + ". Los calientes de entonces (" + cal.numeros.join(", ") + ") acertaron " + cal.aciertos + ". Los fríos (" + fri.numeros.join(", ") + ") acertaron " + fri.aciertos + ".";
+        "El " + pct(data.formas.acierto_3_y_3) + " es la parte de sorteos con 3 impares y 3 pares, igual que el combinatorio. No cuenta números acertados. El " + ultimo.fecha + " salió " + ultimo.numeros.join(", ") + " (" + ultimo.impares + (ultimo.impares === 1 ? " impar" : " impares") + "). Los 6 calientes de entonces (" + cal.numeros.join(", ") + ") acertaron " + cal.aciertos + ".";
       const meses = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
       const fmtFecha = (iso) => {
         const [y, m, d] = iso.split("-");
@@ -905,6 +936,7 @@
         "El reintegro es otra urna, del 0 al 9. La más baja es el " + lo.n + " (" + pct(lo.count / total) + ") y la más alta el " + hi.n + " (" + pct(hi.count / total) + "). Con diez cifras, esa diferencia cabe en el azar. No entra en el intento.";
       renderOdds(data.ventanas.todo);
       renderDecades(data.ventanas.todo);
+      renderSiete(data);
     }
 
     document.getElementById("theme-toggle").addEventListener("click", () => {

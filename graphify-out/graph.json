@@ -1465,7 +1465,7 @@
       "file_type": "code",
       "norm_label": "build()",
       "source_file": "analyze_web.py",
-      "source_location": "L491"
+      "source_location": "L512"
     },
     {
       "id": "analyze_web_chi2_uniform",
@@ -1681,7 +1681,7 @@
       "file_type": "code",
       "norm_label": "_repeats()",
       "source_file": "analyze_web.py",
-      "source_location": "L569"
+      "source_location": "L591"
     },
     {
       "id": "analyze_web_score_past",
@@ -1766,6 +1766,18 @@
       "norm_label": "_topk()",
       "source_file": "analyze_web.py",
       "source_location": "L195"
+    },
+    {
+      "id": "analyze_web_ultimos_siete",
+      "label": "ultimos_siete()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "analyze_web.py",
+      "file_type": "code",
+      "norm_label": "ultimos_siete()",
+      "source_file": "analyze_web.py",
+      "source_location": "L491"
     },
     {
       "id": "analyze_web_z_mean",
@@ -3822,6 +3834,17 @@
       "source_location": "L465"
     },
     {
+      "id": "analyze_web_rationale_492",
+      "label": "Boleto de 6 n\u00fameros armado solo con el pasado, contra cada uno de los \u00faltimos\u2026",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "analyze_web.py",
+      "file_type": "rationale",
+      "norm_label": "boleto de 6 numeros armado solo con el pasado, contra cada uno de los ultimos...",
+      "source_file": "analyze_web.py",
+      "source_location": "L492"
+    },
+    {
       "id": "analyze_web_rationale_67",
       "label": "SELAE responde 403 desde aqu\u00ed. Este tablero publica el sorteo a los pocos\u2026",
       "_origin": "ast",
@@ -4092,6 +4115,18 @@
       "norm_label": "per-number binary classifiers, walk-forward: predict, then observe, refit...",
       "source_file": "edgeHunt.py",
       "source_location": "L447"
+    },
+    {
+      "id": "math",
+      "label": "math",
+      "_origin": "semantic",
+      "community": 0,
+      "community_name": "edgeHunt.py",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "math",
+      "source_file": "",
+      "type": "external"
     },
     {
       "id": "sklearn_ensemble",
@@ -4394,18 +4429,6 @@
       "type": "external"
     },
     {
-      "id": "math",
-      "label": "math",
-      "_origin": "semantic",
-      "community": 6,
-      "community_name": "analyze_web.py",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "math",
-      "source_file": "",
-      "type": "external"
-    },
-    {
       "id": "pathlib",
       "label": "pathlib",
       "_origin": "semantic",
@@ -4420,6 +4443,7 @@
     {
       "id": "urllib_request",
       "label": "urllib_request",
+      "_origin": "semantic",
       "community": 6,
       "community_name": "analyze_web.py",
       "external": true,
@@ -4475,7 +4499,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L492",
+      "source_location": "L513",
       "weight": 1.0
     },
     {
@@ -4487,7 +4511,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L493",
+      "source_location": "L514",
       "weight": 1.0
     },
     {
@@ -4499,7 +4523,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L495",
+      "source_location": "L516",
       "weight": 1.0
     },
     {
@@ -4511,7 +4535,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L496",
+      "source_location": "L517",
       "weight": 1.0
     },
     {
@@ -4523,7 +4547,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L497",
+      "source_location": "L518",
       "weight": 1.0
     },
     {
@@ -4535,7 +4559,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L501",
+      "source_location": "L522",
       "weight": 1.0
     },
     {
@@ -4547,7 +4571,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L505",
+      "source_location": "L526",
       "weight": 1.0
     },
     {
@@ -4559,7 +4583,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L506",
+      "source_location": "L527",
       "weight": 1.0
     },
     {
@@ -4571,7 +4595,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L507",
+      "source_location": "L528",
       "weight": 1.0
     },
     {
@@ -4583,7 +4607,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L508",
+      "source_location": "L529",
       "weight": 1.0
     },
     {
@@ -4595,7 +4619,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L510",
+      "source_location": "L531",
       "weight": 1.0
     },
     {
@@ -4607,7 +4631,19 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L529",
+      "source_location": "L550",
+      "weight": 1.0
+    },
+    {
+      "source": "analyze_web_build",
+      "target": "analyze_web_ultimos_siete",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "analyze_web.py",
+      "source_location": "L556",
       "weight": 1.0
     },
     {
@@ -4619,7 +4655,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L535",
+      "source_location": "L557",
       "weight": 1.0
     },
     {
@@ -4631,7 +4667,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L545",
+      "source_location": "L567",
       "weight": 1.0
     },
     {
@@ -4643,7 +4679,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L548",
+      "source_location": "L570",
       "weight": 1.0
     },
     {
@@ -4944,6 +4980,18 @@
       "context": "call",
       "source_file": "analyze_web.py",
       "source_location": "L385",
+      "weight": 1.0
+    },
+    {
+      "source": "analyze_web_ultimos_siete",
+      "target": "analyze_web_picks_now",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "analyze_web.py",
+      "source_location": "L497",
       "weight": 1.0
     },
     {
@@ -7719,7 +7767,7 @@
     },
     {
       "source": "analyze_web",
-      "target": "analyze_web_build",
+      "target": "analyze_web_ultimos_siete",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -7730,13 +7778,24 @@
     },
     {
       "source": "analyze_web",
+      "target": "analyze_web_build",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "analyze_web.py",
+      "source_location": "L512",
+      "weight": 1.0
+    },
+    {
+      "source": "analyze_web",
       "target": "analyze_web_repeats",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "analyze_web.py",
-      "source_location": "L569",
+      "source_location": "L591",
       "weight": 1.0
     },
     {
@@ -9786,6 +9845,17 @@
       "weight": 1.0
     },
     {
+      "source": "analyze_web_rationale_492",
+      "target": "analyze_web_ultimos_siete",
+      "relation": "rationale_for",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "analyze_web.py",
+      "source_location": "L492",
+      "weight": 1.0
+    },
+    {
       "source": "analyze_web_rationale_67",
       "target": "analyze_web_fetch_live",
       "relation": "rationale_for",
@@ -10857,5 +10927,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "955ebada7215718e151ce719186f9cc1f0c967e5"
+  "built_at_commit": "006478cfb7c32bd0ffc42d2e54e0b9d489738a7a"
 }

@@ -488,6 +488,27 @@ def patrones(draws):
     }
 
 
+def ultimos_siete(draws, n=7):
+    """Boleto de 6 números armado solo con el pasado, contra cada uno de los últimos sorteos."""
+    start = max(WARMUP, len(draws) - n)
+    rows = []
+    for i in range(start, len(draws)):
+        actual = set(draws[i][1])
+        picks = picks_now(draws[:i])
+        reglas = {}
+        for key in ("calientes", "equilibrado"):
+            jugados = picks[key]
+            cuales = sorted(actual & set(jugados))
+            reglas[key] = {"numeros": jugados, "aciertos": len(cuales), "cuales": cuales}
+        rows.append({
+            "fecha": draws[i][0].isoformat(),
+            "salio": list(draws[i][1]),
+            "impares": sum(1 for x in draws[i][1] if x % 2),
+            "reglas": reglas,
+        })
+    return rows
+
+
 def build():
     draws, reins, orden = load()
     freq, exp = freq_table(draws)
@@ -532,6 +553,7 @@ def build():
         "mejor_z": best["z"],
         "forma_modal": {"impares": modal["impares"], "pares": modal["pares"], "obs": modal["obs"], "azar": modal["azar"]},
         "ventanas": windows,
+        "ultimos": ultimos_siete(draws),
         "boletos": picks_now(draws),
         "intento": {
             "regla": best["id"],

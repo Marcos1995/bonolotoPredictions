@@ -19,6 +19,6 @@
 - Ponytail siempre activo (ver AGENTS.md)
 
 ## Estado
-- 2026-10-08: el histórico público es la hoja de Lotoideas (se descarga al generar `data/bonoloto.json`; el sqlite no se publica). Si el sorteo del día ya está en el tablero en vivo y la hoja no, se añade ese hueco.
+- 2026-10-08: el 33,6% es la parte de sorteos con 3 impares y 3 pares. La página lista los últimos 7 sorteos con el boleto de 6 calientes (los más vistos en los 100 anteriores) y cuántos coincidieron.
 
 
