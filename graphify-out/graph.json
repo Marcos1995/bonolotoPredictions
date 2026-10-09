@@ -1525,7 +1525,7 @@
       "file_type": "code",
       "norm_label": "barrido()",
       "source_file": "analyze_web.py",
-      "source_location": "L741"
+      "source_location": "L740"
     },
     {
       "id": "analyze_web_barrido_delta",
@@ -1537,7 +1537,7 @@
       "file_type": "code",
       "norm_label": "delta()",
       "source_file": "analyze_web.py",
-      "source_location": "L843"
+      "source_location": "L842"
     },
     {
       "id": "analyze_web_boletos",
@@ -1561,7 +1561,7 @@
       "file_type": "code",
       "norm_label": "build()",
       "source_file": "analyze_web.py",
-      "source_location": "L1018"
+      "source_location": "L1017"
     },
     {
       "id": "analyze_web_cargar_premios",
@@ -1849,7 +1849,7 @@
       "file_type": "code",
       "norm_label": "noche()",
       "source_file": "analyze_web.py",
-      "source_location": "L994"
+      "source_location": "L993"
     },
     {
       "id": "analyze_web_odd_even",
@@ -1957,7 +1957,7 @@
       "file_type": "code",
       "norm_label": "_repeats()",
       "source_file": "analyze_web.py",
-      "source_location": "L1109"
+      "source_location": "L1108"
     },
     {
       "id": "analyze_web_rueda",
@@ -4179,7 +4179,7 @@
       "source_location": "L70"
     },
     {
-      "id": "analyze_web_rationale_742",
+      "id": "analyze_web_rationale_741",
       "label": "La mirada elige los n\u00fameros (20 a 400). El plazo es solo cu\u00e1nto se juega.",
       "_origin": "ast",
       "community": 6,
@@ -4187,18 +4187,18 @@
       "file_type": "rationale",
       "norm_label": "la mirada elige los numeros (20 a 400). el plazo es solo cuanto se juega.",
       "source_file": "analyze_web.py",
-      "source_location": "L742"
+      "source_location": "L741"
     },
     {
-      "id": "analyze_web_rationale_995",
-      "label": "Los 12 de la pr\u00f3xima noche, con los mismos 400 sorteos anteriores que la tabla.",
+      "id": "analyze_web_rationale_994",
+      "label": "El criterio: un boleto con los 6 calientes de los \u00faltimos 120 sorteos.",
       "_origin": "ast",
       "community": 6,
       "community_name": "analyze_web.py",
       "file_type": "rationale",
-      "norm_label": "los 12 de la proxima noche, con los mismos 400 sorteos anteriores que la tabla.",
+      "norm_label": "el criterio: un boleto con los 6 calientes de los ultimos 120 sorteos.",
       "source_file": "analyze_web.py",
-      "source_location": "L995"
+      "source_location": "L994"
     },
     {
       "id": "commonfunctions_rationale_39",
@@ -4833,7 +4833,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L753",
+      "source_location": "L752",
       "weight": 1.0
     },
     {
@@ -4845,7 +4845,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L753",
+      "source_location": "L752",
       "weight": 1.0
     },
     {
@@ -4857,7 +4857,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L754",
+      "source_location": "L753",
       "weight": 1.0
     },
     {
@@ -4869,7 +4869,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L762",
+      "source_location": "L761",
       "weight": 1.0
     },
     {
@@ -4881,7 +4881,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L762",
+      "source_location": "L761",
       "weight": 1.0
     },
     {
@@ -4893,7 +4893,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L795",
+      "source_location": "L794",
       "weight": 1.0
     },
     {
@@ -4905,7 +4905,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L797",
+      "source_location": "L796",
       "weight": 1.0
     },
     {
@@ -4917,7 +4917,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L803",
+      "source_location": "L802",
       "weight": 1.0
     },
     {
@@ -4929,7 +4929,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L804",
+      "source_location": "L803",
       "weight": 1.0
     },
     {
@@ -4941,7 +4941,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L1019",
+      "source_location": "L1018",
       "weight": 1.0
     },
     {
@@ -4953,7 +4953,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L1020",
+      "source_location": "L1019",
       "weight": 1.0
     },
     {
@@ -4965,7 +4965,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L1021",
+      "source_location": "L1020",
       "weight": 1.0
     },
     {
@@ -4977,7 +4977,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L1023",
+      "source_location": "L1022",
       "weight": 1.0
     },
     {
@@ -4989,7 +4989,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L1024",
+      "source_location": "L1023",
       "weight": 1.0
     },
     {
@@ -5001,7 +5001,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L1025",
+      "source_location": "L1024",
       "weight": 1.0
     },
     {
@@ -5013,7 +5013,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L1029",
+      "source_location": "L1028",
       "weight": 1.0
     },
     {
@@ -5025,7 +5025,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L1033",
+      "source_location": "L1032",
       "weight": 1.0
     },
     {
@@ -5037,7 +5037,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L1034",
+      "source_location": "L1033",
       "weight": 1.0
     },
     {
@@ -5049,7 +5049,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L1035",
+      "source_location": "L1034",
       "weight": 1.0
     },
     {
@@ -5061,7 +5061,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L1036",
+      "source_location": "L1035",
       "weight": 1.0
     },
     {
@@ -5073,7 +5073,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L1038",
+      "source_location": "L1037",
       "weight": 1.0
     },
     {
@@ -5085,7 +5085,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L1057",
+      "source_location": "L1056",
       "weight": 1.0
     },
     {
@@ -5097,7 +5097,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L1063",
+      "source_location": "L1062",
       "weight": 1.0
     },
     {
@@ -5109,7 +5109,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L1064",
+      "source_location": "L1063",
       "weight": 1.0
     },
     {
@@ -5121,7 +5121,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L1065",
+      "source_location": "L1064",
       "weight": 1.0
     },
     {
@@ -5133,7 +5133,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L1075",
+      "source_location": "L1074",
       "weight": 1.0
     },
     {
@@ -5145,7 +5145,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L1078",
+      "source_location": "L1077",
       "weight": 1.0
     },
     {
@@ -5301,7 +5301,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L1006",
+      "source_location": "L1005",
       "weight": 1.0
     },
     {
@@ -5313,7 +5313,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L1008",
+      "source_location": "L1007",
       "weight": 1.0
     },
     {
@@ -5325,7 +5325,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L1012",
+      "source_location": "L1011",
       "weight": 1.0
     },
     {
@@ -6801,7 +6801,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L843",
+      "source_location": "L842",
       "weight": 1.0
     },
     {
@@ -8165,7 +8165,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "analyze_web.py",
-      "source_location": "L1018",
+      "source_location": "L1017",
       "weight": 1.0
     },
     {
@@ -8176,7 +8176,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "analyze_web.py",
-      "source_location": "L1109",
+      "source_location": "L1108",
       "weight": 1.0
     },
     {
@@ -8605,7 +8605,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "analyze_web.py",
-      "source_location": "L741",
+      "source_location": "L740",
       "weight": 1.0
     },
     {
@@ -8627,7 +8627,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "analyze_web.py",
-      "source_location": "L994",
+      "source_location": "L993",
       "weight": 1.0
     },
     {
@@ -10732,25 +10732,25 @@
       "weight": 1.0
     },
     {
-      "source": "analyze_web_rationale_742",
+      "source": "analyze_web_rationale_741",
       "target": "analyze_web_barrido",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "analyze_web.py",
-      "source_location": "L742",
+      "source_location": "L741",
       "weight": 1.0
     },
     {
-      "source": "analyze_web_rationale_995",
+      "source": "analyze_web_rationale_994",
       "target": "analyze_web_noche",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "analyze_web.py",
-      "source_location": "L995",
+      "source_location": "L994",
       "weight": 1.0
     },
     {
@@ -11826,5 +11826,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "689f3d42ac7ff1c6f794c83488c438372e63c750"
+  "built_at_commit": "913378a04f7aafd76ee2bdd4dc89e5c34226cea8"
 }

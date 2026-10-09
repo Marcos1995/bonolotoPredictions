@@ -185,6 +185,10 @@
     .dec-thumb { background: #18E667; color: #032612; }
     .bola { width: 3.25rem; height: 3.25rem; border-radius: 9999px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.25rem; }
     .bola-si { background: #18E667; color: #032612; }
+    .bola-criterio { width: 2.75rem; height: 2.75rem; font-size: 1.15rem; background: #032612; color: #18E667; }
+    @media (min-width: 640px) {
+      .bola-criterio { width: 4.5rem; height: 4.5rem; font-size: 1.75rem; }
+    }
     .chip { border: 1px solid #D3E3D6; background: #fff; color: #032612; border-radius: 9999px; padding: .3rem .65rem; font-size: .75rem; font-weight: 700; }
     .chip.on { background: #18E667; color: #032612; border-color: #18E667; }
     .chip:focus-visible { outline: 2px solid #032612; outline-offset: 2px; }
@@ -225,13 +229,18 @@
 
     <section class="max-w-2xl space-y-2 text-base text-[#183925]" aria-label="Cómo leer las tablas">
       <p><span class="font-black text-[#032612]">Calientes</span> son los que más salieron. <span class="font-black text-[#032612]">Fríos</span>, los que menos. <span class="font-black text-[#032612]">Retrasados</span>, los que más sorteos llevan sin salir.</p>
-      <p><span class="font-black text-[#032612]">Mirados</span> es cuántos sorteos anteriores se usan para elegirlos, de 20 a 400. <span class="font-black text-[#032612]">Plazo</span> es cuánto tiempo se juega esa elección: 3 meses, 6 meses, 1 año, 3 años o 5 años.</p>
+      <p><span class="font-black text-[#032612]">Mirados</span> es cuántos sorteos anteriores se usan para elegirlos, de 20 a 400. <span class="font-black text-[#032612]">Plazo</span> es cuánto se juega: 3 meses, 6 meses o 1 año. Siempre de tres en tres meses. Un tramo de 3 años o de 5 años no se usa.</p>
       <p><span class="font-black text-[#032612]">Saldo positivo</span> significa que en ese plazo se cobró más de lo jugado. Un 6, o un 5 con el complementario, puede dejarlo en verde. No quiere decir que se repita.</p>
     </section>
 
     <section id="noche" class="section-reveal" aria-labelledby="noche-title">
-      <h2 id="noche-title" class="text-3xl sm:text-4xl font-black text-[#032612] tracking-tight mb-2">Para el sorteo de esta noche</h2>
-      <p id="noche-nota" class="text-sm text-[#245233] max-w-2xl mb-4">Los 6 primeros, en verde, son el boleto de una apuesta. Del 7 al 12 se alarga el grupo.</p>
+      <div class="bg-[#18E667] text-[#032612] p-6 sm:p-8 rounded-[14px] mb-4">
+        <p class="text-xs uppercase tracking-widest font-mono font-bold mb-2">El criterio</p>
+        <h2 id="noche-title" class="text-3xl sm:text-5xl font-black tracking-tight leading-tight mb-3">Un boleto: los 6 calientes de los últimos 120 sorteos</h2>
+        <p id="noche-nota" class="text-base font-semibold max-w-2xl mb-4">Se mira siempre de tres en tres meses. También un bloque de seis meses o de un año. Tres años o cinco años no se usan.</p>
+        <ol id="criterio-bolas" class="flex flex-wrap gap-3"></ol>
+        <p id="criterio-fecha" class="mt-4 text-sm font-semibold"></p>
+      </div>
       <div id="noche-rows" class="space-y-4"></div>
     </section>
 
@@ -1069,7 +1078,7 @@
             ? tabla("tabla-si", positivos)
             : `<p class="text-sm text-[#52695B] mb-4">Ninguna combinación de este filtro acaba por encima de cero.</p>`) +
           `<h3 class="text-xl font-black text-[#032612] mt-8 mb-1">Mejor combinación en cada tramo</h3>
-          <p class="text-sm text-[#245233] max-w-2xl mb-2">Cada plazo se parte en bloques seguidos. Así un 6 de hace años no decide el tramo de al lado. Sin 5 dice si ese saldo se cae al quitar el 5 y el 6.</p>` +
+          <p class="text-sm text-[#245233] max-w-2xl mb-2">Siempre de tres en tres meses. Como máximo, seis meses o un año. Un tramo de tres años o de cinco años no entra. Sin 5 dice si ese saldo se cae al quitar el 5 y el 6.</p>` +
           tramosHtml;
         if (document.getElementById("tabla-si")) activarOrden(document.getElementById("tabla-si"), "saldo", -1);
         bloques.forEach((g) => {
@@ -1177,9 +1186,13 @@
     function renderNoche(data) {
       const n = data.noche;
       if (!n) return;
-      document.getElementById("noche-title").textContent = "Para el sorteo del " + n.fecha;
-      document.getElementById("noche-nota").textContent =
-        "Mirando los " + n.mirados + " sorteos del " + n.desde + " al " + n.hasta + ". El de esta noche no entra. Los 6 primeros, en verde, son el boleto de una apuesta. Del 7 al 12 se alarga el grupo.";
+      document.getElementById("noche-title").textContent =
+        "Un boleto: los 6 calientes de los últimos " + n.mirados + " sorteos";
+      document.getElementById("criterio-fecha").textContent =
+        "Para el sorteo del " + n.fecha + ". Esos " + n.mirados + " van del " + n.desde + " al " + n.hasta + ". El de esta noche no entra.";
+      document.getElementById("criterio-bolas").innerHTML = n.calientes.slice(0, 6).map((num) =>
+        `<li><span class="bola bola-criterio">${num}</span></li>`
+      ).join("");
       const bloque = (nombre, lista, nota) => `<article class="bg-white rounded-[14px] border border-[#D3E3D6] p-4">
           <h3 class="text-xl font-black text-[#032612]">${nombre}</h3>
           <p class="text-sm text-[#245233] mb-3">${nota}</p>
@@ -1191,9 +1204,9 @@
           </ol>
         </article>`;
       document.getElementById("noche-rows").innerHTML = [
-        bloque("Calientes", n.calientes, "Los que más salieron en esos 400."),
-        bloque("Fríos", n.frios, "Los que menos salieron."),
-        bloque("Retrasados", n.retrasados, "Los que más sorteos llevan sin salir."),
+        bloque("Calientes", n.calientes, "El boleto de arriba son los 6 primeros. Del 7 al 12 no se juega."),
+        bloque("Fríos", n.frios, "Los que menos salieron. No son el criterio."),
+        bloque("Retrasados", n.retrasados, "Los que más sorteos llevan sin salir. No son el criterio."),
       ].join("");
     }
 

@@ -729,12 +729,11 @@ def _huecos(pos, i, window):
     return gaps
 
 
+HISTORIA = 1825
 PLAZOS = (
     ("3 meses", 90),
     ("6 meses", 180),
     ("1 año", 365),
-    ("3 años", 1095),
-    ("5 años", 1825),
 )
 
 
@@ -745,7 +744,7 @@ def barrido(draws, comps, premios):
         ("frios", "Fríos", "count", False),
         ("retrasados", "Retrasados", "gap", True),
     )
-    max_w = PLAZOS[-1][1]
+    max_w = HISTORIA
     start = len(draws) - max_w
     n = max_w
     cfgs = []
@@ -991,8 +990,8 @@ def barrido(draws, comps, premios):
     }
 
 
-def noche(draws, window=400):
-    """Los 12 de la próxima noche, con los mismos 400 sorteos anteriores que la tabla."""
+def noche(draws, window=120):
+    """El criterio: un boleto con los 6 calientes de los últimos 120 sorteos."""
     i = len(draws)
     prefix = [[0] * (N + 1) for _ in range(i + 1)]
     pos = [[] for _ in range(N + 1)]
@@ -1017,7 +1016,7 @@ def noche(draws, window=400):
 
 def build():
     draws, reins, orden, comps = load()
-    premios = cargar_premios([d for d, _n in draws[-PLAZOS[-1][1]:]])
+    premios = cargar_premios([d for d, _n in draws[-HISTORIA:]])
     freq, exp = freq_table(draws)
     counts = [row["count"] for row in freq]
     chi = chi2_uniform(counts, exp)

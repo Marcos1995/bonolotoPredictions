@@ -19,6 +19,6 @@
 - Ponytail siempre activo (ver AGENTS.md)
 
 ## Estado
-- 2026-10-09: las tablas se filtran por caliente, frío o retrasado, por sorteos mirados y por apuestas. Cada plazo, de 3 meses a 5 años, se parte en tramos y se ve qué combinación gana en cada uno.
+- 2026-10-09: el criterio es un boleto con los 6 calientes de los últimos 120 sorteos. Los plazos son 3 meses, 6 meses y 1 año, siempre en tramos; 3 años y 5 años no se usan.
 
 
