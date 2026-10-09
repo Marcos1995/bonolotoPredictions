@@ -1537,7 +1537,7 @@
       "file_type": "code",
       "norm_label": "barrido()",
       "source_file": "analyze_web.py",
-      "source_location": "L732"
+      "source_location": "L741"
     },
     {
       "id": "analyze_web_boletos",
@@ -1561,7 +1561,7 @@
       "file_type": "code",
       "norm_label": "build()",
       "source_file": "analyze_web.py",
-      "source_location": "L900"
+      "source_location": "L865"
     },
     {
       "id": "analyze_web_cargar_premios",
@@ -1945,7 +1945,7 @@
       "file_type": "code",
       "norm_label": "_repeats()",
       "source_file": "analyze_web.py",
-      "source_location": "L995"
+      "source_location": "L952"
     },
     {
       "id": "analyze_web_rueda",
@@ -4166,15 +4166,15 @@
       "source_location": "L70"
     },
     {
-      "id": "analyze_web_rationale_733",
-      "label": "\u00daltimo a\u00f1o y premios reales. Sin el sorteo de hoy: cada boleto usa solo el\u2026",
+      "id": "analyze_web_rationale_742",
+      "label": "Cada plazo mira y juega los mismos sorteos. Sin el sorteo de hoy.",
       "_origin": "ast",
       "community": 6,
       "community_name": "analyze_web.py",
       "file_type": "rationale",
-      "norm_label": "ultimo ano y premios reales. sin el sorteo de hoy: cada boleto usa solo el...",
+      "norm_label": "cada plazo mira y juega los mismos sorteos. sin el sorteo de hoy.",
       "source_file": "analyze_web.py",
-      "source_location": "L733"
+      "source_location": "L742"
     },
     {
       "id": "maximumhitspredictor_py_dataframe",
@@ -4798,7 +4798,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L746",
+      "source_location": "L753",
       "weight": 1.0
     },
     {
@@ -4810,7 +4810,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L746",
+      "source_location": "L753",
       "weight": 1.0
     },
     {
@@ -4822,7 +4822,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L747",
+      "source_location": "L754",
       "weight": 1.0
     },
     {
@@ -4834,7 +4834,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L755",
+      "source_location": "L762",
       "weight": 1.0
     },
     {
@@ -4846,7 +4846,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L755",
+      "source_location": "L762",
       "weight": 1.0
     },
     {
@@ -4858,7 +4858,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L780",
+      "source_location": "L789",
       "weight": 1.0
     },
     {
@@ -4870,7 +4870,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L782",
+      "source_location": "L791",
       "weight": 1.0
     },
     {
@@ -4882,7 +4882,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L788",
+      "source_location": "L797",
       "weight": 1.0
     },
     {
@@ -4894,7 +4894,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L789",
+      "source_location": "L798",
       "weight": 1.0
     },
     {
@@ -4906,7 +4906,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L901",
+      "source_location": "L866",
       "weight": 1.0
     },
     {
@@ -4918,7 +4918,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L904",
+      "source_location": "L867",
       "weight": 1.0
     },
     {
@@ -4930,7 +4930,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L905",
+      "source_location": "L868",
       "weight": 1.0
     },
     {
@@ -4942,7 +4942,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L907",
+      "source_location": "L870",
       "weight": 1.0
     },
     {
@@ -4954,7 +4954,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L908",
+      "source_location": "L871",
       "weight": 1.0
     },
     {
@@ -4966,7 +4966,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L909",
+      "source_location": "L872",
       "weight": 1.0
     },
     {
@@ -4978,7 +4978,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L913",
+      "source_location": "L876",
       "weight": 1.0
     },
     {
@@ -4990,7 +4990,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L917",
+      "source_location": "L880",
       "weight": 1.0
     },
     {
@@ -5002,7 +5002,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L918",
+      "source_location": "L881",
       "weight": 1.0
     },
     {
@@ -5014,7 +5014,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L919",
+      "source_location": "L882",
       "weight": 1.0
     },
     {
@@ -5026,7 +5026,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L920",
+      "source_location": "L883",
       "weight": 1.0
     },
     {
@@ -5038,7 +5038,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L922",
+      "source_location": "L885",
       "weight": 1.0
     },
     {
@@ -5050,7 +5050,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L941",
+      "source_location": "L904",
       "weight": 1.0
     },
     {
@@ -5062,7 +5062,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L947",
+      "source_location": "L910",
       "weight": 1.0
     },
     {
@@ -5074,7 +5074,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L948",
+      "source_location": "L911",
       "weight": 1.0
     },
     {
@@ -5086,7 +5086,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L958",
+      "source_location": "L921",
       "weight": 1.0
     },
     {
@@ -5098,7 +5098,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L961",
+      "source_location": "L924",
       "weight": 1.0
     },
     {
@@ -8488,7 +8488,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "analyze_web.py",
-      "source_location": "L732",
+      "source_location": "L741",
       "weight": 1.0
     },
     {
@@ -8510,7 +8510,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "analyze_web.py",
-      "source_location": "L900",
+      "source_location": "L865",
       "weight": 1.0
     },
     {
@@ -8521,7 +8521,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "analyze_web.py",
-      "source_location": "L995",
+      "source_location": "L952",
       "weight": 1.0
     },
     {
@@ -10626,14 +10626,14 @@
       "weight": 1.0
     },
     {
-      "source": "analyze_web_rationale_733",
+      "source": "analyze_web_rationale_742",
       "target": "analyze_web_barrido",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "analyze_web.py",
-      "source_location": "L733",
+      "source_location": "L742",
       "weight": 1.0
     },
     {
@@ -11709,5 +11709,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "d16a96871e99724bf2dc5957034a5abf3da5686a"
+  "built_at_commit": "72240ce2ce43c33e1a4b334b8033bed07be525a5"
 }

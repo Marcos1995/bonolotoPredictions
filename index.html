@@ -91,7 +91,7 @@
     .tabla-scroll { overflow-x: auto; max-width: 100%; -webkit-overflow-scrolling: touch; }
     #siete, main { min-width: 0; }
     #siete-title, #siete-nota { overflow-wrap: anywhere; }
-    .tabla-scroll table { border-collapse: separate; border-spacing: 0; min-width: 58rem; }
+    .tabla-scroll table { border-collapse: separate; border-spacing: 0; min-width: 46rem; }
     .tabla-scroll.angosta table { min-width: 36rem; }
     .tabla-scroll th, .tabla-scroll td { white-space: nowrap; background-color: #fff; }
     .tabla-scroll thead th { position: sticky; top: 0; z-index: 2; background-color: #fff; }
@@ -254,9 +254,9 @@
 
     <section id="siete" class="section-reveal" aria-labelledby="siete-title">
       <div class="bg-[#18E667] text-[#032612] p-6 sm:p-8 rounded-[14px] mb-4">
-        <p class="text-xs uppercase tracking-widest font-mono font-bold mb-2">Último año · ventanas de 20 en 20</p>
-        <h2 id="siete-title" class="text-3xl sm:text-5xl font-black tracking-tight leading-tight mb-3">La mediana, no el premio gordo</h2>
-        <p id="siete-nota" class="text-base font-semibold max-w-2xl">Si se quita el 20 % de ventanas que más gana y el 20 % que más pierde, queda el centro. Una ventana salvada por un 6 no es una regla.</p>
+        <p id="siete-kicker" class="text-xs uppercase tracking-widest font-mono font-bold mb-2">Cinco plazos</p>
+        <h2 id="siete-title" class="text-3xl sm:text-5xl font-black tracking-tight leading-tight mb-3">El plazo se mira y se juega</h2>
+        <p id="siete-nota" class="text-base font-semibold max-w-2xl">3 meses, 6 meses, 1 año, 3 años y 5 años. Cada fila usa ese número de sorteos para elegir y ese mismo número para jugar.</p>
       </div>
       <div id="siete-rows" class="space-y-8"></div>
     </section>
@@ -882,6 +882,7 @@
       const cols = [...table.querySelectorAll(".pegada")];
       if (!cols.length) return;
       const w = Math.ceil(Math.max(...cols.map((c) => c.getBoundingClientRect().width)));
+      if (!(w > 8)) return;
       cols.forEach((c) => { c.style.minWidth = w + "px"; });
       table.style.setProperty("--col1", w + "px");
     }
@@ -891,16 +892,15 @@
       if (!pack || !pack.pools) return;
       const euro = (n) => (n >= 0 ? "+" : "−") + Math.abs(n).toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
       const dinero = (n) => n.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
-      const mejor = pack.pools[0];
-      const porSuma = pack.pools.slice().sort((a, b) => b.suma - a.suma)[0];
-      document.getElementById("siete-title").textContent = porSuma.suma > 0
-        ? "La mediana pierde. La suma gana"
-        : "La mediana pierde. La suma también";
+      const mejor = pack.pools.slice().sort((a, b) => b.saldo - a.saldo)[0];
+      const ap = (n) => n + (n === 1 ? " apuesta" : " apuestas");
+      document.getElementById("siete-kicker").textContent = "Cinco plazos · se mira y se juega lo mismo";
+      document.getElementById("siete-title").textContent = mejor.saldo > 0
+        ? "Hay plazos que acaban en positivo"
+        : "Ningún plazo acaba en positivo";
       document.getElementById("siete-nota").textContent =
-        pack.sorteos + " sorteos, del " + pack.desde + ". La mediana menos mala es " + euro(mejor.mediana) +
-        " (" + mejor.nombre + ", " + mejor.cuantos + " números, " + mejor.apuestas + (mejor.apuestas === 1 ? " apuesta" : " apuestas") + "). La suma más alta de las " +
-        pack.ventanas + " ventanas es " + euro(porSuma.suma) + " (" + porSuma.nombre + ", " + porSuma.cuantos +
-        " números, " + porSuma.apuestas + (porSuma.apuestas === 1 ? " apuesta" : " apuestas") + "). Esa suma junta " + pack.ventanas + " formas de elegir; no es un año jugado con un solo boleto.";
+        mejor.nombre + ", " + mejor.cuantos + " números, " + ap(mejor.apuestas) + ", " + mejor.plazo +
+        " (" + mejor.sorteos + " sorteos): " + euro(mejor.saldo) + ". Es un tramo, no una regla que se repita.";
       const celda = (n, texto, extra) => `<td class="px-2 py-2 text-center font-mono ${extra || ""}" data-n="${n}">${texto}</td>`;
       const cajon = (p, nivel) => {
         const dias = (p.grandes || []).filter((g) => {
@@ -914,7 +914,7 @@
       };
       const th = (k, label, ayuda, pegada) =>
         `<th class="${pegada || ""}" scope="col" aria-sort="none" title="${ayuda}"><button type="button" class="ord" data-k="${k}">${label}<span class="flecha" aria-hidden="true"></span></button></th>`;
-      const body = pack.pools.map((p, i) => {
+      const fila = (p, i) => {
         const seis = cajon(p, "6");
         const cincoC = cajon(p, "5c");
         const cinco = cajon(p, "5");
@@ -922,95 +922,62 @@
         return `<tr class="border-t border-[#D3E3D6]">
           <th class="pegada px-2 py-2 text-left font-mono" scope="row" data-n="${i}">#<span data-puesto>${i + 1}</span></th>
           <th class="pegada2 px-2 py-2 text-left" scope="row" data-n="${p.nombre} ${String(p.cuantos).padStart(2, "0")} ${String(p.apuestas).padStart(2, "0")}">${regla}</th>
-          ${celda(p.mediana, euro(p.mediana), "font-bold")}
-          ${celda(p.suma, euro(p.suma), "font-bold")}
+          ${celda(p.mirados, p.plazo)}
+          ${celda(p.sorteos, p.sorteos)}
+          ${celda(p.saldo, euro(p.saldo), "font-bold")}
           ${celda(seis.euros, seis.texto)}
           ${celda(cincoC.euros, cincoC.texto)}
           ${celda(cinco.euros, cinco.texto)}
-          ${celda(p.maximo, euro(p.maximo))}
-          ${celda(p.centro, euro(p.centro))}
-          ${celda(p.en_positivo, p.en_positivo + "/" + p.ventanas)}
           ${celda(p.apuestas, p.apuestas)}
           ${celda(p.coste_dia, dinero(p.coste_dia))}
-          ${celda(p.cobertura["6"], pct(p.cobertura["6"]))}
-          ${celda(p.cobertura["5"], pct(p.cobertura["5"]))}
         </tr>`;
-      }).join("");
-      const cabeza = [
-        th("puesto", "#", "Puesto según la columna activa. Ordena por la mediana de partida.", "pegada"),
-        th("regla", "Regla", "Modo y cuántos números tiene el grupo.", "pegada2"),
-        th("mediana", "Mediana", "Punto medio del saldo de las 20 ventanas."),
-        th("suma", "Suma", "Saldo de las 20 ventanas sumadas. No es un solo año."),
-        th("seis", "6", "Boletos con 6 aciertos, y el dinero de esos días, en cualquier ventana."),
-        th("cincoc", "5+C", "Boletos con 5 y el complementario, y el dinero de esos días."),
-        th("cinco", "5", "Boletos con 5 aciertos, sin el complementario, y el dinero de esos días."),
-        th("mejor", "Mejor", "La ventana que más dinero dejó, sola."),
-        th("centro", "Centro", "La mejor ventana que queda al quitar el 20 % que más gana y el 20 % que más pierde."),
-        th("positivas", "En +", "Ventanas que acaban por encima de cero."),
-        th("apuestas", "Apuestas", "Combinaciones de 6 que se compran cada día."),
-        th("dia", "Al día", "Coste de un sorteo, a 0,50 € el boleto."),
-        th("cubre6", "Cubre 6", "Parte de las combinaciones del grupo que sí compras."),
-        th("cubre5", "Cubre 5", "Si las 6 bolas caen dentro del grupo, en qué parte de los casos algún boleto acierta 5 o más."),
-      ].join("");
-      const marca = (boletos) => {
-        if (boletos["6"]) return "6";
-        if (boletos["5c"]) return "5+C";
-        if (boletos["5"]) return "5";
-        return "4";
       };
-      const partes = (boletos) => ["6", "5c", "5", "4", "3"].filter((key) => boletos[key]).map((key) => boletos[key] + " de " + (key === "5c" ? "5+C" : key)).join(", ");
-      const exitos = pack.pools.map((p) => p.exitos.map((e) => {
-        const rows = e.premios.filter((r) => r.boletos["6"] || r.boletos["5c"] || r.boletos["5"]).slice().reverse().map((r) => `<article class="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-3 items-start bg-white rounded-[14px] p-3 border border-[#D3E3D6]">
-          <div class="dec-thumb w-16 h-16 rounded-2xl font-black text-xl flex items-center justify-center" aria-hidden="true">${marca(r.boletos)}</div>
-          <div class="min-w-0">
-            <h4 class="font-black text-[#032612]">${r.fecha}</h4>
-            <p class="text-sm text-[#245233]">Salió ${r.salio.join(", ")} · C ${r.complementario == null ? "—" : r.complementario}</p>
-            <p class="text-sm text-[#183925]">${partes(r.boletos)}. Ese día: ${dinero(r.euros)}.</p>
-          </div>
-        </article>`).join("");
-        const b = e.boletos;
-        return `<div><h3 class="text-xl font-black text-[#032612] mb-1">${p.nombre}, ${p.cuantos} números, ${p.apuestas} apuestas, ventana ${e.ventana}: ${euro(e.saldo)}</h3>
-          <p class="text-sm text-[#52695B] mb-2">Sin el día que más pagó: ${euro(e.sin_mayor)}. En el año: ${b["3"]} de 3, ${b["4"]} de 4, ${b["5"]} de 5, ${b["5c"]} de 5+C, ${b["6"]} de 6.</p>${rows}</div>`;
-      }).join("")).join("");
-      const ruedas = pack.pools.filter((p) => p.modo === "calientes").sort((a, b) => a.cuantos - b.cuantos || a.apuestas - b.apuestas);
-      const cuerpoCob = ruedas.map((p, i) => `<tr class="border-t border-[#D3E3D6]">
-          <th class="pegada px-2 py-2 text-left font-mono" scope="row" data-n="${i}">#<span data-puesto>${i + 1}</span></th>
-          <th class="pegada2 px-2 py-2 text-left" scope="row" data-n="${p.cuantos}">${p.cuantos} números</th>
-          ${celda(p.apuestas, p.apuestas)}
-          ${celda(p.combinaciones, p.combinaciones.toLocaleString("es-ES"))}
-          ${celda(p.cobertura["6"], pct(p.cobertura["6"]))}
-          ${celda(p.cobertura["5"], pct(p.cobertura["5"]))}
-        </tr>`).join("");
-      document.getElementById("siete-rows").innerHTML =
-        `<p class="text-xs text-[#52695B] mb-2">Pulsa una columna: el primer clic ordena de mayor a menor. # y Regla se quedan fijas al hacer scroll. Con 1 apuesta se juegan los 6 primeros del grupo, así que el saldo de 6 a 12 números coincide.</p>
-        <div class="tabla-scroll bg-white rounded-[14px] border border-[#D3E3D6] py-2 pr-2">
-          <table id="tabla-reglas" class="w-full text-sm text-[#032612]">
-            <thead><tr>${cabeza}</tr></thead><tbody>${body}</tbody>
+      const cabeza = [
+        th("puesto", "#", "Puesto según la columna activa.", "pegada"),
+        th("regla", "Regla", "Calientes, fríos o retrasados, y cuántos números.", "pegada2"),
+        th("plazo", "Plazo", "Tiempo que se mira y que se juega."),
+        th("sorteos", "Sorteos", "Cuántos sorteos entran en ese plazo."),
+        th("saldo", "Saldo", "Premios menos lo jugado en ese plazo."),
+        th("seis", "6", "Veces que un boleto acertó los 6, y el dinero de esos días."),
+        th("cincoc", "5+C", "Veces con 5 y el complementario, y el dinero de esos días."),
+        th("cinco", "5", "Veces con 5, sin el complementario, y el dinero de esos días."),
+        th("apuestas", "Apuestas", "Boletos que se compran cada sorteo."),
+        th("dia", "Al día", "Coste de un sorteo, a 0,50 € el boleto."),
+      ].join("");
+      const tabla = (id, rows) => `<div class="tabla-scroll bg-white rounded-[14px] border border-[#D3E3D6] py-2 pr-2">
+          <table id="${id}" class="w-full text-sm text-[#032612]">
+            <thead><tr>${cabeza}</tr></thead><tbody>${rows.map(fila).join("")}</tbody>
           </table>
+        </div>`;
+      const positivos = pack.pools.filter((p) => p.saldo > 0);
+      const negativos = pack.pools.filter((p) => p.saldo <= 0);
+      const porPlazo = (pack.plazos || []).map((z) => pack.pools.filter((p) => p.plazo === z.nombre).sort((a, b) => b.saldo - a.saldo || a.apuestas - b.apuestas)[0]).filter(Boolean);
+      const plazosTxt = (pack.plazos || []).map((z) => z.nombre + " = " + z.sorteos + " sorteos, del " + z.desde).join(". ");
+      document.getElementById("siete-rows").innerHTML =
+        `<div class="text-sm text-[#183925] max-w-2xl space-y-2 mb-4">
+          <p><span class="font-black text-[#032612]">Calientes:</span> los que más salieron en esos sorteos. <span class="font-black text-[#032612]">Fríos:</span> los que menos. <span class="font-black text-[#032612]">Retrasados:</span> los que más sorteos llevan sin salir. Si uno no salió ninguna vez en el plazo, va el primero. El frío sí salió, pocas veces.</p>
+          <p>${plazosTxt}. Se miran los sorteos anteriores a cada día, y se juegan los de ese mismo plazo.</p>
+          <p>Con 6 números se compra el único boleto. Con más números se compran 1, 5, 10 o 20, no el grupo entero. Con 7 números, 7 boletos sí lo cubren. Una apuesta usa los 6 primeros, así que el saldo de 6 a 12 números coincide.</p>
         </div>
-        <div class="mt-8">
-          <h3 class="text-2xl font-black text-[#032612] mb-2">La cobertura no elige los números.</h3>
-          <p class="text-sm text-[#183925] max-w-2xl mb-3">Con 6 números solo hay 1 boleto. Lo compras entero: cobertura 100 %. Da igual calientes, fríos o retrasados. El modo cambia qué números entran, no el porcentaje.</p>
-          <p class="text-sm text-[#245233] max-w-2xl mb-4">Del 7 al 12 hay más combinaciones. Se prueban 1, 5, 10 y 20 boletos, o todos si caben en menos. Con 7 números, 7 boletos cubren el grupo entero. La tabla es la misma para los tres modos. Solo cobra el boleto que compraste, no el grupo.</p>
-          <div class="tabla-scroll angosta bg-white rounded-[14px] border border-[#D3E3D6] py-2 pr-2">
-            <table id="tabla-cobertura" class="w-full text-sm text-[#032612]">
-              <thead><tr>
-                ${th("puesto", "#", "Puesto de la tabla.", "pegada")}
-                ${th("numeros", "Números", "Tamaño del grupo.", "pegada2")}
-                ${th("apuestas", "Apuestas", "Boletos comprados cada día.")}
-                ${th("combinaciones", "Combinaciones", "Todas las formas de elegir 6 números dentro del grupo.")}
-                ${th("cubre6", "Cubre el 6", "Apuestas divididas entre las combinaciones del grupo.")}
-                ${th("cubre5", "Cubre el 5", "Parte de los sorteos dentro del grupo en los que algún boleto acierta 5 o más.")}
-              </tr></thead>
-              <tbody>${cuerpoCob}</tbody>
-            </table>
-          </div>
-        </div>` +
-        (exitos
-          ? `<h3 class="text-xl font-black text-[#032612] mt-6 mb-2">Solo las ventanas que acaban en positivo</h3>` + exitos
-          : `<p class="text-sm text-[#52695B] mt-6">Ninguna ventana acaba en positivo.</p>`);
-      activarOrden(document.getElementById("tabla-reglas"), "mediana", -1);
-      activarOrden(document.getElementById("tabla-cobertura"), "numeros", 1);
+        <h3 class="text-xl font-black text-[#032612] mb-2">Saldo positivo</h3>` +
+        (positivos.length
+          ? tabla("tabla-si", positivos)
+          : `<p class="text-sm text-[#52695B] mb-4">Ninguna regla acaba por encima de cero.</p>`) +
+        `<h3 class="text-xl font-black text-[#032612] mt-6 mb-2">La mejor de cada plazo</h3>
+        <p class="text-xs text-[#52695B] mb-2">Aunque ese plazo pierda. Pulsa una columna: el primer clic ordena de mayor a menor. # y Regla se quedan fijas.</p>` +
+        tabla("tabla-plazo", porPlazo) +
+        `<details id="tabla-no-det" class="mt-6">
+          <summary class="cursor-pointer font-black text-[#032612] text-xl">En negativo: ${negativos.length} reglas</summary>
+          <p class="text-xs text-[#52695B] my-2">Las que no salen arriba. El saldo más alto de este grupo es el que menos pierde.</p>
+          ${tabla("tabla-no", negativos)}
+        </details>`;
+      if (positivos.length) activarOrden(document.getElementById("tabla-si"), "saldo", -1);
+      activarOrden(document.getElementById("tabla-plazo"), "plazo", 1);
+      activarOrden(document.getElementById("tabla-no"), "saldo", -1);
+      document.getElementById("tabla-no-det").addEventListener("toggle", () => {
+        const t = document.getElementById("tabla-no");
+        if (t && t.querySelector(".pegada")) pegarColumnas(t);
+      });
       const repintarPegadas = () => {
         document.querySelectorAll("table").forEach((t) => {
           if (t.querySelector(".pegada")) pegarColumnas(t);

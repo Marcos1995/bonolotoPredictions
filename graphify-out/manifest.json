@@ -6,9 +6,9 @@
     "semantic_hash": ""
   },
   "analyze_web.py": {
-    "mtime": 1791545338.2650046,
-    "seen": 1791545601.6070611,
-    "ast_hash": "848a4b64848ba8dfd1635e553bdae940",
+    "mtime": 1791546749.497577,
+    "seen": 1791547110.16112,
+    "ast_hash": "864da8f585ce3d1ba81f8261edf1d08d",
     "semantic_hash": ""
   },
   "bestPrediction.py": {
@@ -24,9 +24,9 @@
     "semantic_hash": ""
   },
   "data/bonoloto.json": {
-    "mtime": 1791545402.4508402,
-    "seen": 1791545601.6070611,
-    "ast_hash": "eaaa962971c1ea1078c57acc152d3635",
+    "mtime": 1791546976.4473464,
+    "seen": 1791547110.16112,
+    "ast_hash": "e0815315ffafac83c69ed8858721fb75",
     "semantic_hash": ""
   },
   "edgeHunt.py": {
@@ -180,9 +180,9 @@
     "semantic_hash": ""
   },
   "PROJECT.md": {
-    "mtime": 1791545342.0146377,
-    "seen": 1791545601.6070611,
-    "ast_hash": "00653ea321d9b57158fec22c1b632b20",
+    "mtime": 1791546714.0324528,
+    "seen": 1791547110.16112,
+    "ast_hash": "a2044f28e9c2e7b5f66f9b49e506b63b",
     "semantic_hash": ""
   },
   "README.md": {
@@ -198,15 +198,15 @@
     "semantic_hash": ""
   },
   "docs/DECISIONES.md": {
-    "mtime": 1791532374.8246274,
-    "seen": 1791532769.019234,
-    "ast_hash": "aa507fa459f540615d3fe313898f1714",
+    "mtime": 1791546712.1212254,
+    "seen": 1791547110.16112,
+    "ast_hash": "4cc22db5815491141c781f0e618d6e7f",
     "semantic_hash": ""
   },
   "index.html": {
-    "mtime": 1791545582.1981177,
-    "seen": 1791545601.6070611,
-    "ast_hash": "cbcc3c389ae4c914ccc3653b71748a4d",
+    "mtime": 1791546833.2951162,
+    "seen": 1791547110.16112,
+    "ast_hash": "861be96c69827b7d45e8ecc4f9b6883e",
     "semantic_hash": ""
   },
   "pattern_analysis_results.txt": {
@@ -222,9 +222,9 @@
     "semantic_hash": ""
   },
   "data/premios.json": {
-    "mtime": 1791496980.4913557,
-    "seen": 1791497047.2156744,
-    "ast_hash": "460889a793a4e7bd1747235ebd993b3a",
+    "mtime": 1791546974.4219506,
+    "seen": 1791547110.16112,
+    "ast_hash": "5f597c101bf8097fc98b55f4a1db0e30",
     "semantic_hash": ""
   },
   ".cursor/skills/tablas/SKILL.md": {

@@ -19,6 +19,6 @@
 - Ponytail siempre activo (ver AGENTS.md)
 
 ## Estado
-- 2026-10-09: grupos del 6 al 12. La cobertura es la misma en calientes, fríos y retrasados: con 6 números es siempre el 100 %. La lista de premios solo enseña ventanas en positivo. La primera columna tapa el hueco de la izquierda al hacer scroll.
+- 2026-10-09: cada plazo mira y juega los mismos sorteos: 90 (3 meses), 180 (6 meses), 365 (1 año), 1.095 (3 años) y 1.825 (5 años). Retrasado es el que más sorteos lleva sin salir en ese plazo. Arriba, solo el saldo positivo; debajo, la mejor de cada plazo y el resto plegado.
 
 
