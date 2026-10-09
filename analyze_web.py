@@ -729,18 +729,24 @@ def calientes_ventanas(draws, comps, premios):
                 "boletos": suma,
                 "premios": dias,
             })
-        mejor = max(filas, key=lambda f: f["saldo"])
-        peor = min(filas, key=lambda f: f["saldo"])
+        ordenadas = sorted(f["saldo"] for f in filas)
+        corte = int(len(ordenadas) * 0.2)
+        centro = ordenadas[corte:len(ordenadas) - corte] if corte else ordenadas
+        mitad = len(ordenadas) // 2
+        mediana = ordenadas[mitad] if len(ordenadas) % 2 else round((ordenadas[mitad - 1] + ordenadas[mitad]) / 2, 2)
         exitos = []
         for f in filas:
             if f["saldo"] <= 0:
                 continue
+            mayor = max((d["euros"] for d in f["premios"]), default=0)
             exitos.append({
                 "ventana": f["ventana"],
                 "saldo": f["saldo"],
+                "sin_mayor": round(f["saldo"] - mayor, 2),
                 "boletos": f["boletos"],
                 "premios": f["premios"],
             })
+        mejor = max(filas, key=lambda f: f["saldo"])
         pools.append({
             "cuantos": k,
             "combinaciones": total,
@@ -749,8 +755,9 @@ def calientes_ventanas(draws, comps, premios):
             "cobertura": cobertura,
             "en_positivo": len(exitos),
             "ventanas": len(filas),
-            "mejor": mejor["saldo"],
-            "peor": peor["saldo"],
+            "mediana": mediana,
+            "centro": round(max(centro), 2),
+            "centro_positivas": sum(s > 0 for s in centro),
             "boletos": mejor["boletos"],
             "exitos": exitos,
         })
@@ -840,9 +847,9 @@ def build():
     v = payload["calientes_ventanas"]
     for p in v["pools"]:
         print(
-            f"{p['cuantos']} nums {p['apuestas']} apuestas {p['en_positivo']}/{p['ventanas']} "
-            f"mejor={p['mejor']} peor={p['peor']} boletos={p['boletos']} "
-            f"ventanas={[e['ventana'] for e in p['exitos']]}"
+            f"{p['cuantos']} nums {p['en_positivo']}/{p['ventanas']} mediana={p['mediana']} "
+            f"centro={p['centro']} positivas_centro={p['centro_positivas']} "
+            f"sin_mayor={[e['sin_mayor'] for e in p['exitos']]}"
         )
     p = payload["patrones"]
     print("orden", orden["ya_ordenadas"], "/", orden["filas"])

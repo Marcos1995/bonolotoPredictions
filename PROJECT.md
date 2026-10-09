@@ -19,6 +19,6 @@
 - Ponytail siempre activo (ver AGENTS.md)
 
 ## Estado
-- 2026-10-09: grupos de 6, 9 y 12 calientes. El 6 es 1 apuesta. El 9 y el 12, hasta 20 (10 €). La página lista las ventanas en positivo y sus premios de 4, 5, 5+C y 6.
+- 2026-10-09: la mediana de las 10 ventanas y el centro al quitar el 20 % mejor y el 20 % peor. Sin el día que más paga, el saldo de esa ventana va aparte.
 
 

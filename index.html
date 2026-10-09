@@ -219,8 +219,8 @@
     <section id="siete" class="section-reveal" aria-labelledby="siete-title">
       <div class="bg-[#18E667] text-[#032612] p-6 sm:p-8 rounded-[14px] mb-4">
         <p class="text-xs uppercase tracking-widest font-mono font-bold mb-2">Último año · ventanas de 50 en 50</p>
-        <h2 id="siete-title" class="text-3xl sm:text-5xl font-black tracking-tight leading-tight mb-3">6 números, 1 apuesta. 9 y 12, hasta 20.</h2>
-        <p id="siete-nota" class="text-base font-semibold max-w-2xl">Máxima cobertura por debajo de 10 € al día. Abajo, las ventanas que acaban en positivo y los premios de 4, 5, 5+C y 6.</p>
+        <h2 id="siete-title" class="text-3xl sm:text-5xl font-black tracking-tight leading-tight mb-3">La mediana, no el premio gordo</h2>
+        <p id="siete-nota" class="text-base font-semibold max-w-2xl">Si se quita el 20 % de ventanas que más gana y el 20 % que más pierde, queda el centro. Una ventana salvada por un 6 no es una regla.</p>
       </div>
       <div id="siete-rows" class="space-y-8"></div>
     </section>
@@ -812,17 +812,17 @@
       if (!pack || !pack.pools) return;
       const euro = (n) => (n >= 0 ? "+" : "−") + Math.abs(n).toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
       const dinero = (n) => n.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
-      const alguna = pack.pools.find((p) => p.en_positivo >= 7);
+      const alguna = pack.pools.find((p) => p.mediana > 0);
       document.getElementById("siete-title").textContent = alguna
-        ? alguna.cuantos + " calientes ganan en " + alguna.en_positivo + " de " + alguna.ventanas
-        : "Ningún grupo gana en muchas ventanas";
+        ? "La mediana de " + alguna.cuantos + " calientes sale positiva"
+        : "La mediana pierde. El 6 no es una regla";
       document.getElementById("siete-nota").textContent =
-        pack.sorteos + " sorteos, del " + pack.desde + ". El 6 es una apuesta, 0,50 €. El 9 y el 12 llegan hasta 20 apuestas, 10 €, la cobertura más alta posible. Los 3, 4, 5, 5+C y 6 de la tabla son los boletos de la ventana con mejor saldo.";
-      const cols = ["Apuestas", "Al día", "En positivo", "3", "4", "5", "5+C", "6", "Mejor", "Peor"];
+        pack.sorteos + " sorteos, del " + pack.desde + ". De 10 ventanas se quitan las 2 que más ganan y las 2 que más pierden. La mediana es el centro de las 10. Sin el día de más dinero, el saldo de esa ventana está debajo de su título.";
+      const cols = ["Apuestas", "Al día", "En positivo", "3", "4", "5", "5+C", "6", "Mediana", "Centro"];
       const head = cols.map((c) => `<th class="px-1 py-2 text-center font-bold">${c}</th>`).join("");
       const body = pack.pools.map((p) => {
         const b = p.boletos;
-        return `<tr class="border-t border-[#D3E3D6]"><th class="pr-2 py-2 text-left">${p.cuantos} calientes</th><td class="px-1 py-2 text-center font-mono">${p.apuestas}</td><td class="px-1 py-2 text-center font-mono">${dinero(p.coste_dia)}</td><td class="px-1 py-2 text-center font-mono font-bold">${p.en_positivo}/${p.ventanas}</td><td class="px-1 py-2 text-center font-mono">${b["3"]}</td><td class="px-1 py-2 text-center font-mono">${b["4"]}</td><td class="px-1 py-2 text-center font-mono">${b["5"]}</td><td class="px-1 py-2 text-center font-mono">${b["5c"]}</td><td class="px-1 py-2 text-center font-mono">${b["6"]}</td><td class="px-1 py-2 text-center font-mono">${euro(p.mejor)}</td><td class="px-1 py-2 text-center font-mono">${euro(p.peor)}</td></tr>`;
+        return `<tr class="border-t border-[#D3E3D6]"><th class="pr-2 py-2 text-left">${p.cuantos} calientes</th><td class="px-1 py-2 text-center font-mono">${p.apuestas}</td><td class="px-1 py-2 text-center font-mono">${dinero(p.coste_dia)}</td><td class="px-1 py-2 text-center font-mono font-bold">${p.en_positivo}/${p.ventanas}</td><td class="px-1 py-2 text-center font-mono">${b["3"]}</td><td class="px-1 py-2 text-center font-mono">${b["4"]}</td><td class="px-1 py-2 text-center font-mono">${b["5"]}</td><td class="px-1 py-2 text-center font-mono">${b["5c"]}</td><td class="px-1 py-2 text-center font-mono">${b["6"]}</td><td class="px-1 py-2 text-center font-mono font-bold">${euro(p.mediana)}</td><td class="px-1 py-2 text-center font-mono">${euro(p.centro)} · ${p.centro_positivas}/6</td></tr>`;
       }).join("");
       const marca = (boletos) => {
         if (boletos["6"]) return "6";
@@ -842,11 +842,11 @@
         </article>`).join("");
         const b = e.boletos;
         return `<div><h3 class="text-xl font-black text-[#032612] mb-1">${p.cuantos} calientes, ventana ${e.ventana}: ${euro(e.saldo)}</h3>
-          <p class="text-sm text-[#52695B] mb-2">En el año: ${b["3"]} de 3, ${b["4"]} de 4, ${b["5"]} de 5, ${b["5c"]} de 5+C, ${b["6"]} de 6.</p>${rows}</div>`;
+          <p class="text-sm text-[#52695B] mb-2">Sin el día que más pagó: ${euro(e.sin_mayor)}. En el año: ${b["3"]} de 3, ${b["4"]} de 4, ${b["5"]} de 5, ${b["5c"]} de 5+C, ${b["6"]} de 6.</p>${rows}</div>`;
       }).join("")).join("");
       document.getElementById("siete-rows").innerHTML =
         `<div class="overflow-x-auto bg-white rounded-[14px] border border-[#D3E3D6] p-3">
-          <table class="w-full text-sm text-[#032612]"><caption class="text-left text-xs text-[#52695B] mb-2">Ventanas de 50 a 500. En positivo son las que acaban el año por encima de cero. Los premios de debajo son solo esas.</caption>
+          <table class="w-full text-sm text-[#032612]"><caption class="text-left text-xs text-[#52695B] mb-2">Centro: las 6 ventanas que quedan al quitar el 20 % mejor y el 20 % peor. La mediana es el punto medio de las 10.</caption>
           <thead><tr><th class="text-left pr-2 py-2">Grupo</th>${head}</tr></thead><tbody>${body}</tbody></table>
         </div>` + (exitos || `<p class="text-sm text-[#52695B]">Ninguna ventana acaba en positivo.</p>`);
     }
