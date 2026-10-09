@@ -19,6 +19,6 @@
 - Ponytail siempre activo (ver AGENTS.md)
 
 ## Estado
-- 2026-10-09: mirar y jugar son dos cosas. Se miran de 20 a 400 sorteos para elegir calientes, fríos o retrasados. Se juega 3 meses, 6 meses, 1 año, 3 años o 5 años. La tabla de arriba solo lista el saldo positivo, que incluye el 6 de 12 calientes.
+- 2026-10-09: la página muestra los 12 calientes, fríos y retrasados del próximo sorteo, mirando los 400 anteriores. Los 6 primeros son el boleto de una apuesta.
 
 

@@ -1,17 +1,17 @@
 # Graph Report - bonolotoPredictions  (2026-10-09)
 
 ## Corpus Check
-- 34 files · ~125,280 words
+- 34 files · ~125,654 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 5 file(s) not represented in the graph (top: .mdc 2, (none) 2, .sqlite 1)
 
 ## Summary
-- 402 nodes · 607 edges · 26 communities (19 shown, 7 thin omitted)
+- 404 nodes · 613 edges · 26 communities (19 shown, 7 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 4 edges (avg confidence: 0.88)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `9de92125`
+- Built from commit: `6986d7fc`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -42,7 +42,7 @@
 - DECISIONES.md
 
 ## God Nodes (most connected - your core abstractions)
-1. `build()` - 18 edges
+1. `build()` - 19 edges
 2. `LotteryPatternAnalyzer` - 16 edges
 3. `MultiStrategyPredictor` - 15 edges
 4. `PatternOptimizer` - 14 edges
@@ -56,14 +56,14 @@
 ## Surprising Connections (you probably didn't know these)
 - `load()` --calls--> `load_rows()`  [EXTRACTED]
   analyze_web.py → raffles.py
+- `noche()` --calls--> `nextBonolotoDate()`  [EXTRACTED]
+  analyze_web.py → commonFunctions.py
 - `build()` --calls--> `nextBonolotoDate()`  [EXTRACTED]
   analyze_web.py → commonFunctions.py
 - `run_series()` --calls--> `nextDrawDate()`  [EXTRACTED]
   edgeHunt.py → commonFunctions.py
 - `generate_best_prediction()` --calls--> `nextBonolotoDate()`  [EXTRACTED]
   bestPrediction.py → commonFunctions.py
-- `generate_best_prediction()` --calls--> `db`  [EXTRACTED]
-  bestPrediction.py → sqliteClass.py
 
 ## Import Cycles
 - None detected.
@@ -72,7 +72,7 @@
 
 ### Community 0 - "edgeHunt.py"
 Cohesion: 0.06
-Nodes (46): Build judgments with Laya, Call, Design, borda(), _ensemble_members(), expected_hits(), _fill_from_groups(), _fz() (+38 more)
+Nodes (47): Build judgments with Laya, Call, Design, borda(), _ensemble_members(), expected_hits(), _fill_from_groups(), _fz() (+39 more)
 
 ### Community 1 - "commonFunctions.py"
 Cohesion: 0.10
@@ -96,7 +96,7 @@ Nodes (14): main(), MultiStrategyPredictor, Combine top 3 hot numbers with top 3
 
 ### Community 6 - "analyze_web.py"
 Cohesion: 0.06
-Nodes (64): backtest(), _balance(), barrido(), _boletos(), build(), cargar_premios(), uno(), chi2_uniform() (+56 more)
+Nodes (65): backtest(), _balance(), barrido(), _boletos(), build(), cargar_premios(), uno(), chi2_uniform() (+57 more)
 
 ### Community 7 - "MaximumHitsPredictor"
 Cohesion: 0.14
@@ -148,7 +148,7 @@ Nodes (3): Check, Do, Review
 
 ## Knowledge Gaps
 - **31 isolated node(s):** `1. Root cause`, `2. Compare`, `3. Hypothesis`, `4. Fix`, `Red flags → back to step 1` (+26 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 199 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 200 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **7 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
@@ -163,7 +163,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **What connects `1. Root cause`, `2. Compare`, `3. Hypothesis` to the rest of the system?**
   _31 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `edgeHunt.py` be split into smaller, more focused modules?**
-  _Cohesion score 0.05786090005844535 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.05649717514124294 - nodes in this community are weakly interconnected._
 - **Should `commonFunctions.py` be split into smaller, more focused modules?**
   _Cohesion score 0.09878048780487805 - nodes in this community are weakly interconnected._
 - **Should `webScraper.py` be split into smaller, more focused modules?**

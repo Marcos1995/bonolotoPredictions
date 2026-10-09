@@ -183,6 +183,10 @@
     .orden-band a { color: #18E667; }
     html[data-theme="dark"] .orden-band { background: #04170c; color: #e7f6ec; }
     .dec-thumb { background: #18E667; color: #032612; }
+    .bola { width: 3.25rem; height: 3.25rem; border-radius: 9999px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.25rem; }
+    .bola-si { background: #18E667; color: #032612; }
+    .bola-no { background: #fff; color: #032612; border: 1px solid #D3E3D6; }
+    html[data-theme="dark"] .bola-no { background: #102418; color: #e7f6ec; border-color: #245233; }
     @media (prefers-reduced-motion: reduce) {
       .section-reveal, .section-reveal h1, .theme-thumb { animation: none; transition: none; }
       .animate-pulse { animation: none !important; }
@@ -217,6 +221,12 @@
       <p><span class="font-black text-[#032612]">Calientes</span> son los que más salieron. <span class="font-black text-[#032612]">Fríos</span>, los que menos. <span class="font-black text-[#032612]">Retrasados</span>, los que más sorteos llevan sin salir.</p>
       <p><span class="font-black text-[#032612]">Mirados</span> es cuántos sorteos anteriores se usan para elegirlos, de 20 a 400. <span class="font-black text-[#032612]">Plazo</span> es cuánto tiempo se juega esa elección: 3 meses, 6 meses, 1 año, 3 años o 5 años.</p>
       <p><span class="font-black text-[#032612]">Saldo positivo</span> significa que en ese plazo se cobró más de lo jugado. Un 6, o un 5 con el complementario, puede dejarlo en verde. No quiere decir que se repita.</p>
+    </section>
+
+    <section id="noche" class="section-reveal" aria-labelledby="noche-title">
+      <h2 id="noche-title" class="text-3xl sm:text-4xl font-black text-[#032612] tracking-tight mb-2">Para el sorteo de esta noche</h2>
+      <p id="noche-nota" class="text-sm text-[#245233] max-w-2xl mb-4">Los 6 primeros, en verde, son el boleto de una apuesta. Del 7 al 12 se alarga el grupo.</p>
+      <div id="noche-rows" class="space-y-4"></div>
     </section>
 
     <section id="siete" class="section-reveal" aria-labelledby="siete-title">
@@ -1035,8 +1045,32 @@
       }
     }
 
+    function renderNoche(data) {
+      const n = data.noche;
+      if (!n) return;
+      document.getElementById("noche-title").textContent = "Para el sorteo del " + n.fecha;
+      document.getElementById("noche-nota").textContent =
+        "Mirando los " + n.mirados + " sorteos del " + n.desde + " al " + n.hasta + ". El de esta noche no entra. Los 6 primeros, en verde, son el boleto de una apuesta. Del 7 al 12 se alarga el grupo.";
+      const bloque = (nombre, lista, nota) => `<article class="bg-white rounded-[14px] border border-[#D3E3D6] p-4">
+          <h3 class="text-xl font-black text-[#032612]">${nombre}</h3>
+          <p class="text-sm text-[#245233] mb-3">${nota}</p>
+          <ol class="flex flex-wrap gap-3">
+            ${lista.map((num, i) => `<li class="flex flex-col items-center gap-1">
+              <span class="bola ${i < 6 ? "bola-si" : "bola-no"}">${num}</span>
+              <span class="text-[10px] font-mono text-[#52695B]">${i + 1}</span>
+            </li>`).join("")}
+          </ol>
+        </article>`;
+      document.getElementById("noche-rows").innerHTML = [
+        bloque("Calientes", n.calientes, "Los que más salieron en esos 400."),
+        bloque("Fríos", n.frios, "Los que menos salieron."),
+        bloque("Retrasados", n.retrasados, "Los que más sorteos llevan sin salir."),
+      ].join("");
+    }
+
     function boot(data) {
       DATA = data;
+      renderNoche(data);
       renderSiete(data);
       const expRep = data.sorteos * (data.sorteos - 1) / (2 * data.universo);
       document.getElementById("rep-pill").textContent = data.repeticiones_exactas + " frente a unas " + num(expRep, 1) + " que espera el azar";

@@ -874,6 +874,30 @@ def barrido(draws, comps, premios):
     }
 
 
+def noche(draws, window=400):
+    """Los 12 de la próxima noche, con los mismos 400 sorteos anteriores que la tabla."""
+    i = len(draws)
+    prefix = [[0] * (N + 1) for _ in range(i + 1)]
+    pos = [[] for _ in range(N + 1)]
+    for j, (_d, nums) in enumerate(draws):
+        nxt = prefix[j + 1]
+        nxt[:] = prefix[j]
+        for num in nums:
+            nxt[num] += 1
+            pos[num].append(j)
+    counts = [prefix[i][n] - prefix[i - window][n] for n in range(N + 1)]
+    gaps = _huecos(pos, i, window)
+    return {
+        "fecha": cf.nextBonolotoDate(draws[-1][0]).isoformat(),
+        "desde": draws[i - window][0].isoformat(),
+        "hasta": draws[-1][0].isoformat(),
+        "mirados": window,
+        "calientes": _topk(counts, k=12, reverse=True),
+        "frios": _topk(counts, k=12, reverse=False),
+        "retrasados": _topk(gaps, k=12, reverse=True),
+    }
+
+
 def build():
     draws, reins, orden, comps = load()
     premios = cargar_premios([d for d, _n in draws[-PLAZOS[-1][1]:]])
@@ -920,6 +944,7 @@ def build():
         "forma_modal": {"impares": modal["impares"], "pares": modal["pares"], "obs": modal["obs"], "azar": modal["azar"]},
         "ventanas": windows,
         "calientes_ventanas": barrido(draws, comps, premios),
+        "noche": noche(draws),
         "boletos": picks_now(draws),
         "intento": {
             "regla": best["id"],
