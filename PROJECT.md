@@ -19,6 +19,6 @@
 - Ponytail siempre activo (ver AGENTS.md)
 
 ## Estado
-- 2026-10-09: cada plazo mira y juega los mismos sorteos: 90 (3 meses), 180 (6 meses), 365 (1 año), 1.095 (3 años) y 1.825 (5 años). Retrasado es el que más sorteos lleva sin salir en ese plazo. Arriba, solo el saldo positivo; debajo, la mejor de cada plazo y el resto plegado.
+- 2026-10-09: mirar y jugar son dos cosas. Se miran de 20 a 400 sorteos para elegir calientes, fríos o retrasados. Se juega 3 meses, 6 meses, 1 año, 3 años o 5 años. La tabla de arriba solo lista el saldo positivo, que incluye el 6 de 12 calientes.
 
 
