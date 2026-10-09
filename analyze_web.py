@@ -3,6 +3,7 @@
 Escribe data/bonoloto.json. Fuente: hojas públicas de raffles.py (mismo origen
 que el sqlite local). Sin lookahead: cada regla usa solo sorteos anteriores.
 """
+import bisect
 import datetime as dt
 import json
 import math
@@ -680,94 +681,214 @@ def _rueda(v, tope):
     return masks, cobertura, total
 
 
-def _aplicar(ranked, masks):
-    tickets = []
-    for m in masks:
-        tickets.append(sorted(ranked[i] for i in range(len(ranked)) if m & (1 << i)))
-    return tickets
+def _cobertura(masks, uni):
+    total = len(uni)
+    cobertura = {}
+    for meta in (3, 4, 5, 6):
+        cubiertas = sum(1 for w in uni if any((t & w).bit_count() >= meta for t in masks))
+        cobertura[str(meta)] = round(cubiertas / total, 4) if total else 0
+    return cobertura
 
 
-def calientes_ventanas(draws, comps, premios):
-    """6 calientes: 1 apuesta. 9 y 12: hasta 20 apuestas, la cobertura más alta bajo 10 €."""
+def _indices(masks, k):
+    return [[i for i in range(k) if m & (1 << i)] for m in masks]
+
+
+def _jugar(pool, indices, esta, comp):
+    b = {"3": 0, "4": 0, "5": 0, "5c": 0, "6": 0}
+    for idxs in indices:
+        hits = 0
+        resto = None
+        for i in idxs:
+            n = pool[i]
+            if esta[n]:
+                hits += 1
+            else:
+                resto = n
+        if hits == 6:
+            b["6"] += 1
+        elif hits == 5 and comp is not None and resto == comp:
+            b["5c"] += 1
+        elif hits == 5:
+            b["5"] += 1
+        elif hits >= 3:
+            b[str(hits)] += 1
+    return b
+
+
+def _huecos(pos, i, window):
+    lo = i - window
+    gaps = [0] * (N + 1)
+    for n in range(1, N + 1):
+        arr = pos[n]
+        j = bisect.bisect_left(arr, i) - 1
+        if j < 0 or arr[j] < lo:
+            gaps[n] = window
+        else:
+            gaps[n] = (i - 1) - arr[j]
+    return gaps
+
+
+def barrido(draws, comps, premios):
+    """Último año y premios reales. Sin el sorteo de hoy: cada boleto usa solo el pasado."""
+    windows = list(range(20, 401, 20))
+    modos = (
+        ("calientes", "Calientes", "count", True),
+        ("frios", "Fríos", "count", False),
+        ("retrasados", "Retrasados", "gap", True),
+    )
     last = draws[-1][0]
     idx = next(i for i, (d, _n) in enumerate(draws) if d >= last - dt.timedelta(days=364))
     start = max(idx, 1)
     n = len(draws) - start
-    pools = []
-    for k in (6, 9, 12):
+    cfgs = []
+    for k in (6, 8, 9, 10, 12):
         tope = 1 if k == 6 else 20
-        masks, cobertura, total = _rueda(k, tope)
-        apuestas = len(masks)
-        filas = []
-        for window in range(50, 501, 50):
-            cobrado = 0.0
-            suma = {"3": 0, "4": 0, "5": 0, "5c": 0, "6": 0}
-            dias = []
-            for i in range(start, len(draws)):
-                actual = draws[i][1]
-                comp = comps.get(draws[i][0])
-                ranked = _topk(_scores(draws[:i][-window:]), k=k, reverse=True)
-                tickets = _aplicar(ranked, masks)
-                _t5, _t6, boletos = _boletos(tickets, actual, comp)
-                for key in suma:
-                    suma[key] += boletos[key]
-                pago = _euros(premios.get(draws[i][0].isoformat()), boletos)
-                if pago is None:
-                    continue
-                cobrado += pago
-                if boletos["4"] or boletos["5"] or boletos["5c"] or boletos["6"]:
-                    dias.append({
-                        "fecha": draws[i][0].isoformat(),
-                        "salio": list(actual),
-                        "complementario": comp,
-                        "boletos": boletos,
-                        "euros": round(pago, 2),
+        masks, _cob, total = _rueda(k, tope)
+        uni = _mascaras(k)
+        topes = (1,) if k == 6 else (1, 5, 10, 20)
+        for t in topes:
+            uso = masks[:t]
+            cfgs.append((k, t, _indices(uso, k), _cobertura(uso, uni), total))
+    prefix = [[0] * (N + 1) for _ in range(len(draws) + 1)]
+    pos = [[] for _ in range(N + 1)]
+    for i, (_d, nums) in enumerate(draws):
+        nxt = prefix[i + 1]
+        nxt[:] = prefix[i]
+        for num in nums:
+            nxt[num] += 1
+            pos[num].append(i)
+    vacio = {"3": 0, "4": 0, "5": 0, "5c": 0, "6": 0}
+    series = {}
+    for modo, _nombre, _kind, _rev in modos:
+        for k, t, _idx, _cob, _total in cfgs:
+            for window in windows:
+                series[(modo, k, t, window)] = [0.0, dict(vacio), [], 0.0]
+    for paso, i in enumerate(range(start, len(draws)), 1):
+        fecha_d, actual = draws[i]
+        fecha = fecha_d.isoformat()
+        esta = [False] * (N + 1)
+        for num in actual:
+            esta[num] = True
+        comp = comps.get(fecha_d)
+        tabla = premios.get(fecha)
+        for window in windows:
+            counts = [prefix[i][num] - prefix[i - window][num] for num in range(N + 1)]
+            gaps = _huecos(pos, i, window)
+            listas = {
+                "calientes": _topk(counts, k=12, reverse=True),
+                "frios": _topk(counts, k=12, reverse=False),
+                "retrasados": _topk(gaps, k=12, reverse=True),
+            }
+            for modo, ranked in listas.items():
+                for k, t, indices, _cob, _total in cfgs:
+                    boletos = _jugar(ranked[:k], indices, esta, comp)
+                    pago = _euros(tabla, boletos)
+                    if pago is None:
+                        continue
+                    celda = series[(modo, k, t, window)]
+                    celda[0] += pago
+                    if pago > celda[3]:
+                        celda[3] = pago
+                    for key in vacio:
+                        celda[1][key] += boletos[key]
+                    if boletos["4"] or boletos["5"] or boletos["5c"] or boletos["6"]:
+                        celda[2].append({
+                            "fecha": fecha,
+                            "salio": list(actual),
+                            "complementario": comp,
+                            "boletos": boletos,
+                            "euros": round(pago, 2),
+                        })
+        if paso % 80 == 0:
+            print(f"barrido {paso}/{n}", flush=True)
+    umbral = (7 * len(windows)) // 10
+    corte = len(windows) // 5
+    pools = []
+    for modo, nombre, _kind, _rev in modos:
+        for k, t, _idx, cobertura, total in cfgs:
+            filas = []
+            for window in windows:
+                cobrado, suma, dias, mayor = series[(modo, k, t, window)]
+                saldo = round(cobrado - n * t * 0.50, 2)
+                filas.append({
+                    "ventana": window,
+                    "saldo": saldo,
+                    "sin_mayor": round(saldo - mayor, 2),
+                    "boletos": suma,
+                    "premios": dias,
+                    "mayor": mayor,
+                })
+            ordenadas = sorted(f["saldo"] for f in filas)
+            centro = ordenadas[corte:len(ordenadas) - corte] if corte else ordenadas
+            mitad = len(ordenadas) // 2
+            mediana = ordenadas[mitad] if len(ordenadas) % 2 else round((ordenadas[mitad - 1] + ordenadas[mitad]) / 2, 2)
+            cercana = min(filas, key=lambda f: (abs(f["saldo"] - mediana), f["ventana"]))
+            exitos = []
+            grandes = {}
+            for f in filas:
+                if f["saldo"] > 0:
+                    exitos.append({
+                        "ventana": f["ventana"],
+                        "saldo": f["saldo"],
+                        "sin_mayor": f["sin_mayor"],
+                        "boletos": f["boletos"],
+                        "premios": f["premios"],
                     })
-            filas.append({
-                "ventana": window,
-                "saldo": round(cobrado - n * apuestas * 0.50, 2),
-                "boletos": suma,
-                "premios": dias,
+                for dia in f["premios"]:
+                    if not (dia["boletos"]["5"] or dia["boletos"]["5c"] or dia["boletos"]["6"]):
+                        continue
+                    rec = grandes.setdefault(dia["fecha"], {
+                        "fecha": dia["fecha"],
+                        "salio": dia["salio"],
+                        "complementario": dia["complementario"],
+                        "euros": dia["euros"],
+                        "boletos": dia["boletos"],
+                        "ventanas": [],
+                    })
+                    rec["ventanas"].append(f["ventana"])
+                    if dia["euros"] > rec["euros"]:
+                        rec["euros"] = dia["euros"]
+                        rec["boletos"] = dia["boletos"]
+            lista_grandes = sorted(grandes.values(), key=lambda r: r["fecha"])
+            pools.append({
+                "modo": modo,
+                "nombre": nombre,
+                "cuantos": k,
+                "combinaciones": total,
+                "apuestas": t,
+                "coste_dia": round(t * 0.50, 2),
+                "cobertura": cobertura,
+                "en_positivo": len(exitos),
+                "ventanas": len(filas),
+                "mediana": mediana,
+                "centro": round(max(centro), 2),
+                "centro_n": len(centro),
+                "centro_positivas": sum(s > 0 for s in centro),
+                "boletos": cercana["boletos"],
+                "sin_mayor": cercana["sin_mayor"],
+                "exitos": exitos,
+                "grandes": lista_grandes,
+                "rentable": mediana > 0 and len(exitos) >= umbral,
             })
-        ordenadas = sorted(f["saldo"] for f in filas)
-        corte = int(len(ordenadas) * 0.2)
-        centro = ordenadas[corte:len(ordenadas) - corte] if corte else ordenadas
-        mitad = len(ordenadas) // 2
-        mediana = ordenadas[mitad] if len(ordenadas) % 2 else round((ordenadas[mitad - 1] + ordenadas[mitad]) / 2, 2)
-        exitos = []
-        for f in filas:
-            if f["saldo"] <= 0:
-                continue
-            mayor = max((d["euros"] for d in f["premios"]), default=0)
-            exitos.append({
-                "ventana": f["ventana"],
-                "saldo": f["saldo"],
-                "sin_mayor": round(f["saldo"] - mayor, 2),
-                "boletos": f["boletos"],
-                "premios": f["premios"],
-            })
-        mejor = max(filas, key=lambda f: f["saldo"])
-        pools.append({
-            "cuantos": k,
-            "combinaciones": total,
-            "apuestas": apuestas,
-            "coste_dia": round(apuestas * 0.50, 2),
-            "cobertura": cobertura,
-            "en_positivo": len(exitos),
-            "ventanas": len(filas),
-            "mediana": mediana,
-            "centro": round(max(centro), 2),
-            "centro_positivas": sum(s > 0 for s in centro),
-            "boletos": mejor["boletos"],
-            "exitos": exitos,
-        })
-        print(f"rueda {k} apuestas={apuestas} cobertura={cobertura} exitos={len(exitos)}")
+            print(
+                f"{modo} {k} apuestas={t} mediana={mediana} "
+                f"positivas={len(exitos)}/{len(filas)} grandes={len(lista_grandes)}",
+                flush=True,
+            )
+    pools.sort(key=lambda p: p["mediana"], reverse=True)
     return {
         "sorteos": n,
         "desde": draws[start][0].isoformat(),
-        "tope": tope,
+        "ventanas": len(windows),
+        "min_ventana": windows[0],
+        "max_ventana": windows[-1],
+        "paso": windows[1] - windows[0],
+        "corte": corte,
+        "centro_n": len(windows) - 2 * corte,
+        "umbral": umbral,
         "pools": pools,
-        "rentable": any(p["en_positivo"] >= 7 for p in pools),
+        "rentable": any(p["rentable"] for p in pools),
     }
 
 
@@ -818,7 +939,7 @@ def build():
         "mejor_z": best["z"],
         "forma_modal": {"impares": modal["impares"], "pares": modal["pares"], "obs": modal["obs"], "azar": modal["azar"]},
         "ventanas": windows,
-        "calientes_ventanas": calientes_ventanas(draws, comps, premios),
+        "calientes_ventanas": barrido(draws, comps, premios),
         "boletos": picks_now(draws),
         "intento": {
             "regla": best["id"],
@@ -845,12 +966,13 @@ def build():
         f"ultimo={formas['ultimo']} hueco={formas['hueco_medio']}/{formas['hueco_azar']}"
     )
     v = payload["calientes_ventanas"]
-    for p in v["pools"]:
-        print(
-            f"{p['cuantos']} nums {p['en_positivo']}/{p['ventanas']} mediana={p['mediana']} "
-            f"centro={p['centro']} positivas_centro={p['centro_positivas']} "
-            f"sin_mayor={[e['sin_mayor'] for e in p['exitos']]}"
-        )
+    p = v["pools"][0]
+    print(
+        f"rentable={v['rentable']} mejor={p['nombre']} {p['cuantos']} "
+        f"apuestas={p['apuestas']} mediana={p['mediana']} "
+        f"{p['en_positivo']}/{p['ventanas']} sin_mayor={p['sin_mayor']} "
+        f"grandes={len(p['grandes'])}"
+    )
     p = payload["patrones"]
     print("orden", orden["ya_ordenadas"], "/", orden["filas"])
     print("decenas", [(d["decena"], d["bolas"], d["por_sorteo"], d["azar"], d["z"]) for d in p["decenas"]])

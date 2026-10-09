@@ -12,3 +12,4 @@
 2026-10-09 · Rueda de hasta 20 apuestas sobre 9, 10 y 12 calientes · tope de 10 € al día · el 100 % del 5 en 12 números pide 46 apuestas · descartado: 84 y 924 · laya — · confianza: —
 2026-10-09 · Grupos 6, 9 y 12; el 6 es una apuesta y el 9 y el 12 llegan a 20 · mostrar premios solo de las ventanas en positivo · descartado: el grupo de 10 · laya — · confianza: —
 2026-10-09 · La cifra que vale es la mediana de las 10 ventanas, y el centro sin el 20 % mejor y el 20 % peor · un 6 en una ventana no es una regla · descartado: el saldo de la mejor ventana · laya — · confianza: —
+2026-10-09 · Rejilla histórica: calientes, fríos y retrasados; ventanas 20–400 de 20 en 20; grupos 6, 8, 9, 10 y 12; topes 1, 5, 10 y 20 · el usuario pidió variar ventanas, modos y apuestas; Laya la prefirió por poco a dejar la rejilla corta · descartado: simple, denso · laya 0.48 · confianza: media
