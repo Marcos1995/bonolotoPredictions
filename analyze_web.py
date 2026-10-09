@@ -867,6 +867,8 @@ def barrido(draws, comps, premios):
                 "centro_positivas": sum(s > 0 for s in centro),
                 "boletos": cercana["boletos"],
                 "sin_mayor": cercana["sin_mayor"],
+                "suma": round(sum(f["saldo"] for f in filas), 2),
+                "maximo": max(f["saldo"] for f in filas),
                 "exitos": exitos,
                 "grandes": lista_grandes,
                 "rentable": mediana > 0 and len(exitos) >= umbral,
@@ -971,7 +973,12 @@ def build():
         f"rentable={v['rentable']} mejor={p['nombre']} {p['cuantos']} "
         f"apuestas={p['apuestas']} mediana={p['mediana']} "
         f"{p['en_positivo']}/{p['ventanas']} sin_mayor={p['sin_mayor']} "
-        f"grandes={len(p['grandes'])}"
+        f"suma={p['suma']} maximo={p['maximo']} grandes={len(p['grandes'])}"
+    )
+    rico = max(v["pools"], key=lambda row: row["suma"])
+    print(
+        f"suma_mayor={rico['nombre']} {rico['cuantos']} apuestas={rico['apuestas']} "
+        f"suma={rico['suma']} maximo={rico['maximo']} mediana={rico['mediana']}"
     )
     p = payload["patrones"]
     print("orden", orden["ya_ordenadas"], "/", orden["filas"])
