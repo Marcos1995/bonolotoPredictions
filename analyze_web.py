@@ -742,14 +742,17 @@ def barrido(draws, comps, premios):
     start = max(idx, 1)
     n = len(draws) - start
     cfgs = []
-    for k in (6, 8, 9, 10, 12):
-        tope = 1 if k == 6 else 20
-        masks, _cob, total = _rueda(k, tope)
+    for k in range(6, 13):
+        masks, _cob, total = _rueda(k, min(20, comb(k, 6)))
         uni = _mascaras(k)
-        topes = (1,) if k == 6 else (1, 5, 10, 20)
-        for t in topes:
-            uso = masks[:t]
-            cfgs.append((k, t, _indices(uso, k), _cobertura(uso, uni), total))
+        vistos = set()
+        for t in ((1,) if k == 6 else (1, 5, 10, 20)):
+            n_ap = min(t, len(masks))
+            if n_ap in vistos:
+                continue
+            vistos.add(n_ap)
+            uso = masks[:n_ap]
+            cfgs.append((k, n_ap, _indices(uso, k), _cobertura(uso, uni), total))
     prefix = [[0] * (N + 1) for _ in range(len(draws) + 1)]
     pos = [[] for _ in range(N + 1)]
     for i, (_d, nums) in enumerate(draws):

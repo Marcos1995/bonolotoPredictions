@@ -19,6 +19,6 @@
 - Ponytail siempre activo (ver AGENTS.md)
 
 ## Estado
-- 2026-10-09: la tabla del barrido se ordena al pulsar cualquier columna (el primer clic baja). Las columnas fijas tapan el scroll: el ancho se mide y el fondo es opaco. Al lado de la mediana está la suma de las 20 ventanas y el dinero de los 6, 5+C y 5. El grupo no cobra: cobran las combinaciones compradas. Con 12 números, 20 apuestas cubren el 2,2 % de los seises y el 71 % de los cincos.
+- 2026-10-09: grupos del 6 al 12. La cobertura es la misma en calientes, fríos y retrasados: con 6 números es siempre el 100 %. La lista de premios solo enseña ventanas en positivo. La primera columna tapa el hueco de la izquierda al hacer scroll.
 
 

@@ -99,6 +99,15 @@
       position: sticky; z-index: 4; background-color: #fff;
     }
     .tabla-scroll .pegada { left: 0; }
+    .tabla-scroll .pegada::before {
+      content: "";
+      position: absolute;
+      top: -2px;
+      bottom: -2px;
+      right: 100%;
+      width: 3rem;
+      background-color: #fff;
+    }
     .tabla-scroll .pegada2 { left: calc(var(--col1, 4.5rem) - 1px); }
     .tabla-scroll thead .pegada, .tabla-scroll thead .pegada2 { z-index: 6; background-color: #fff; }
     .tabla-scroll button.ord {
@@ -112,7 +121,8 @@
     html[data-theme="dark"] .tabla-scroll .pegada,
     html[data-theme="dark"] .tabla-scroll .pegada2,
     html[data-theme="dark"] .tabla-scroll thead .pegada,
-    html[data-theme="dark"] .tabla-scroll thead .pegada2 { background-color: #102418 !important; }
+    html[data-theme="dark"] .tabla-scroll thead .pegada2,
+    html[data-theme="dark"] .tabla-scroll .pegada::before { background-color: #102418 !important; }
     html[data-theme="dark"] .tabla-scroll button.ord .flecha { color: #18E667; }
     html[data-theme="dark"] body { background: #07140d; color: #e7f6ec; }
     html[data-theme="dark"] .bg-white { background-color: #102418 !important; }
@@ -950,7 +960,7 @@
       };
       const partes = (boletos) => ["6", "5c", "5", "4", "3"].filter((key) => boletos[key]).map((key) => boletos[key] + " de " + (key === "5c" ? "5+C" : key)).join(", ");
       const exitos = pack.pools.map((p) => p.exitos.map((e) => {
-        const rows = e.premios.slice().reverse().map((r) => `<article class="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-3 items-start bg-white rounded-[14px] p-3 border border-[#D3E3D6]">
+        const rows = e.premios.filter((r) => r.boletos["6"] || r.boletos["5c"] || r.boletos["5"]).slice().reverse().map((r) => `<article class="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-3 items-start bg-white rounded-[14px] p-3 border border-[#D3E3D6]">
           <div class="dec-thumb w-16 h-16 rounded-2xl font-black text-xl flex items-center justify-center" aria-hidden="true">${marca(r.boletos)}</div>
           <div class="min-w-0">
             <h4 class="font-black text-[#032612]">${r.fecha}</h4>
@@ -962,18 +972,6 @@
         return `<div><h3 class="text-xl font-black text-[#032612] mb-1">${p.nombre}, ${p.cuantos} números, ${p.apuestas} apuestas, ventana ${e.ventana}: ${euro(e.saldo)}</h3>
           <p class="text-sm text-[#52695B] mb-2">Sin el día que más pagó: ${euro(e.sin_mayor)}. En el año: ${b["3"]} de 3, ${b["4"]} de 4, ${b["5"]} de 5, ${b["5c"]} de 5+C, ${b["6"]} de 6.</p>${rows}</div>`;
       }).join("")).join("");
-      const grandes = pack.pools.flatMap((p) => (p.grandes || []).map((g) => {
-        const marcaG = g.boletos["6"] ? "6" : (g.boletos["5c"] ? "5+C" : "5");
-        return `<article class="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-3 items-start bg-white rounded-[14px] p-3 border border-[#D3E3D6]">
-          <div class="dec-thumb w-16 h-16 rounded-2xl font-black text-xl flex items-center justify-center" aria-hidden="true">${marcaG}</div>
-          <div class="min-w-0">
-            <h4 class="font-black text-[#032612]">${p.nombre}, ${p.cuantos} números, ${p.apuestas} apuestas</h4>
-            <p class="text-sm text-[#245233]">${g.fecha}. Salió ${g.salio.join(", ")} · C ${g.complementario == null ? "—" : g.complementario}. Ventanas ${g.ventanas.join(", ")}.</p>
-            <p class="text-sm text-[#183925]">${partes(g.boletos)}. Ese día: ${dinero(g.euros)}.</p>
-          </div>
-        </article>`;
-      })).join("");
-      const doce = pack.pools.find((p) => p.modo === "calientes" && p.cuantos === 12 && p.apuestas === 20);
       const ruedas = pack.pools.filter((p) => p.modo === "calientes").sort((a, b) => a.cuantos - b.cuantos || a.apuestas - b.apuestas);
       const cuerpoCob = ruedas.map((p, i) => `<tr class="border-t border-[#D3E3D6]">
           <th class="pegada px-2 py-2 text-left font-mono" scope="row" data-n="${i}">#<span data-puesto>${i + 1}</span></th>
@@ -984,18 +982,17 @@
           ${celda(p.cobertura["5"], pct(p.cobertura["5"]))}
         </tr>`).join("");
       document.getElementById("siete-rows").innerHTML =
-        `<p class="text-xs text-[#52695B] mb-2">Pulsa una columna: el primer clic ordena de mayor a menor. # y Regla se quedan fijas al hacer scroll. Con 1 apuesta se juegan los 6 primeros del grupo, así que el saldo de 6, 8, 9, 10 y 12 números coincide.</p>
-        <div class="tabla-scroll bg-white rounded-[14px] border border-[#D3E3D6] p-3">
+        `<p class="text-xs text-[#52695B] mb-2">Pulsa una columna: el primer clic ordena de mayor a menor. # y Regla se quedan fijas al hacer scroll. Con 1 apuesta se juegan los 6 primeros del grupo, así que el saldo de 6 a 12 números coincide.</p>
+        <div class="tabla-scroll bg-white rounded-[14px] border border-[#D3E3D6] py-2 pr-2">
           <table id="tabla-reglas" class="w-full text-sm text-[#032612]">
             <thead><tr>${cabeza}</tr></thead><tbody>${body}</tbody>
           </table>
         </div>
         <div class="mt-8">
-          <h3 class="text-2xl font-black text-[#032612] mb-2">El grupo no cobra. Cobra el boleto.</h3>
-          <p class="text-sm text-[#245233] max-w-2xl mb-3">Calientes: los que más salieron en la ventana. Fríos: los que menos. Retrasados: los que más sorteos llevan sin salir. De esos números se compran combinaciones de 6. No se gana porque el sorteo caiga dentro del grupo.</p>
-          <p class="text-sm text-[#183925] max-w-2xl mb-4">${doce.cuantos} números son ${doce.combinaciones.toLocaleString("es-ES")} combinaciones. ${doce.apuestas} apuestas compran el ${pct(doce.cobertura["6"])} de los seises. Esas apuestas se eligen para tapar cincos: si las 6 bolas caen dentro de los ${doce.cuantos}, en el ${pct(doce.cobertura["5"])} de los casos algún boleto acierta 5 o más. El 6 solo entra si compraste esa combinación.</p>
-          <p class="text-xs text-[#52695B] mb-2">Misma rueda para los tres modos. Cubre el 6: combinaciones que compras. Cubre el 5: si el sorteo cae dentro del grupo, en qué parte algún boleto lleva 5 o más.</p>
-          <div class="tabla-scroll angosta bg-white rounded-[14px] border border-[#D3E3D6] p-3">
+          <h3 class="text-2xl font-black text-[#032612] mb-2">La cobertura no elige los números.</h3>
+          <p class="text-sm text-[#183925] max-w-2xl mb-3">Con 6 números solo hay 1 boleto. Lo compras entero: cobertura 100 %. Da igual calientes, fríos o retrasados. El modo cambia qué números entran, no el porcentaje.</p>
+          <p class="text-sm text-[#245233] max-w-2xl mb-4">Del 7 al 12 hay más combinaciones. Se prueban 1, 5, 10 y 20 boletos, o todos si caben en menos. Con 7 números, 7 boletos cubren el grupo entero. La tabla es la misma para los tres modos. Solo cobra el boleto que compraste, no el grupo.</p>
+          <div class="tabla-scroll angosta bg-white rounded-[14px] border border-[#D3E3D6] py-2 pr-2">
             <table id="tabla-cobertura" class="w-full text-sm text-[#032612]">
               <thead><tr>
                 ${th("puesto", "#", "Puesto de la tabla.", "pegada")}
@@ -1009,9 +1006,9 @@
             </table>
           </div>
         </div>` +
-        (exitos || `<p class="text-sm text-[#52695B] mt-6">Ninguna ventana acaba en positivo.</p>`) +
-        `<h3 class="text-xl font-black text-[#032612] mt-6 mb-2">Cincos y seises, aunque la ventana pierda</h3>` +
-        (grandes || `<p class="text-sm text-[#52695B]">Ningún boleto acertó 5 ni 6.</p>`);
+        (exitos
+          ? `<h3 class="text-xl font-black text-[#032612] mt-6 mb-2">Solo las ventanas que acaban en positivo</h3>` + exitos
+          : `<p class="text-sm text-[#52695B] mt-6">Ninguna ventana acaba en positivo.</p>`);
       activarOrden(document.getElementById("tabla-reglas"), "mediana", -1);
       activarOrden(document.getElementById("tabla-cobertura"), "numeros", 1);
       const repintarPegadas = () => {

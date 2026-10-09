@@ -1,17 +1,17 @@
 # Graph Report - bonolotoPredictions  (2026-10-09)
 
 ## Corpus Check
-- 34 files · ~94,066 words
+- 34 files · ~96,519 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 5 file(s) not represented in the graph (top: .mdc 2, (none) 2, .sqlite 1)
 
 ## Summary
-- 402 nodes · 606 edges · 26 communities (19 shown, 7 thin omitted)
+- 402 nodes · 607 edges · 26 communities (19 shown, 7 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 4 edges (avg confidence: 0.88)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `fda0c44a`
+- Built from commit: `d16a9687`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -46,9 +46,9 @@
 2. `LotteryPatternAnalyzer` - 16 edges
 3. `MultiStrategyPredictor` - 15 edges
 4. `PatternOptimizer` - 14 edges
-5. `MaximumHitsPredictor` - 12 edges
-6. `BonolotoScraper` - 12 edges
-7. `barrido()` - 11 edges
+5. `barrido()` - 12 edges
+6. `MaximumHitsPredictor` - 12 edges
+7. `BonolotoScraper` - 12 edges
 8. `run_series()` - 11 edges
 9. `hunt()` - 9 edges
 10. `OverdueBacktester` - 9 edges
