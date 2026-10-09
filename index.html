@@ -185,6 +185,12 @@
     .dec-thumb { background: #18E667; color: #032612; }
     .bola { width: 3.25rem; height: 3.25rem; border-radius: 9999px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.25rem; }
     .bola-si { background: #18E667; color: #032612; }
+    .chip { border: 1px solid #D3E3D6; background: #fff; color: #032612; border-radius: 9999px; padding: .3rem .65rem; font-size: .75rem; font-weight: 700; }
+    .chip.on { background: #18E667; color: #032612; border-color: #18E667; }
+    .chip:focus-visible { outline: 2px solid #032612; outline-offset: 2px; }
+    html[data-theme="dark"] .chip { background: #102418; color: #e7f6ec; border-color: #245233; }
+    html[data-theme="dark"] .chip.on { background: #18E667; color: #032612; }
+    html[data-theme="dark"] .chip:focus-visible { outline-color: #18E667; }
     .bola-no { background: #fff; color: #032612; border: 1px solid #D3E3D6; }
     html[data-theme="dark"] .bola-no { background: #102418; color: #e7f6ec; border-color: #245233; }
     @media (prefers-reduced-motion: reduce) {
@@ -977,27 +983,131 @@
             <thead><tr>${cabeza}</tr></thead><tbody>${rows.map(fila).join("")}</tbody>
           </table>
         </div>`;
-      const positivos = pack.pools.filter((p) => p.saldo > 0);
-      const porPlazo = pack.mejores || [];
-      const resto = (pack.probadas || 0) - positivos.length;
+      const modos = ["calientes", "frios", "retrasados"];
+      const modoTxt = { calientes: "Calientes", frios: "Fríos", retrasados: "Retrasados" };
+      const mirados = [...new Set(pack.pools.map((p) => String(p.mirados)))].sort((a, b) => Number(a) - Number(b));
+      const apuestas = [...new Set(pack.pools.map((p) => String(p.apuestas)))].sort((a, b) => Number(a) - Number(b));
+      const plazos = (pack.plazos || []).map((z) => z.nombre);
+      const estado = {
+        modo: new Set(modos),
+        mirados: new Set(mirados),
+        apuestas: new Set(apuestas),
+        plazo: new Set(plazos),
+      };
+      const listas = { modo: modos, mirados, apuestas, plazo: plazos };
       const u = pack.uno_saldo;
       const mejorSin6 = pack.pools.slice().sort((a, b) => b.sin6 - a.sin6)[0];
       const mejorSin5 = pack.pools.slice().sort((a, b) => b.sin5 - a.sin5)[0];
       const lineaUno = u && mejorSin6 && mejorSin5
         ? `Con 1 apuesta, el mejor saldo es ${euro(u.saldo)} (${u.nombre}, ${u.cuantos} números, mirando ${u.mirados}, ${u.plazo}): ${u.tres} de 3 y ${u.cuatros} de 4, sin 5 ni 6. Si solo se quita el 6, lo mejor sigue en ${euro(mejorSin6.sin6)} (${mejorSin6.nombre}, ${mejorSin6.cuantos}, ${ap(mejorSin6.apuestas)}, mirando ${mejorSin6.mirados}, ${mejorSin6.plazo}). Si se quitan el 5 y el 6, ninguna queda en positivo: la menos mala es ${euro(mejorSin5.sin5)}.`
         : "";
+      const chips = (titulo, clave, valores, texto) => {
+        const todos = estado[clave].size === valores.length;
+        const botones = [`<button type="button" class="chip ${todos ? "on" : ""}" data-g="${clave}" data-v="*">Todos</button>`]
+          .concat(valores.map((v) => `<button type="button" class="chip ${!todos && estado[clave].has(v) ? "on" : ""}" data-g="${clave}" data-v="${v}">${texto(v)}</button>`));
+        return `<div class="mb-3"><p class="text-xs font-black text-[#032612] mb-1">${titulo}</p><div class="flex flex-wrap gap-1">${botones.join("")}</div></div>`;
+      };
+      const pasa = (row) => (
+        (estado.modo.size === modos.length || estado.modo.has(row.modo))
+        && (estado.mirados.size === mirados.length || estado.mirados.has(String(row.mirados)))
+        && (estado.apuestas.size === apuestas.length || estado.apuestas.has(String(row.apuestas)))
+        && (estado.plazo.size === plazos.length || estado.plazo.has(row.plazo))
+      );
+      const cabezaTramo = [
+        th("puesto", "#", "Puesto según la columna activa.", "pegada"),
+        th("tramo", "Tramo", "Fechas de ese bloque, una detrás de otra.", "pegada2"),
+        th("regla", "Regla", "La combinación con mejor saldo dentro del filtro."),
+        th("mirados", "Mirados", "Sorteos anteriores usados para elegir."),
+        th("apuestas", "Apuestas", "Boletos por sorteo."),
+        th("saldo", "Saldo", "Premios menos lo jugado en el tramo."),
+        th("sin5", "Sin 5", "Saldo al quitar los días con 5, 5+C o 6."),
+        th("seis", "6", "Boletos con 6 en ese tramo."),
+      ].join("");
+      const pintar = () => {
+        const positivos = pack.pools.filter((p) => p.saldo > 0 && pasa(p));
+        const bloques = ((pack.tramos && pack.tramos.series) || []).filter((g) => estado.plazo.size === plazos.length || estado.plazo.has(g.nombre));
+        const tramosHtml = bloques.map((g) => {
+          const filas = g.tramos.map((tramo) => {
+            let best = null;
+            pack.tramos.reglas.forEach((r, i) => {
+              if (!pasa({ modo: r.modo, mirados: r.mirados, apuestas: r.apuestas, plazo: g.nombre })) return;
+              const saldo = tramo.saldo[i];
+              const sin5 = tramo.sin5[i];
+              if (!best || saldo > best.saldo || (saldo === best.saldo && sin5 > best.sin5)) {
+                best = { ...r, saldo, sin5, seises: tramo.seises[i], desde: tramo.desde, hasta: tramo.hasta };
+              }
+            });
+            return best;
+          }).filter(Boolean);
+          const cuenta = new Map();
+          filas.forEach((f) => {
+            const k = f.nombre + " " + f.cuantos + " · " + f.mirados + " mirados · " + ap(f.apuestas);
+            cuenta.set(k, (cuenta.get(k) || 0) + 1);
+          });
+          const patron = [...cuenta.entries()].sort((a, b) => b[1] - a[1])[0];
+          const cuerpo = filas.map((f, i) => `<tr class="border-t border-[#D3E3D6]">
+            <th class="pegada px-2 py-2 text-left font-mono" scope="row" data-n="${i}">#<span data-puesto>${i + 1}</span></th>
+            <th class="pegada2 px-2 py-2 text-left" scope="row" data-n="${f.desde}">${f.desde} → ${f.hasta}</th>
+            ${celda(f.nombre + " " + String(f.cuantos).padStart(2, "0"), f.nombre + ", " + f.cuantos)}
+            ${celda(f.mirados, f.mirados)}
+            ${celda(f.apuestas, f.apuestas)}
+            ${celda(f.saldo, euro(f.saldo), "font-bold")}
+            ${celda(f.sin5, euro(f.sin5))}
+            ${celda(f.seises, f.seises)}
+          </tr>`).join("");
+          const id = "tabla-tramo-" + g.largo;
+          return `<h3 class="text-xl font-black text-[#032612] mt-6 mb-1">${g.nombre}</h3>
+            <p class="text-sm text-[#245233] mb-2">${filas.length} tramos seguidos. La que más veces gana: ${patron ? patron[0] + ", " + patron[1] + " de " + filas.length : "ninguna"}.</p>
+            <div class="tabla-scroll bg-white rounded-[14px] border border-[#D3E3D6] py-2 pr-2">
+              <table id="${id}" class="w-full text-sm text-[#032612]"><thead><tr>${cabezaTramo}</tr></thead><tbody>${cuerpo}</tbody></table>
+            </div>`;
+        }).join("");
+        document.getElementById("siete-tablas").innerHTML =
+          `<p class="text-xs text-[#52695B] mb-2">Pulsa una columna: el primer clic ordena de mayor a menor. # y Regla se quedan fijas.</p>
+          <h3 class="text-xl font-black text-[#032612] mb-2">Saldo positivo</h3>` +
+          (positivos.length
+            ? tabla("tabla-si", positivos)
+            : `<p class="text-sm text-[#52695B] mb-4">Ninguna combinación de este filtro acaba por encima de cero.</p>`) +
+          `<h3 class="text-xl font-black text-[#032612] mt-8 mb-1">Mejor combinación en cada tramo</h3>
+          <p class="text-sm text-[#245233] max-w-2xl mb-2">Cada plazo se parte en bloques seguidos. Así un 6 de hace años no decide el tramo de al lado. Sin 5 dice si ese saldo se cae al quitar el 5 y el 6.</p>` +
+          tramosHtml;
+        if (document.getElementById("tabla-si")) activarOrden(document.getElementById("tabla-si"), "saldo", -1);
+        bloques.forEach((g) => {
+          const t = document.getElementById("tabla-tramo-" + g.largo);
+          if (t) activarOrden(t, "saldo", -1);
+        });
+        document.querySelectorAll("#siete-tablas table").forEach((t) => {
+          if (t.querySelector(".pegada")) pegarColumnas(t);
+        });
+      };
       document.getElementById("siete-rows").innerHTML =
-        `<p class="text-sm text-[#183925] max-w-2xl mb-2">${lineaUno} La mediana de antes quitaba el mejor y el peor de varias miradas. Aquí cada fila es una sola. Sin 6 y Sin 5 es el saldo de esa fila al quitar el día de suerte.</p>
-        <p class="text-xs text-[#52695B] mb-2">Pulsa una columna: el primer clic ordena de mayor a menor. # y Regla se quedan fijas.</p>
-        <h3 class="text-xl font-black text-[#032612] mb-2">Saldo positivo</h3>` +
-        (positivos.length
-          ? tabla("tabla-si", positivos)
-          : `<p class="text-sm text-[#52695B] mb-4">Ninguna combinación acaba por encima de cero.</p>`) +
-        `<h3 class="text-xl font-black text-[#032612] mt-6 mb-2">La mejor de cada plazo</h3>` +
-        tabla("tabla-plazo", porPlazo) +
-        `<p class="text-sm text-[#52695B] mt-4">Las otras ${resto} combinaciones acaban en negativo.</p>`;
-      if (positivos.length) activarOrden(document.getElementById("tabla-si"), "saldo", -1);
-      activarOrden(document.getElementById("tabla-plazo"), "plazo", 1);
+        `<p class="text-sm text-[#183925] max-w-2xl mb-3">${lineaUno}</p>
+        <div id="siete-filtros" class="mb-4">
+          ${chips("Tipo", "modo", modos, (v) => modoTxt[v])}
+          ${chips("Plazo", "plazo", plazos, (v) => v)}
+          ${chips("Apuestas", "apuestas", apuestas, (v) => v)}
+          ${chips("Mirados", "mirados", mirados, (v) => v)}
+        </div>
+        <div id="siete-tablas"></div>`;
+      document.getElementById("siete-filtros").addEventListener("click", (ev) => {
+        const b = ev.target.closest("button[data-g]");
+        if (!b) return;
+        const clave = b.dataset.g;
+        const valores = listas[clave];
+        const set = estado[clave];
+        if (b.dataset.v === "*") valores.forEach((v) => set.add(v));
+        else if (set.size === valores.length) { set.clear(); set.add(b.dataset.v); }
+        else if (set.has(b.dataset.v)) set.delete(b.dataset.v);
+        else set.add(b.dataset.v);
+        if (set.size === 0) valores.forEach((v) => set.add(v));
+        document.getElementById("siete-filtros").innerHTML =
+          chips("Tipo", "modo", modos, (v) => modoTxt[v])
+          + chips("Plazo", "plazo", plazos, (v) => v)
+          + chips("Apuestas", "apuestas", apuestas, (v) => v)
+          + chips("Mirados", "mirados", mirados, (v) => v);
+        pintar();
+      });
+      pintar();
       const repintarPegadas = () => {
         document.querySelectorAll("table").forEach((t) => {
           if (t.querySelector(".pegada")) pegarColumnas(t);

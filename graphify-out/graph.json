@@ -1561,7 +1561,7 @@
       "file_type": "code",
       "norm_label": "build()",
       "source_file": "analyze_web.py",
-      "source_location": "L960"
+      "source_location": "L1018"
     },
     {
       "id": "analyze_web_cargar_premios",
@@ -1849,7 +1849,7 @@
       "file_type": "code",
       "norm_label": "noche()",
       "source_file": "analyze_web.py",
-      "source_location": "L936"
+      "source_location": "L994"
     },
     {
       "id": "analyze_web_odd_even",
@@ -1957,7 +1957,7 @@
       "file_type": "code",
       "norm_label": "_repeats()",
       "source_file": "analyze_web.py",
-      "source_location": "L1051"
+      "source_location": "L1109"
     },
     {
       "id": "analyze_web_rueda",
@@ -4190,7 +4190,7 @@
       "source_location": "L742"
     },
     {
-      "id": "analyze_web_rationale_937",
+      "id": "analyze_web_rationale_995",
       "label": "Los 12 de la pr\u00f3xima noche, con los mismos 400 sorteos anteriores que la tabla.",
       "_origin": "ast",
       "community": 6,
@@ -4198,7 +4198,7 @@
       "file_type": "rationale",
       "norm_label": "los 12 de la proxima noche, con los mismos 400 sorteos anteriores que la tabla.",
       "source_file": "analyze_web.py",
-      "source_location": "L937"
+      "source_location": "L995"
     },
     {
       "id": "commonfunctions_rationale_39",
@@ -4934,66 +4934,6 @@
     },
     {
       "source": "analyze_web_build",
-      "target": "analyze_web_barrido",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "analyze_web.py",
-      "source_location": "L1005",
-      "weight": 1.0
-    },
-    {
-      "source": "analyze_web_build",
-      "target": "analyze_web_noche",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "analyze_web.py",
-      "source_location": "L1006",
-      "weight": 1.0
-    },
-    {
-      "source": "analyze_web_build",
-      "target": "analyze_web_picks_now",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "analyze_web.py",
-      "source_location": "L1007",
-      "weight": 1.0
-    },
-    {
-      "source": "analyze_web_build",
-      "target": "analyze_web_next_ticket",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "analyze_web.py",
-      "source_location": "L1017",
-      "weight": 1.0
-    },
-    {
-      "source": "analyze_web_build",
-      "target": "analyze_web_repeats",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "analyze_web.py",
-      "source_location": "L1020",
-      "weight": 1.0
-    },
-    {
-      "source": "analyze_web_build",
       "target": "analyze_web_load",
       "relation": "calls",
       "_origin": "ast",
@@ -5001,7 +4941,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L961",
+      "source_location": "L1019",
       "weight": 1.0
     },
     {
@@ -5013,7 +4953,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L962",
+      "source_location": "L1020",
       "weight": 1.0
     },
     {
@@ -5025,7 +4965,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L963",
+      "source_location": "L1021",
       "weight": 1.0
     },
     {
@@ -5037,7 +4977,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L965",
+      "source_location": "L1023",
       "weight": 1.0
     },
     {
@@ -5049,7 +4989,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L966",
+      "source_location": "L1024",
       "weight": 1.0
     },
     {
@@ -5061,7 +5001,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L967",
+      "source_location": "L1025",
       "weight": 1.0
     },
     {
@@ -5073,7 +5013,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L971",
+      "source_location": "L1029",
       "weight": 1.0
     },
     {
@@ -5085,7 +5025,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L975",
+      "source_location": "L1033",
       "weight": 1.0
     },
     {
@@ -5097,7 +5037,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L976",
+      "source_location": "L1034",
       "weight": 1.0
     },
     {
@@ -5109,7 +5049,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L977",
+      "source_location": "L1035",
       "weight": 1.0
     },
     {
@@ -5121,7 +5061,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L978",
+      "source_location": "L1036",
       "weight": 1.0
     },
     {
@@ -5133,7 +5073,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L980",
+      "source_location": "L1038",
       "weight": 1.0
     },
     {
@@ -5145,7 +5085,67 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L999",
+      "source_location": "L1057",
+      "weight": 1.0
+    },
+    {
+      "source": "analyze_web_build",
+      "target": "analyze_web_barrido",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "analyze_web.py",
+      "source_location": "L1063",
+      "weight": 1.0
+    },
+    {
+      "source": "analyze_web_build",
+      "target": "analyze_web_noche",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "analyze_web.py",
+      "source_location": "L1064",
+      "weight": 1.0
+    },
+    {
+      "source": "analyze_web_build",
+      "target": "analyze_web_picks_now",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "analyze_web.py",
+      "source_location": "L1065",
+      "weight": 1.0
+    },
+    {
+      "source": "analyze_web_build",
+      "target": "analyze_web_next_ticket",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "analyze_web.py",
+      "source_location": "L1075",
+      "weight": 1.0
+    },
+    {
+      "source": "analyze_web_build",
+      "target": "analyze_web_repeats",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "analyze_web.py",
+      "source_location": "L1078",
       "weight": 1.0
     },
     {
@@ -5301,7 +5301,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L948",
+      "source_location": "L1006",
       "weight": 1.0
     },
     {
@@ -5313,7 +5313,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L950",
+      "source_location": "L1008",
       "weight": 1.0
     },
     {
@@ -5325,7 +5325,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L954",
+      "source_location": "L1012",
       "weight": 1.0
     },
     {
@@ -8159,13 +8159,24 @@
     },
     {
       "source": "analyze_web",
+      "target": "analyze_web_build",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "analyze_web.py",
+      "source_location": "L1018",
+      "weight": 1.0
+    },
+    {
+      "source": "analyze_web",
       "target": "analyze_web_repeats",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "analyze_web.py",
-      "source_location": "L1051",
+      "source_location": "L1109",
       "weight": 1.0
     },
     {
@@ -8616,18 +8627,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "analyze_web.py",
-      "source_location": "L936",
-      "weight": 1.0
-    },
-    {
-      "source": "analyze_web",
-      "target": "analyze_web_build",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "analyze_web.py",
-      "source_location": "L960",
+      "source_location": "L994",
       "weight": 1.0
     },
     {
@@ -10743,14 +10743,14 @@
       "weight": 1.0
     },
     {
-      "source": "analyze_web_rationale_937",
+      "source": "analyze_web_rationale_995",
       "target": "analyze_web_noche",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "analyze_web.py",
-      "source_location": "L937",
+      "source_location": "L995",
       "weight": 1.0
     },
     {
@@ -11826,5 +11826,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "5afabcc36792a0ce51d531fc467c967e315a9f91"
+  "built_at_commit": "689f3d42ac7ff1c6f794c83488c438372e63c750"
 }

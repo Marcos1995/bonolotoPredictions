@@ -916,6 +916,63 @@ def barrido(draws, comps, premios):
             f"{uno_sin['plazo']} saldo={uno_sin['saldo']} sin5={uno_sin['sin5']}",
             flush=True,
         )
+    claves = [
+        (modo, nombre, k, t, window)
+        for modo, nombre, _kind, _rev in modos
+        for k, t, _idx, _cob, _total in cfgs
+        for window in miradas
+    ]
+    reglas = [
+        {"modo": modo, "nombre": nombre, "cuantos": k, "apuestas": t, "mirados": window}
+        for modo, nombre, k, t, window in claves
+    ]
+    series_tramo = []
+    for nombre_p, largo in PLAZOS:
+        hi = n
+        cortes_t = []
+        while hi - largo >= 0:
+            cortes_t.append((hi - largo, hi))
+            hi -= largo
+        cortes_t.reverse()
+        tramos = []
+        for lo, hi_t in cortes_t:
+            saldo_t = []
+            sin5_t = []
+            seises_t = []
+            for modo, _nombre, k, t, window in claves:
+                key = (modo, k, t, window)
+                pref = series[key]
+                cobrado = pref[hi_t] - pref[lo]
+                saldo_i = round(cobrado - (hi_t - lo) * t * 0.50, 2)
+                euros = 0.0
+                n6 = 0
+                for dia in grandes[key]:
+                    if lo < dia["i"] <= hi_t:
+                        euros += dia["euros"]
+                        n6 += dia["boletos"]["6"]
+                saldo_t.append(saldo_i)
+                sin5_t.append(round(saldo_i - euros, 2))
+                seises_t.append(n6)
+            tramos.append({
+                "desde": draws[start + lo][0].isoformat(),
+                "hasta": draws[start + hi_t - 1][0].isoformat(),
+                "saldo": saldo_t,
+                "sin5": sin5_t,
+                "seises": seises_t,
+            })
+        series_tramo.append({"nombre": nombre_p, "largo": largo, "tramos": tramos})
+        top = {}
+        for tramo in tramos:
+            i = max(range(len(reglas)), key=lambda j: tramo["saldo"][j])
+            r = reglas[i]
+            marca = (r["modo"], r["cuantos"], r["apuestas"], r["mirados"])
+            top[marca] = top.get(marca, 0) + 1
+        frecuente = max(top, key=top.get)
+        print(
+            f"tramo {nombre_p} n={len(tramos)} gana={frecuente[0]} {frecuente[1]} "
+            f"apuestas={frecuente[2]} mirados={frecuente[3]} veces={top[frecuente]}",
+            flush=True,
+        )
     return {
         "sorteos": n,
         "desde": draws[start][0].isoformat(),
@@ -925,6 +982,7 @@ def barrido(draws, comps, premios):
         "plazos": plazos,
         "pools": pools,
         "mejores": [mejores[nombre_p] for nombre_p, _largo in PLAZOS],
+        "tramos": {"reglas": reglas, "series": series_tramo},
         "uno_saldo": uno_saldo,
         "uno_sin": uno_sin,
         "en_positivo": len(pools),

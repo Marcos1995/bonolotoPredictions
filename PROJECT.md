@@ -19,6 +19,6 @@
 - Ponytail siempre activo (ver AGENTS.md)
 
 ## Estado
-- 2026-10-09: la tabla añade los 4, los 3, los días con premio y el saldo sin el día del 5 o del 6. Con 1 apuesta se señala el mejor saldo y el mejor saldo sin ese día.
+- 2026-10-09: las tablas se filtran por caliente, frío o retrasado, por sorteos mirados y por apuestas. Cada plazo, de 3 meses a 5 años, se parte en tramos y se ve qué combinación gana en cada uno.
 
 
