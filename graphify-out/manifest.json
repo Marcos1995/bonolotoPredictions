@@ -168,9 +168,9 @@
     "semantic_hash": ""
   },
   "AGENTS.md": {
-    "mtime": 1791405641.3770995,
-    "seen": 1791406906.9790945,
-    "ast_hash": "de8a30e72dd30604bd7408146c465b4e",
+    "mtime": 1791542338.3023078,
+    "seen": 1791542541.8322444,
+    "ast_hash": "9d6990f052140d965d6c26810ce34eba",
     "semantic_hash": ""
   },
   "DESIGN.md": {
@@ -180,9 +180,9 @@
     "semantic_hash": ""
   },
   "PROJECT.md": {
-    "mtime": 1791541299.584782,
-    "seen": 1791541788.959061,
-    "ast_hash": "de8ecebba3b51c0065fd607499ddac23",
+    "mtime": 1791542326.0512855,
+    "seen": 1791542541.8322444,
+    "ast_hash": "338a681ae9ffb28103cbc87f8a35e58f",
     "semantic_hash": ""
   },
   "README.md": {
@@ -204,9 +204,9 @@
     "semantic_hash": ""
   },
   "index.html": {
-    "mtime": 1791541706.3263023,
-    "seen": 1791541788.959061,
-    "ast_hash": "95d1d51514e0efbc946a9f7f6e11f80b",
+    "mtime": 1791542453.6846745,
+    "seen": 1791542541.8322444,
+    "ast_hash": "fcb7411bb4664616bf9b3a9e7d585850",
     "semantic_hash": ""
   },
   "pattern_analysis_results.txt": {
@@ -225,6 +225,12 @@
     "mtime": 1791496980.4913557,
     "seen": 1791497047.2156744,
     "ast_hash": "460889a793a4e7bd1747235ebd993b3a",
+    "semantic_hash": ""
+  },
+  ".cursor/skills/tablas/SKILL.md": {
+    "mtime": 1791542338.3013368,
+    "seen": 1791542541.8322444,
+    "ast_hash": "0213fecac7b24fa349260bd3416068c8",
     "semantic_hash": ""
   }
 }

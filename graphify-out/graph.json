@@ -4364,16 +4364,32 @@
       "source_location": "L42"
     },
     {
-      "id": "math",
-      "label": "math",
-      "_origin": "semantic",
-      "community": 0,
-      "community_name": "edgeHunt.py",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "math",
-      "source_file": "",
-      "type": "external"
+      "id": "cursor_skills_tablas_skill",
+      "label": "tablas/SKILL.md",
+      "_origin": "ast",
+      "community": 9,
+      "community_name": "tablas/SKILL.md",
+      "file_type": "document",
+      "frontmatter": {
+        "name": "tablas",
+        "description": "Any HTML table or data grid, or &quot;tabla&quot;, &quot;ordenable&quot;, &quot;columnas&quot;. Every column header sorts on click. First click is descending. A frozen column must hide the cells scrolling underneath."
+      },
+      "node_kind": "page",
+      "norm_label": "tablas/skill.md",
+      "source_file": ".cursor/skills/tablas/SKILL.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "cursor_skills_tablas_skill_tablas",
+      "label": "Tablas",
+      "_origin": "ast",
+      "community": 9,
+      "community_name": "tablas/SKILL.md",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "tablas",
+      "source_file": ".cursor/skills/tablas/SKILL.md",
+      "source_location": "L9"
     },
     {
       "id": "sklearn_ensemble",
@@ -4696,6 +4712,18 @@
       "external": true,
       "file_type": "concept",
       "norm_label": "concurrent_futures",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "math",
+      "label": "math",
+      "_origin": "semantic",
+      "community": 6,
+      "community_name": "analyze_web.py",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "math",
       "source_file": "",
       "type": "external"
     },
@@ -8727,6 +8755,17 @@
       "weight": 1.0
     },
     {
+      "source": "cursor_skills_tablas_skill",
+      "target": "cursor_skills_tablas_skill_tablas",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".cursor/skills/tablas/SKILL.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
       "source": "cursor_skills_verify_skill",
       "target": "cursor_skills_verify_skill_verify_ui",
       "relation": "contains",
@@ -11658,5 +11697,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "3894b613baa49f21e1752589cfe2c1dea1df212a"
+  "built_at_commit": "fda0c44a2cb77525828d9dda3c47fb3da6b5a08c"
 }

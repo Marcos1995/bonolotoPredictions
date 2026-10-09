@@ -93,11 +93,14 @@
     #siete-title, #siete-nota { overflow-wrap: anywhere; }
     .tabla-scroll table { border-collapse: separate; border-spacing: 0; min-width: 58rem; }
     .tabla-scroll.angosta table { min-width: 36rem; }
-    .tabla-scroll th, .tabla-scroll td { white-space: nowrap; background: #fff; }
-    .tabla-scroll thead th { position: sticky; top: 0; z-index: 2; }
-    .tabla-scroll .pegada { position: sticky; left: 0; z-index: 1; min-width: 4.25rem; }
-    .tabla-scroll .pegada2 { position: sticky; left: 4.25rem; z-index: 1; box-shadow: 4px 0 0 #fff; }
-    .tabla-scroll thead .pegada, .tabla-scroll thead .pegada2 { z-index: 3; }
+    .tabla-scroll th, .tabla-scroll td { white-space: nowrap; background-color: #fff; }
+    .tabla-scroll thead th { position: sticky; top: 0; z-index: 2; background-color: #fff; }
+    .tabla-scroll .pegada, .tabla-scroll .pegada2 {
+      position: sticky; z-index: 4; background-color: #fff;
+    }
+    .tabla-scroll .pegada { left: 0; }
+    .tabla-scroll .pegada2 { left: calc(var(--col1, 4.5rem) - 1px); }
+    .tabla-scroll thead .pegada, .tabla-scroll thead .pegada2 { z-index: 6; background-color: #fff; }
     .tabla-scroll button.ord {
       background: none; border: 0; padding: .35rem .2rem; margin: 0;
       font: inherit; font-weight: 700; color: inherit; cursor: pointer;
@@ -105,8 +108,11 @@
     }
     .tabla-scroll button.ord .flecha { width: .7rem; text-align: center; color: #0A3D22; }
     html[data-theme="dark"] .tabla-scroll th,
-    html[data-theme="dark"] .tabla-scroll td { background: #102418; }
-    html[data-theme="dark"] .tabla-scroll .pegada2 { box-shadow: 4px 0 0 #102418; }
+    html[data-theme="dark"] .tabla-scroll td,
+    html[data-theme="dark"] .tabla-scroll .pegada,
+    html[data-theme="dark"] .tabla-scroll .pegada2,
+    html[data-theme="dark"] .tabla-scroll thead .pegada,
+    html[data-theme="dark"] .tabla-scroll thead .pegada2 { background-color: #102418 !important; }
     html[data-theme="dark"] .tabla-scroll button.ord .flecha { color: #18E667; }
     html[data-theme="dark"] body { background: #07140d; color: #e7f6ec; }
     html[data-theme="dark"] .bg-white { background-color: #102418 !important; }
@@ -859,6 +865,15 @@
         pintar();
       }));
       pintar();
+      pegarColumnas(table);
+    }
+
+    function pegarColumnas(table) {
+      const cols = [...table.querySelectorAll(".pegada")];
+      if (!cols.length) return;
+      const w = Math.ceil(Math.max(...cols.map((c) => c.getBoundingClientRect().width)));
+      cols.forEach((c) => { c.style.minWidth = w + "px"; });
+      table.style.setProperty("--col1", w + "px");
     }
 
     function renderSiete(data) {
@@ -999,6 +1014,16 @@
         (grandes || `<p class="text-sm text-[#52695B]">Ningún boleto acertó 5 ni 6.</p>`);
       activarOrden(document.getElementById("tabla-reglas"), "mediana", -1);
       activarOrden(document.getElementById("tabla-cobertura"), "numeros", 1);
+      const repintarPegadas = () => {
+        document.querySelectorAll("table").forEach((t) => {
+          if (t.querySelector(".pegada")) pegarColumnas(t);
+        });
+      };
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(repintarPegadas);
+      if (!window.__pegarTablas) {
+        window.__pegarTablas = true;
+        window.addEventListener("resize", repintarPegadas);
+      }
     }
 
     function renderOdds(pack) {
