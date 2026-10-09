@@ -19,6 +19,6 @@
 - Ponytail siempre activo (ver AGENTS.md)
 
 ## Estado
-- 2026-10-09: la página muestra los 12 calientes, fríos y retrasados del próximo sorteo, mirando los 400 anteriores. Los 6 primeros son el boleto de una apuesta.
+- 2026-10-09: la tabla añade los 4, los 3, los días con premio y el saldo sin el día del 5 o del 6. Con 1 apuesta se señala el mejor saldo y el mejor saldo sin ese día.
 
 

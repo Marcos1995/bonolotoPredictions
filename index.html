@@ -941,9 +941,15 @@
           ${celda(p.mirados, p.mirados)}
           ${celda(p.sorteos, p.plazo)}
           ${celda(p.saldo, euro(p.saldo), "font-bold")}
+          ${celda(p.sin6, euro(p.sin6))}
+          ${celda(p.sin5, euro(p.sin5))}
           ${celda(seis.euros, seis.texto)}
           ${celda(cincoC.euros, cincoC.texto)}
           ${celda(cinco.euros, cinco.texto)}
+          ${celda(p.cuatros, p.cuatros)}
+          ${celda(p.tres, p.tres)}
+          ${celda(p.dias, p.dias)}
+          ${celda(p.dias_menor, p.dias_menor)}
           ${celda(p.apuestas, p.apuestas)}
           ${celda(p.coste_dia, dinero(p.coste_dia))}
         </tr>`;
@@ -954,9 +960,15 @@
         th("mirados", "Mirados", "Sorteos anteriores que se usan para elegir los números."),
         th("plazo", "Plazo", "Cuánto tiempo se juega esa elección."),
         th("saldo", "Saldo", "Premios menos lo jugado en ese plazo."),
+        th("sin6", "Sin 6", "Saldo si se quita el dinero de los días con un 6. El coste de esos días se queda."),
+        th("sin5", "Sin 5", "Saldo si se quitan los días con un 5, un 5+C o un 6. El coste se queda."),
         th("seis", "6", "Veces que un boleto acertó los 6, y el dinero de esos días."),
         th("cincoc", "5+C", "Veces con 5 y el complementario, y el dinero de esos días."),
         th("cinco", "5", "Veces con 5, sin el complementario, y el dinero de esos días."),
+        th("cuatro", "4", "Boletos con 4 aciertos en ese plazo."),
+        th("tres", "3", "Boletos con 3 aciertos en ese plazo."),
+        th("dias", "Días", "Días con algún premio de 3 o más."),
+        th("chicos", "Días 3-4", "Días con premio en los que no hubo 5 ni 6. Un 6 no cuenta aquí."),
         th("apuestas", "Apuestas", "Boletos que se compran cada sorteo."),
         th("dia", "Al día", "Coste de un sorteo, a 0,50 € el boleto."),
       ].join("");
@@ -968,8 +980,15 @@
       const positivos = pack.pools.filter((p) => p.saldo > 0);
       const porPlazo = pack.mejores || [];
       const resto = (pack.probadas || 0) - positivos.length;
+      const u = pack.uno_saldo;
+      const mejorSin6 = pack.pools.slice().sort((a, b) => b.sin6 - a.sin6)[0];
+      const mejorSin5 = pack.pools.slice().sort((a, b) => b.sin5 - a.sin5)[0];
+      const lineaUno = u && mejorSin6 && mejorSin5
+        ? `Con 1 apuesta, el mejor saldo es ${euro(u.saldo)} (${u.nombre}, ${u.cuantos} números, mirando ${u.mirados}, ${u.plazo}): ${u.tres} de 3 y ${u.cuatros} de 4, sin 5 ni 6. Si solo se quita el 6, lo mejor sigue en ${euro(mejorSin6.sin6)} (${mejorSin6.nombre}, ${mejorSin6.cuantos}, ${ap(mejorSin6.apuestas)}, mirando ${mejorSin6.mirados}, ${mejorSin6.plazo}). Si se quitan el 5 y el 6, ninguna queda en positivo: la menos mala es ${euro(mejorSin5.sin5)}.`
+        : "";
       document.getElementById("siete-rows").innerHTML =
-        `<p class="text-xs text-[#52695B] mb-2">Pulsa una columna: el primer clic ordena de mayor a menor. # y Regla se quedan fijas.</p>
+        `<p class="text-sm text-[#183925] max-w-2xl mb-2">${lineaUno} La mediana de antes quitaba el mejor y el peor de varias miradas. Aquí cada fila es una sola. Sin 6 y Sin 5 es el saldo de esa fila al quitar el día de suerte.</p>
+        <p class="text-xs text-[#52695B] mb-2">Pulsa una columna: el primer clic ordena de mayor a menor. # y Regla se quedan fijas.</p>
         <h3 class="text-xl font-black text-[#032612] mb-2">Saldo positivo</h3>` +
         (positivos.length
           ? tabla("tabla-si", positivos)

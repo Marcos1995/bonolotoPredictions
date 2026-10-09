@@ -160,6 +160,18 @@
       "source_location": "L18"
     },
     {
+      "id": "commonfunctions_nextdrawdate",
+      "label": "nextDrawDate()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "edgeHunt.py",
+      "file_type": "code",
+      "norm_label": "nextdrawdate()",
+      "source_file": "commonFunctions.py",
+      "source_location": "L28"
+    },
+    {
       "id": "edgehunt_borda",
       "label": "borda()",
       "_callable": true,
@@ -628,18 +640,6 @@
       "source_location": "L43"
     },
     {
-      "id": "patternoptimizer_main",
-      "label": "main()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "commonFunctions.py",
-      "file_type": "code",
-      "norm_label": "main()",
-      "source_file": "patternOptimizer.py",
-      "source_location": "L496"
-    },
-    {
       "id": "raffles_csv",
       "label": "_csv()",
       "_callable": true,
@@ -698,30 +698,6 @@
       "norm_label": "generate_best_prediction()",
       "source_file": "bestPrediction.py",
       "source_location": "L19"
-    },
-    {
-      "id": "commonfunctions_nextbonolotodate",
-      "label": "nextBonolotoDate()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "db",
-      "file_type": "code",
-      "norm_label": "nextbonolotodate()",
-      "source_file": "commonFunctions.py",
-      "source_location": "L38"
-    },
-    {
-      "id": "commonfunctions_nextdrawdate",
-      "label": "nextDrawDate()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "db",
-      "file_type": "code",
-      "norm_label": "nextdrawdate()",
-      "source_file": "commonFunctions.py",
-      "source_location": "L28"
     },
     {
       "id": "sqliteclass_db_createdatabasestructureifnotexists",
@@ -1216,6 +1192,18 @@
       "source_location": "L650"
     },
     {
+      "id": "patternoptimizer_main",
+      "label": "main()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "PatternOptimizer",
+      "file_type": "code",
+      "norm_label": "main()",
+      "source_file": "patternOptimizer.py",
+      "source_location": "L496"
+    },
+    {
       "id": "patternoptimizer_patternoptimizer_create_cache_table",
       "label": "._create_cache_table()",
       "_callable": true,
@@ -1540,6 +1528,18 @@
       "source_location": "L741"
     },
     {
+      "id": "analyze_web_barrido_delta",
+      "label": "delta()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "analyze_web.py",
+      "file_type": "code",
+      "norm_label": "delta()",
+      "source_file": "analyze_web.py",
+      "source_location": "L843"
+    },
+    {
       "id": "analyze_web_boletos",
       "label": "_boletos()",
       "_callable": true,
@@ -1561,7 +1561,7 @@
       "file_type": "code",
       "norm_label": "build()",
       "source_file": "analyze_web.py",
-      "source_location": "L901"
+      "source_location": "L960"
     },
     {
       "id": "analyze_web_cargar_premios",
@@ -1849,7 +1849,7 @@
       "file_type": "code",
       "norm_label": "noche()",
       "source_file": "analyze_web.py",
-      "source_location": "L877"
+      "source_location": "L936"
     },
     {
       "id": "analyze_web_odd_even",
@@ -1957,7 +1957,7 @@
       "file_type": "code",
       "norm_label": "_repeats()",
       "source_file": "analyze_web.py",
-      "source_location": "L992"
+      "source_location": "L1051"
     },
     {
       "id": "analyze_web_rueda",
@@ -2066,6 +2066,18 @@
       "norm_label": "z_mean()",
       "source_file": "analyze_web.py",
       "source_location": "L41"
+    },
+    {
+      "id": "commonfunctions_nextbonolotodate",
+      "label": "nextBonolotoDate()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "analyze_web.py",
+      "file_type": "code",
+      "norm_label": "nextbonolotodate()",
+      "source_file": "commonFunctions.py",
+      "source_location": "L38"
     },
     {
       "id": "maximumhitspredictor_main",
@@ -2333,6 +2345,17 @@
       "norm_label": "design",
       "source_file": ".cursor/skills/jev/SKILL.md",
       "source_location": "L66"
+    },
+    {
+      "id": "commonfunctions_rationale_29",
+      "label": "Next date after last_date whose weekday is in weekdays (Mon=0).",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "edgeHunt.py",
+      "file_type": "rationale",
+      "norm_label": "next date after last_date whose weekday is in weekdays (mon=0).",
+      "source_file": "commonFunctions.py",
+      "source_location": "L29"
     },
     {
       "id": "edgehunt_rationale_1",
@@ -2729,28 +2752,6 @@
       "norm_label": "generate the best possible prediction using comprehensive analysis.",
       "source_file": "bestPrediction.py",
       "source_location": "L20"
-    },
-    {
-      "id": "commonfunctions_rationale_29",
-      "label": "Next date after last_date whose weekday is in weekdays (Mon=0).",
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "db",
-      "file_type": "rationale",
-      "norm_label": "next date after last_date whose weekday is in weekdays (mon=0).",
-      "source_file": "commonFunctions.py",
-      "source_location": "L29"
-    },
-    {
-      "id": "commonfunctions_rationale_39",
-      "label": "Bonoloto draws Mon-Sat. Skip Sunday.",
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "db",
-      "file_type": "rationale",
-      "norm_label": "bonoloto draws mon-sat. skip sunday.",
-      "source_file": "commonFunctions.py",
-      "source_location": "L39"
     },
     {
       "id": "predictionbacktester_rationale_11",
@@ -4189,7 +4190,7 @@
       "source_location": "L742"
     },
     {
-      "id": "analyze_web_rationale_878",
+      "id": "analyze_web_rationale_937",
       "label": "Los 12 de la pr\u00f3xima noche, con los mismos 400 sorteos anteriores que la tabla.",
       "_origin": "ast",
       "community": 6,
@@ -4197,7 +4198,18 @@
       "file_type": "rationale",
       "norm_label": "los 12 de la proxima noche, con los mismos 400 sorteos anteriores que la tabla.",
       "source_file": "analyze_web.py",
-      "source_location": "L878"
+      "source_location": "L937"
+    },
+    {
+      "id": "commonfunctions_rationale_39",
+      "label": "Bonoloto draws Mon-Sat. Skip Sunday.",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "analyze_web.py",
+      "file_type": "rationale",
+      "norm_label": "bonoloto draws mon-sat. skip sunday.",
+      "source_file": "commonFunctions.py",
+      "source_location": "L39"
     },
     {
       "id": "maximumhitspredictor_py_dataframe",
@@ -4881,7 +4893,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L789",
+      "source_location": "L795",
       "weight": 1.0
     },
     {
@@ -4893,7 +4905,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L791",
+      "source_location": "L797",
       "weight": 1.0
     },
     {
@@ -4905,7 +4917,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L797",
+      "source_location": "L803",
       "weight": 1.0
     },
     {
@@ -4917,163 +4929,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L798",
-      "weight": 1.0
-    },
-    {
-      "source": "analyze_web_build",
-      "target": "analyze_web_load",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "analyze_web.py",
-      "source_location": "L902",
-      "weight": 1.0
-    },
-    {
-      "source": "analyze_web_build",
-      "target": "analyze_web_cargar_premios",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "analyze_web.py",
-      "source_location": "L903",
-      "weight": 1.0
-    },
-    {
-      "source": "analyze_web_build",
-      "target": "analyze_web_freq_table",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "analyze_web.py",
-      "source_location": "L904",
-      "weight": 1.0
-    },
-    {
-      "source": "analyze_web_build",
-      "target": "analyze_web_chi2_uniform",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "analyze_web.py",
-      "source_location": "L906",
-      "weight": 1.0
-    },
-    {
-      "source": "analyze_web_build",
-      "target": "analyze_web_odd_even",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "analyze_web.py",
-      "source_location": "L907",
-      "weight": 1.0
-    },
-    {
-      "source": "analyze_web_build",
-      "target": "analyze_web_consec_stats",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "analyze_web.py",
-      "source_location": "L908",
-      "weight": 1.0
-    },
-    {
-      "source": "analyze_web_build",
-      "target": "analyze_web_slice_pack",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "analyze_web.py",
-      "source_location": "L912",
-      "weight": 1.0
-    },
-    {
-      "source": "analyze_web_build",
-      "target": "analyze_web_sum_stats",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "analyze_web.py",
-      "source_location": "L916",
-      "weight": 1.0
-    },
-    {
-      "source": "analyze_web_build",
-      "target": "analyze_web_shape_check",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "analyze_web.py",
-      "source_location": "L917",
-      "weight": 1.0
-    },
-    {
-      "source": "analyze_web_build",
-      "target": "analyze_web_reintegro_stats",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "analyze_web.py",
-      "source_location": "L918",
-      "weight": 1.0
-    },
-    {
-      "source": "analyze_web_build",
-      "target": "analyze_web_backtest",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "analyze_web.py",
-      "source_location": "L919",
-      "weight": 1.0
-    },
-    {
-      "source": "analyze_web_build",
-      "target": "commonfunctions_nextbonolotodate",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "analyze_web.py",
-      "source_location": "L921",
-      "weight": 1.0
-    },
-    {
-      "source": "analyze_web_build",
-      "target": "analyze_web_patrones",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "analyze_web.py",
-      "source_location": "L940",
+      "source_location": "L804",
       "weight": 1.0
     },
     {
@@ -5085,7 +4941,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L946",
+      "source_location": "L1005",
       "weight": 1.0
     },
     {
@@ -5097,7 +4953,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L947",
+      "source_location": "L1006",
       "weight": 1.0
     },
     {
@@ -5109,7 +4965,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L948",
+      "source_location": "L1007",
       "weight": 1.0
     },
     {
@@ -5121,7 +4977,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L958",
+      "source_location": "L1017",
       "weight": 1.0
     },
     {
@@ -5133,7 +4989,163 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
+      "source_location": "L1020",
+      "weight": 1.0
+    },
+    {
+      "source": "analyze_web_build",
+      "target": "analyze_web_load",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "analyze_web.py",
       "source_location": "L961",
+      "weight": 1.0
+    },
+    {
+      "source": "analyze_web_build",
+      "target": "analyze_web_cargar_premios",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "analyze_web.py",
+      "source_location": "L962",
+      "weight": 1.0
+    },
+    {
+      "source": "analyze_web_build",
+      "target": "analyze_web_freq_table",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "analyze_web.py",
+      "source_location": "L963",
+      "weight": 1.0
+    },
+    {
+      "source": "analyze_web_build",
+      "target": "analyze_web_chi2_uniform",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "analyze_web.py",
+      "source_location": "L965",
+      "weight": 1.0
+    },
+    {
+      "source": "analyze_web_build",
+      "target": "analyze_web_odd_even",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "analyze_web.py",
+      "source_location": "L966",
+      "weight": 1.0
+    },
+    {
+      "source": "analyze_web_build",
+      "target": "analyze_web_consec_stats",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "analyze_web.py",
+      "source_location": "L967",
+      "weight": 1.0
+    },
+    {
+      "source": "analyze_web_build",
+      "target": "analyze_web_slice_pack",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "analyze_web.py",
+      "source_location": "L971",
+      "weight": 1.0
+    },
+    {
+      "source": "analyze_web_build",
+      "target": "analyze_web_sum_stats",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "analyze_web.py",
+      "source_location": "L975",
+      "weight": 1.0
+    },
+    {
+      "source": "analyze_web_build",
+      "target": "analyze_web_shape_check",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "analyze_web.py",
+      "source_location": "L976",
+      "weight": 1.0
+    },
+    {
+      "source": "analyze_web_build",
+      "target": "analyze_web_reintegro_stats",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "analyze_web.py",
+      "source_location": "L977",
+      "weight": 1.0
+    },
+    {
+      "source": "analyze_web_build",
+      "target": "analyze_web_backtest",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "analyze_web.py",
+      "source_location": "L978",
+      "weight": 1.0
+    },
+    {
+      "source": "analyze_web_build",
+      "target": "commonfunctions_nextbonolotodate",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "analyze_web.py",
+      "source_location": "L980",
+      "weight": 1.0
+    },
+    {
+      "source": "analyze_web_build",
+      "target": "analyze_web_patrones",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "analyze_web.py",
+      "source_location": "L999",
       "weight": 1.0
     },
     {
@@ -5289,7 +5301,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L889",
+      "source_location": "L948",
       "weight": 1.0
     },
     {
@@ -5301,7 +5313,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L891",
+      "source_location": "L950",
       "weight": 1.0
     },
     {
@@ -5313,7 +5325,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "analyze_web.py",
-      "source_location": "L895",
+      "source_location": "L954",
       "weight": 1.0
     },
     {
@@ -6781,6 +6793,18 @@
       "weight": 1.0
     },
     {
+      "source": "analyze_web_barrido",
+      "target": "analyze_web_barrido_delta",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "analyze_web.py",
+      "source_location": "L843",
+      "weight": 1.0
+    },
+    {
       "source": "analyze_web_consec_stats",
       "target": "analyze_web_consec_stats_pairs",
       "relation": "contains",
@@ -8135,6 +8159,17 @@
     },
     {
       "source": "analyze_web",
+      "target": "analyze_web_repeats",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "analyze_web.py",
+      "source_location": "L1051",
+      "weight": 1.0
+    },
+    {
+      "source": "analyze_web",
       "target": "analyze_web_comp",
       "relation": "contains",
       "_origin": "ast",
@@ -8581,7 +8616,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "analyze_web.py",
-      "source_location": "L877",
+      "source_location": "L936",
       "weight": 1.0
     },
     {
@@ -8592,18 +8627,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "analyze_web.py",
-      "source_location": "L901",
-      "weight": 1.0
-    },
-    {
-      "source": "analyze_web",
-      "target": "analyze_web_repeats",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "analyze_web.py",
-      "source_location": "L992",
+      "source_location": "L960",
       "weight": 1.0
     },
     {
@@ -10719,14 +10743,14 @@
       "weight": 1.0
     },
     {
-      "source": "analyze_web_rationale_878",
+      "source": "analyze_web_rationale_937",
       "target": "analyze_web_noche",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "analyze_web.py",
-      "source_location": "L878",
+      "source_location": "L937",
       "weight": 1.0
     },
     {
@@ -11802,5 +11826,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "6986d7fcbe5bd00fa00a9450c13ad76279e48924"
+  "built_at_commit": "5afabcc36792a0ce51d531fc467c967e315a9f91"
 }

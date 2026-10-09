@@ -771,11 +771,17 @@ def barrido(draws, comps, premios):
     miradas = list(range(20, 401, 20))
     series = {}
     grandes = {}
+    acum = {}
+    snaps = {}
     for modo, _nombre, _kind, _rev in modos:
         for k, t, _idx, _cob, _total in cfgs:
             for window in miradas:
-                series[(modo, k, t, window)] = [0.0]
-                grandes[(modo, k, t, window)] = []
+                key = (modo, k, t, window)
+                series[key] = [0.0]
+                grandes[key] = []
+                acum[key] = [0, 0, 0, 0, 0, 0, 0]
+                snaps[key] = {}
+    cortes = {n - largo for _nombre_p, largo in PLAZOS if n - largo > 0}
     for paso, i in enumerate(range(start, len(draws)), 1):
         fecha_d, actual = draws[i]
         fecha = fecha_d.isoformat()
@@ -802,6 +808,16 @@ def barrido(draws, comps, premios):
                         series[key].append(prev)
                         continue
                     series[key].append(prev + pago)
+                    box = acum[key]
+                    box[0] += boletos["3"]
+                    box[1] += boletos["4"]
+                    box[2] += boletos["5"]
+                    box[3] += boletos["5c"]
+                    box[4] += boletos["6"]
+                    if boletos["3"] or boletos["4"] or boletos["5"] or boletos["5c"] or boletos["6"]:
+                        box[5] += 1
+                        if not (boletos["5"] or boletos["5c"] or boletos["6"]):
+                            box[6] += 1
                     if boletos["5"] or boletos["5c"] or boletos["6"]:
                         grandes[key].append({
                             "i": paso,
@@ -811,6 +827,9 @@ def barrido(draws, comps, premios):
                             "boletos": boletos,
                             "euros": round(pago, 2),
                         })
+        if paso in cortes or paso == n:
+            for key, box in acum.items():
+                snaps[key][paso] = tuple(box)
         if paso % 200 == 0:
             print(f"barrido {paso}/{n}", flush=True)
     plazos = []
@@ -821,16 +840,28 @@ def barrido(draws, comps, premios):
             "desde": draws[len(draws) - largo][0].isoformat(),
             "hasta": draws[-1][0].isoformat(),
         })
+    def delta(key, largo):
+        end = snaps[key][n]
+        base = snaps[key].get(n - largo, (0, 0, 0, 0, 0, 0, 0))
+        return [end[i] - base[i] for i in range(7)]
+
     pools = []
     mejores = {nombre_p: None for nombre_p, _largo in PLAZOS}
+    uno_saldo = None
+    uno_sin = None
     for modo, nombre, _kind, _rev in modos:
         for k, t, _idx, _cob, _total in cfgs:
             for window in miradas:
-                pref = series[(modo, k, t, window)]
-                hits = grandes[(modo, k, t, window)]
+                key = (modo, k, t, window)
+                pref = series[key]
+                hits = grandes[key]
                 for nombre_p, largo in PLAZOS:
                     cobrado = pref[-1] - pref[-1 - largo]
                     saldo = round(cobrado - largo * t * 0.50, 2)
+                    tres, cuatros, cincos, cincoc, seises, dias, dias_menor = delta(key, largo)
+                    vistos = [dia for dia in hits if dia["i"] > n - largo]
+                    euros6 = sum(dia["euros"] for dia in vistos if dia["boletos"]["6"])
+                    euros_grande = sum(dia["euros"] for dia in vistos)
                     row = {
                         "modo": modo,
                         "nombre": nombre,
@@ -841,10 +872,18 @@ def barrido(draws, comps, premios):
                         "mirados": window,
                         "sorteos": largo,
                         "saldo": saldo,
+                        "sin6": round(saldo - euros6, 2),
+                        "sin5": round(saldo - euros_grande, 2),
+                        "tres": tres,
+                        "cuatros": cuatros,
+                        "cincos": cincos,
+                        "cincoc": cincoc,
+                        "seises": seises,
+                        "dias": dias,
+                        "dias_menor": dias_menor,
                         "grandes": [
                             {k2: v for k2, v in dia.items() if k2 != "i"}
-                            for dia in hits
-                            if dia["i"] > n - largo
+                            for dia in vistos
                         ],
                     }
                     if saldo > 0:
@@ -852,11 +891,29 @@ def barrido(draws, comps, premios):
                     cur = mejores[nombre_p]
                     if cur is None or saldo > cur["saldo"]:
                         mejores[nombre_p] = row
+                    if t == 1 and (uno_saldo is None or saldo > uno_saldo["saldo"]):
+                        uno_saldo = row
+                    if t == 1 and (uno_sin is None or row["sin5"] > uno_sin["sin5"]):
+                        uno_sin = row
     pools.sort(key=lambda p: p["saldo"], reverse=True)
-    for row in pools[:12]:
+    for row in pools[:8]:
         print(
             f"+ {row['nombre']} {row['cuantos']} mirados={row['mirados']} {row['plazo']} "
-            f"apuestas={row['apuestas']} saldo={row['saldo']}",
+            f"apuestas={row['apuestas']} saldo={row['saldo']} sin5={row['sin5']} "
+            f"3={row['tres']} 4={row['cuatros']} dias={row['dias']}/{row['dias_menor']}",
+            flush=True,
+        )
+    if uno_saldo:
+        print(
+            f"1apuesta saldo={uno_saldo['nombre']} {uno_saldo['cuantos']} mirados={uno_saldo['mirados']} "
+            f"{uno_saldo['plazo']} saldo={uno_saldo['saldo']} sin5={uno_saldo['sin5']} "
+            f"3={uno_saldo['tres']} 4={uno_saldo['cuatros']}",
+            flush=True,
+        )
+    if uno_sin:
+        print(
+            f"1apuesta sin5={uno_sin['nombre']} {uno_sin['cuantos']} mirados={uno_sin['mirados']} "
+            f"{uno_sin['plazo']} saldo={uno_sin['saldo']} sin5={uno_sin['sin5']}",
             flush=True,
         )
     return {
@@ -868,6 +925,8 @@ def barrido(draws, comps, premios):
         "plazos": plazos,
         "pools": pools,
         "mejores": [mejores[nombre_p] for nombre_p, _largo in PLAZOS],
+        "uno_saldo": uno_saldo,
+        "uno_sin": uno_sin,
         "en_positivo": len(pools),
         "probadas": len(modos) * len(cfgs) * len(miradas) * len(PLAZOS),
         "rentable": False,
