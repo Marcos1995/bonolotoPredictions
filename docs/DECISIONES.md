@@ -15,3 +15,4 @@
 2026-10-09 · Rejilla histórica: calientes, fríos y retrasados; ventanas 20–400 de 20 en 20; grupos 6, 8, 9, 10 y 12; topes 1, 5, 10 y 20 · el usuario pidió variar ventanas, modos y apuestas; Laya la prefirió por poco a dejar la rejilla corta · descartado: simple, denso · laya 0.48 · confianza: media
 2026-10-09 · El plazo es la mirada y el juego: 3 meses, 6 meses, 1 año, 3 años y 5 años · un año significa mirar un año, no mezclar 20 miradas · descartado: cortes, miradas · laya 0.65 · confianza: alta
 2026-10-09 · La mirada vuelve a 20–400 y el plazo solo mide cuánto se juega · el usuario rechazó igualarlas: el 6 de 12 calientes estaba al mirar 400, no al mirar 365 · descartado: igual · laya — · confianza: —
+2026-10-09 · Un boleto: los 6 calientes de los últimos 120 sorteos · en 20 trimestres y 10 semestres ninguna mediana es positiva; la rueda de 12 y 10 apuestas solo gana un tramo, el del 6 · descartado: nada, boleto40, rueda · laya 0.40 · confianza: baja
