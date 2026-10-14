@@ -6,9 +6,9 @@
     "semantic_hash": ""
   },
   "analyze_web.py": {
-    "mtime": 1791567942.297135,
-    "seen": 1791568132.2041962,
-    "ast_hash": "1e21e782f5ad8725c277a25297199d95",
+    "mtime": 1791997601.0508044,
+    "seen": 1791997756.355851,
+    "ast_hash": "8022de4f9ef115579ba898b204b41913",
     "semantic_hash": ""
   },
   "bestPrediction.py": {
@@ -180,9 +180,9 @@
     "semantic_hash": ""
   },
   "PROJECT.md": {
-    "mtime": 1791567958.2605543,
-    "seen": 1791568132.2071972,
-    "ast_hash": "857a0165b13254e3861eef54b33f1050",
+    "mtime": 1791997606.6118007,
+    "seen": 1791997756.3588696,
+    "ast_hash": "2129eecd3a2d14e47b385f9b2e8e39f2",
     "semantic_hash": ""
   },
   "README.md": {
@@ -198,15 +198,15 @@
     "semantic_hash": ""
   },
   "docs/DECISIONES.md": {
-    "mtime": 1791567961.670846,
-    "seen": 1791568132.2071972,
-    "ast_hash": "37013eca85f36d2dec9f0987260f42b9",
+    "mtime": 1791997609.2385168,
+    "seen": 1791997756.3588696,
+    "ast_hash": "da93eba9676343a25c7beaec6b0e5728",
     "semantic_hash": ""
   },
   "index.html": {
-    "mtime": 1791568070.101488,
-    "seen": 1791568132.2071972,
-    "ast_hash": "abcf5ca0b4b16b8db924a7bbcaa9c6fe",
+    "mtime": 1791997605.560726,
+    "seen": 1791997756.3588696,
+    "ast_hash": "680496ecd02f7d32f6dbbabbc073e385",
     "semantic_hash": ""
   },
   "pattern_analysis_results.txt": {
@@ -222,9 +222,9 @@
     "semantic_hash": ""
   },
   "data/premios.json": {
-    "mtime": 1791546974.4219506,
-    "seen": 1791547110.16112,
-    "ast_hash": "5f597c101bf8097fc98b55f4a1db0e30",
+    "mtime": 1791997680.764863,
+    "seen": 1791997756.356892,
+    "ast_hash": "fdc513a85cda94cd98b227b4d81b73b1",
     "semantic_hash": ""
   },
   ".cursor/skills/tablas/SKILL.md": {

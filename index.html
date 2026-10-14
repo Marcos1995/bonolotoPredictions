@@ -229,7 +229,7 @@
 
     <section class="max-w-2xl space-y-2 text-base text-[#183925]" aria-label="Cómo leer las tablas">
       <p><span class="font-black text-[#032612]">Calientes</span> son los que más salieron. <span class="font-black text-[#032612]">Fríos</span>, los que menos. <span class="font-black text-[#032612]">Retrasados</span>, los que más sorteos llevan sin salir.</p>
-      <p><span class="font-black text-[#032612]">Mirados</span> es cuántos sorteos anteriores se usan para elegirlos, de 20 a 400. <span class="font-black text-[#032612]">Plazo</span> es cuánto se juega: 3 meses, 6 meses o 1 año. Siempre de tres en tres meses. Un tramo de 3 años o de 5 años no se usa.</p>
+      <p><span class="font-black text-[#032612]">Mirados</span> es cuántos sorteos anteriores se usan para elegirlos, de 20 a 400. <span class="font-black text-[#032612]">Plazo</span> es un mes natural: cada fila va del primer sorteo de ese mes al último. No hay tramos de 3 meses, de 6 meses ni de 1 año.</p>
       <p><span class="font-black text-[#032612]">Saldo positivo</span> significa que en ese plazo se cobró más de lo jugado. Un 6, o un 5 con el complementario, puede dejarlo en verde. No quiere decir que se repita.</p>
     </section>
 
@@ -237,7 +237,7 @@
       <div class="bg-[#18E667] text-[#032612] p-6 sm:p-8 rounded-[14px] mb-4">
         <p class="text-xs uppercase tracking-widest font-mono font-bold mb-2">El criterio</p>
         <h2 id="noche-title" class="text-3xl sm:text-5xl font-black tracking-tight leading-tight mb-3">Un boleto: los 6 calientes de los últimos 120 sorteos</h2>
-        <p id="noche-nota" class="text-base font-semibold max-w-2xl mb-4">Se mira siempre de tres en tres meses. También un bloque de seis meses o de un año. Tres años o cinco años no se usan.</p>
+        <p id="noche-nota" class="text-base font-semibold max-w-2xl mb-4">El saldo se parte por meses naturales. Cada fila es un mes, hasta el último sorteo publicado.</p>
         <ol id="criterio-bolas" class="flex flex-wrap gap-3"></ol>
         <p id="criterio-fecha" class="mt-4 text-sm font-semibold"></p>
       </div>
@@ -1056,7 +1056,7 @@
           const patron = [...cuenta.entries()].sort((a, b) => b[1] - a[1])[0];
           const cuerpo = filas.map((f, i) => `<tr class="border-t border-[#D3E3D6]">
             <th class="pegada px-2 py-2 text-left font-mono" scope="row" data-n="${i}">#<span data-puesto>${i + 1}</span></th>
-            <th class="pegada2 px-2 py-2 text-left" scope="row" data-n="${f.desde}">${f.desde} → ${f.hasta}</th>
+            <th class="pegada2 px-2 py-2 text-left" scope="row" data-n="${f.desde}">${f.mes ? f.mes + " · " : ""}${f.desde} → ${f.hasta}</th>
             ${celda(f.nombre + " " + String(f.cuantos).padStart(2, "0"), f.nombre + ", " + f.cuantos)}
             ${celda(f.mirados, f.mirados)}
             ${celda(f.apuestas, f.apuestas)}
@@ -1078,7 +1078,7 @@
             ? tabla("tabla-si", positivos)
             : `<p class="text-sm text-[#52695B] mb-4">Ninguna combinación de este filtro acaba por encima de cero.</p>`) +
           `<h3 class="text-xl font-black text-[#032612] mt-8 mb-1">Mejor combinación en cada tramo</h3>
-          <p class="text-sm text-[#245233] max-w-2xl mb-2">Siempre de tres en tres meses. Como máximo, seis meses o un año. Un tramo de tres años o de cinco años no entra. Sin 5 dice si ese saldo se cae al quitar el 5 y el 6.</p>` +
+          <p class="text-sm text-[#245233] max-w-2xl mb-2">Cada fila es un mes natural, del primer sorteo de ese mes al último. Sin 5 dice si ese saldo se cae al quitar el 5 y el 6.</p>` +
           tramosHtml;
         if (document.getElementById("tabla-si")) activarOrden(document.getElementById("tabla-si"), "saldo", -1);
         bloques.forEach((g) => {

@@ -730,15 +730,40 @@ def _huecos(pos, i, window):
 
 
 HISTORIA = 1825
-PLAZOS = (
-    ("3 meses", 90),
-    ("6 meses", 180),
-    ("1 año", 365),
-)
+_MES = ("ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic")
+PLAZO = "1 mes"
+
+
+def _meses(draws, start, n):
+    """Meses naturales en la ventana. (etiqueta, lo, hi): el saldo es pref[hi] - pref[lo]."""
+    out = []
+    cur = None
+    lo = 0
+    for paso, i in enumerate(range(start, start + n), 1):
+        d = draws[i][0]
+        key = (d.year, d.month)
+        if cur is None:
+            cur = key
+            lo = paso - 1
+        elif key != cur:
+            y, m = cur
+            out.append((f"{_MES[m - 1]} {y}", lo, paso - 1))
+            cur = key
+            lo = paso - 1
+    if cur is not None:
+        y, m = cur
+        out.append((f"{_MES[m - 1]} {y}", lo, n))
+    if out:
+        i0 = start + out[0][1]
+        d0 = draws[i0][0]
+        prev = draws[i0 - 1][0] if i0 else None
+        if prev and (prev.year, prev.month) == (d0.year, d0.month):
+            out = out[1:]
+    return out
 
 
 def barrido(draws, comps, premios):
-    """La mirada elige los números (20 a 400). El plazo es solo cuánto se juega."""
+    """La mirada elige los números (20 a 400). El plazo es un mes natural."""
     modos = (
         ("calientes", "Calientes", "count", True),
         ("frios", "Fríos", "count", False),
@@ -768,6 +793,9 @@ def barrido(draws, comps, premios):
             nxt[num] += 1
             pos[num].append(i)
     miradas = list(range(20, 401, 20))
+    meses = _meses(draws, start, n)
+    lo_ult = meses[-1][1]
+    largo_ult = n - lo_ult
     series = {}
     grandes = {}
     acum = {}
@@ -780,7 +808,7 @@ def barrido(draws, comps, premios):
                 grandes[key] = []
                 acum[key] = [0, 0, 0, 0, 0, 0, 0]
                 snaps[key] = {}
-    cortes = {n - largo for _nombre_p, largo in PLAZOS if n - largo > 0}
+    cortes = {lo_ult} if lo_ult else set()
     for paso, i in enumerate(range(start, len(draws)), 1):
         fecha_d, actual = draws[i]
         fecha = fecha_d.isoformat()
@@ -831,21 +859,19 @@ def barrido(draws, comps, premios):
                 snaps[key][paso] = tuple(box)
         if paso % 200 == 0:
             print(f"barrido {paso}/{n}", flush=True)
-    plazos = []
-    for nombre_p, largo in PLAZOS:
-        plazos.append({
-            "nombre": nombre_p,
-            "sorteos": largo,
-            "desde": draws[len(draws) - largo][0].isoformat(),
-            "hasta": draws[-1][0].isoformat(),
-        })
+    plazos = [{
+        "nombre": PLAZO,
+        "sorteos": largo_ult,
+        "desde": draws[start + lo_ult][0].isoformat(),
+        "hasta": draws[-1][0].isoformat(),
+    }]
     def delta(key, largo):
         end = snaps[key][n]
         base = snaps[key].get(n - largo, (0, 0, 0, 0, 0, 0, 0))
         return [end[i] - base[i] for i in range(7)]
 
     pools = []
-    mejores = {nombre_p: None for nombre_p, _largo in PLAZOS}
+    mejores = {PLAZO: None}
     uno_saldo = None
     uno_sin = None
     for modo, nombre, _kind, _rev in modos:
@@ -854,7 +880,7 @@ def barrido(draws, comps, premios):
                 key = (modo, k, t, window)
                 pref = series[key]
                 hits = grandes[key]
-                for nombre_p, largo in PLAZOS:
+                for nombre_p, largo in ((PLAZO, largo_ult),):
                     cobrado = pref[-1] - pref[-1 - largo]
                     saldo = round(cobrado - largo * t * 0.50, 2)
                     tres, cuatros, cincos, cincoc, seises, dias, dias_menor = delta(key, largo)
@@ -925,53 +951,46 @@ def barrido(draws, comps, premios):
         {"modo": modo, "nombre": nombre, "cuantos": k, "apuestas": t, "mirados": window}
         for modo, nombre, k, t, window in claves
     ]
-    series_tramo = []
-    for nombre_p, largo in PLAZOS:
-        hi = n
-        cortes_t = []
-        while hi - largo >= 0:
-            cortes_t.append((hi - largo, hi))
-            hi -= largo
-        cortes_t.reverse()
-        tramos = []
-        for lo, hi_t in cortes_t:
-            saldo_t = []
-            sin5_t = []
-            seises_t = []
-            for modo, _nombre, k, t, window in claves:
-                key = (modo, k, t, window)
-                pref = series[key]
-                cobrado = pref[hi_t] - pref[lo]
-                saldo_i = round(cobrado - (hi_t - lo) * t * 0.50, 2)
-                euros = 0.0
-                n6 = 0
-                for dia in grandes[key]:
-                    if lo < dia["i"] <= hi_t:
-                        euros += dia["euros"]
-                        n6 += dia["boletos"]["6"]
-                saldo_t.append(saldo_i)
-                sin5_t.append(round(saldo_i - euros, 2))
-                seises_t.append(n6)
-            tramos.append({
-                "desde": draws[start + lo][0].isoformat(),
-                "hasta": draws[start + hi_t - 1][0].isoformat(),
-                "saldo": saldo_t,
-                "sin5": sin5_t,
-                "seises": seises_t,
-            })
-        series_tramo.append({"nombre": nombre_p, "largo": largo, "tramos": tramos})
-        top = {}
-        for tramo in tramos:
-            i = max(range(len(reglas)), key=lambda j: tramo["saldo"][j])
-            r = reglas[i]
-            marca = (r["modo"], r["cuantos"], r["apuestas"], r["mirados"])
-            top[marca] = top.get(marca, 0) + 1
-        frecuente = max(top, key=top.get)
-        print(
-            f"tramo {nombre_p} n={len(tramos)} gana={frecuente[0]} {frecuente[1]} "
-            f"apuestas={frecuente[2]} mirados={frecuente[3]} veces={top[frecuente]}",
-            flush=True,
-        )
+    tramos = []
+    for etiqueta, lo, hi_t in meses:
+        saldo_t = []
+        sin5_t = []
+        seises_t = []
+        for modo, _nombre, k, t, window in claves:
+            key = (modo, k, t, window)
+            pref = series[key]
+            cobrado = pref[hi_t] - pref[lo]
+            saldo_i = round(cobrado - (hi_t - lo) * t * 0.50, 2)
+            euros = 0.0
+            n6 = 0
+            for dia in grandes[key]:
+                if lo < dia["i"] <= hi_t:
+                    euros += dia["euros"]
+                    n6 += dia["boletos"]["6"]
+            saldo_t.append(saldo_i)
+            sin5_t.append(round(saldo_i - euros, 2))
+            seises_t.append(n6)
+        tramos.append({
+            "mes": etiqueta,
+            "desde": draws[start + lo][0].isoformat(),
+            "hasta": draws[start + hi_t - 1][0].isoformat(),
+            "saldo": saldo_t,
+            "sin5": sin5_t,
+            "seises": seises_t,
+        })
+    series_tramo = [{"nombre": PLAZO, "largo": "mes", "tramos": tramos}]
+    top = {}
+    for tramo in tramos:
+        i = max(range(len(reglas)), key=lambda j: tramo["saldo"][j])
+        r = reglas[i]
+        marca = (r["modo"], r["cuantos"], r["apuestas"], r["mirados"])
+        top[marca] = top.get(marca, 0) + 1
+    frecuente = max(top, key=top.get)
+    print(
+        f"tramo {PLAZO} n={len(tramos)} gana={frecuente[0]} {frecuente[1]} "
+        f"apuestas={frecuente[2]} mirados={frecuente[3]} veces={top[frecuente]}",
+        flush=True,
+    )
     return {
         "sorteos": n,
         "desde": draws[start][0].isoformat(),
@@ -980,12 +999,12 @@ def barrido(draws, comps, premios):
         "mirados_max": miradas[-1],
         "plazos": plazos,
         "pools": pools,
-        "mejores": [mejores[nombre_p] for nombre_p, _largo in PLAZOS],
+        "mejores": [mejores[PLAZO]],
         "tramos": {"reglas": reglas, "series": series_tramo},
         "uno_saldo": uno_saldo,
         "uno_sin": uno_sin,
         "en_positivo": len(pools),
-        "probadas": len(modos) * len(cfgs) * len(miradas) * len(PLAZOS),
+        "probadas": len(modos) * len(cfgs) * len(miradas),
         "rentable": False,
     }
 

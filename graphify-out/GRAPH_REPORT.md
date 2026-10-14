@@ -1,17 +1,17 @@
-# Graph Report - bonolotoPredictions  (2026-10-09)
+# Graph Report - bonolotoPredictions  (2026-10-14)
 
 ## Corpus Check
-- 34 files · ~293,093 words
+- 34 files · ~405,014 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 5 file(s) not represented in the graph (top: .mdc 2, (none) 2, .sqlite 1)
 
 ## Summary
-- 405 nodes · 614 edges · 26 communities (19 shown, 7 thin omitted)
+- 407 nodes · 617 edges · 26 communities (19 shown, 7 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 4 edges (avg confidence: 0.88)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `913378a0`
+- Built from commit: `5c525162`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -45,8 +45,8 @@
 1. `build()` - 19 edges
 2. `LotteryPatternAnalyzer` - 16 edges
 3. `MultiStrategyPredictor` - 15 edges
-4. `PatternOptimizer` - 14 edges
-5. `barrido()` - 13 edges
+4. `barrido()` - 14 edges
+5. `PatternOptimizer` - 14 edges
 6. `MaximumHitsPredictor` - 12 edges
 7. `BonolotoScraper` - 12 edges
 8. `run_series()` - 11 edges
@@ -76,7 +76,7 @@ Nodes (49): nextDrawDate(), Next date after last_date whose weekday is in weekda
 
 ### Community 1 - "commonFunctions.py"
 Cohesion: 0.10
-Nodes (23): Best Prediction Generator ========================= Comprehensive analysis…, collections, colorama, Pick k unique ints from a value_counts-like Series, then fill low..high., topUniqueNumbers(), datetime, hashlib, itertools (+15 more)
+Nodes (24): Best Prediction Generator ========================= Comprehensive analysis…, collections, colorama, Pick k unique ints from a value_counts-like Series, then fill low..high., topUniqueNumbers(), datetime, hashlib, itertools (+16 more)
 
 ### Community 2 - "webScraper.py"
 Cohesion: 0.07
@@ -88,7 +88,7 @@ Nodes (15): LotteryPatternAnalyzer, Analyze lottery patterns using statistical m
 
 ### Community 4 - "PatternOptimizer"
 Cohesion: 0.12
-Nodes (14): main(), PatternOptimizer, DataFrame, Save a result to the cache., Get number frequency data for a given lookback window., Pattern-based strategy with configurable parameters. params: lookback: number…, Get actual lottery numbers for a specific date., Test a specific parameter combination. Uses caching to skip recalculation if… (+6 more)
+Nodes (13): PatternOptimizer, DataFrame, Save a result to the cache., Get number frequency data for a given lookback window., Pattern-based strategy with configurable parameters. params: lookback: number…, Get actual lottery numbers for a specific date., Test a specific parameter combination. Uses caching to skip recalculation if…, Optimize pattern-based lottery predictions by testing parameter combinations. (+5 more)
 
 ### Community 5 - "MultiStrategyPredictor"
 Cohesion: 0.08
@@ -96,7 +96,7 @@ Nodes (14): main(), MultiStrategyPredictor, Combine top 3 hot numbers with top 3
 
 ### Community 6 - "analyze_web.py"
 Cohesion: 0.05
-Nodes (67): backtest(), _balance(), barrido(), _boletos(), build(), cargar_premios(), uno(), chi2_uniform() (+59 more)
+Nodes (69): backtest(), _balance(), barrido(), _boletos(), build(), cargar_premios(), uno(), chi2_uniform() (+61 more)
 
 ### Community 7 - "MaximumHitsPredictor"
 Cohesion: 0.14
@@ -148,23 +148,23 @@ Nodes (3): Check, Do, Review
 
 ## Knowledge Gaps
 - **31 isolated node(s):** `1. Root cause`, `2. Compare`, `3. Hypothesis`, `4. Fix`, `Red flags → back to step 1` (+26 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 201 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 202 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **7 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `LotteryPatternAnalyzer` connect `LotteryPatternAnalyzer` to `commonFunctions.py`?**
-  _High betweenness centrality (0.126) - this node is a cross-community bridge._
+  _High betweenness centrality (0.125) - this node is a cross-community bridge._
 - **Why does `MultiStrategyPredictor` connect `MultiStrategyPredictor` to `commonFunctions.py`?**
-  _High betweenness centrality (0.100) - this node is a cross-community bridge._
+  _High betweenness centrality (0.099) - this node is a cross-community bridge._
 - **Why does `PatternOptimizer` connect `PatternOptimizer` to `commonFunctions.py`?**
-  _High betweenness centrality (0.095) - this node is a cross-community bridge._
+  _High betweenness centrality (0.094) - this node is a cross-community bridge._
 - **What connects `1. Root cause`, `2. Compare`, `3. Hypothesis` to the rest of the system?**
   _31 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `edgeHunt.py` be split into smaller, more focused modules?**
   _Cohesion score 0.053939714436805924 - nodes in this community are weakly interconnected._
 - **Should `commonFunctions.py` be split into smaller, more focused modules?**
-  _Cohesion score 0.10256410256410256 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.09878048780487805 - nodes in this community are weakly interconnected._
 - **Should `webScraper.py` be split into smaller, more focused modules?**
   _Cohesion score 0.07058823529411765 - nodes in this community are weakly interconnected._
