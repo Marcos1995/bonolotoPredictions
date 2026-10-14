@@ -734,6 +734,17 @@ _MES = ("ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "n
 PLAZO = "1 mes"
 
 
+def _mediana(xs):
+    s = sorted(xs)
+    n = len(s)
+    if not n:
+        return 0.0
+    mid = n // 2
+    if n % 2:
+        return s[mid]
+    return (s[mid - 1] + s[mid]) / 2
+
+
 def _meses(draws, start, n):
     """Meses naturales en la ventana. (etiqueta, lo, hi): el saldo es pref[hi] - pref[lo]."""
     out = []
@@ -951,25 +962,44 @@ def barrido(draws, comps, premios):
         {"modo": modo, "nombre": nombre, "cuantos": k, "apuestas": t, "mirados": window}
         for modo, nombre, k, t, window in claves
     ]
+    n_reg = len(claves)
+    premios_acc = [0.0] * n_reg
+    gasto_acc = [0.0] * n_reg
+    euros6_acc = [0.0] * n_reg
+    euros5_acc = [0.0] * n_reg
+    pos_acc = [0] * n_reg
+    rindes_mes = [[] for _ in range(n_reg)]
     tramos = []
     for etiqueta, lo, hi_t in meses:
         saldo_t = []
         sin5_t = []
         seises_t = []
-        for modo, _nombre, k, t, window in claves:
+        sorteos_m = hi_t - lo
+        for i, (modo, _nombre, k, t, window) in enumerate(claves):
             key = (modo, k, t, window)
             pref = series[key]
             cobrado = pref[hi_t] - pref[lo]
-            saldo_i = round(cobrado - (hi_t - lo) * t * 0.50, 2)
+            gasto_m = sorteos_m * t * 0.50
+            saldo_i = round(cobrado - gasto_m, 2)
             euros = 0.0
+            euros6 = 0.0
             n6 = 0
             for dia in grandes[key]:
                 if lo < dia["i"] <= hi_t:
                     euros += dia["euros"]
                     n6 += dia["boletos"]["6"]
+                    if dia["boletos"]["6"]:
+                        euros6 += dia["euros"]
             saldo_t.append(saldo_i)
             sin5_t.append(round(saldo_i - euros, 2))
             seises_t.append(n6)
+            premios_acc[i] += cobrado
+            gasto_acc[i] += gasto_m
+            euros6_acc[i] += euros6
+            euros5_acc[i] += euros
+            if saldo_i > 0:
+                pos_acc[i] += 1
+            rindes_mes[i].append(cobrado / gasto_m if gasto_m else 0.0)
         tramos.append({
             "mes": etiqueta,
             "desde": draws[start + lo][0].isoformat(),
@@ -991,6 +1021,36 @@ def barrido(draws, comps, premios):
         f"apuestas={frecuente[2]} mirados={frecuente[3]} veces={top[frecuente]}",
         flush=True,
     )
+    cuadro = []
+    for i, (modo, nombre, k, t, window) in enumerate(claves):
+        prem = premios_acc[i]
+        gasto = gasto_acc[i]
+        saldo = prem - gasto
+        cuadro.append({
+            "modo": modo,
+            "nombre": nombre,
+            "cuantos": k,
+            "apuestas": t,
+            "mirados": window,
+            "plazo": PLAZO,
+            "meses": len(tramos),
+            "meses_pos": pos_acc[i],
+            "mediana": round(_mediana(rindes_mes[i]), 4),
+            "premios": round(prem, 2),
+            "gasto": round(gasto, 2),
+            "rinde": round(prem / gasto, 4) if gasto else 0,
+            "saldo": round(saldo, 2),
+            "sin6": round(saldo - euros6_acc[i], 2),
+            "sin5": round(saldo - euros5_acc[i], 2),
+        })
+    regular = max(cuadro, key=lambda r: (r["mediana"], r["meses_pos"], -r["apuestas"]))
+    print(
+        f"regular {regular['nombre']} {regular['cuantos']} mirados={regular['mirados']} "
+        f"apuestas={regular['apuestas']} mediana={regular['mediana']} "
+        f"rinde={regular['rinde']} meses+={regular['meses_pos']}/{regular['meses']} "
+        f"saldo={regular['saldo']} sin6={regular['sin6']} sin5={regular['sin5']}",
+        flush=True,
+    )
     return {
         "sorteos": n,
         "desde": draws[start][0].isoformat(),
@@ -1001,6 +1061,7 @@ def barrido(draws, comps, premios):
         "pools": pools,
         "mejores": [mejores[PLAZO]],
         "tramos": {"reglas": reglas, "series": series_tramo},
+        "cuadro": cuadro,
         "uno_saldo": uno_saldo,
         "uno_sin": uno_sin,
         "en_positivo": len(pools),

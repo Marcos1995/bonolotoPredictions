@@ -230,7 +230,7 @@
     <section class="max-w-2xl space-y-2 text-base text-[#183925]" aria-label="Cómo leer las tablas">
       <p><span class="font-black text-[#032612]">Calientes</span> son los que más salieron. <span class="font-black text-[#032612]">Fríos</span>, los que menos. <span class="font-black text-[#032612]">Retrasados</span>, los que más sorteos llevan sin salir.</p>
       <p><span class="font-black text-[#032612]">Mirados</span> es cuántos sorteos anteriores se usan para elegirlos, de 20 a 400. <span class="font-black text-[#032612]">Plazo</span> es un mes natural: cada fila va del primer sorteo de ese mes al último. No hay tramos de 3 meses, de 6 meses ni de 1 año.</p>
-      <p><span class="font-black text-[#032612]">Saldo positivo</span> significa que en ese plazo se cobró más de lo jugado. Un 6, o un 5 con el complementario, puede dejarlo en verde. No quiere decir que se repita.</p>
+      <p><span class="font-black text-[#032612]">Rinde</span> es premios dividido por gasto. 1 es empatar. 20 apuestas gastan 20 veces más: solo compensan si el rinde no baja. <span class="font-black text-[#032612]">Mediana</span> es el rinde del mes de en medio, para que un 6 suelto no mande.</p>
     </section>
 
     <section id="noche" class="section-reveal" aria-labelledby="noche-title">
@@ -923,15 +923,26 @@
       if (!pack || !pack.pools) return;
       const euro = (n) => (n >= 0 ? "+" : "−") + Math.abs(n).toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
       const dinero = (n) => n.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
-      const mejor = pack.pools.slice().sort((a, b) => b.saldo - a.saldo)[0];
       const ap = (n) => n + (n === 1 ? " apuesta" : " apuestas");
-      document.getElementById("siete-kicker").textContent = pack.en_positivo + " combinaciones en positivo";
-      document.getElementById("siete-title").textContent = mejor
-        ? "Sí hay saldo positivo"
-        : "Ninguna combinación acaba en positivo";
-      document.getElementById("siete-nota").textContent = mejor
-        ? mejor.nombre + ", " + mejor.cuantos + " números, " + ap(mejor.apuestas) + ", mirando " + mejor.mirados + " sorteos, plazo " + mejor.plazo + ": " + euro(mejor.saldo) + "."
-        : "No hay ninguna fila por encima de cero.";
+      const veces = (n) => n.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      const regla = (r) => r.nombre + ", " + r.cuantos + " números, " + ap(r.apuestas) + ", mirando " + r.mirados;
+      const cuadro = pack.cuadro || [];
+      const coger = (cmp) => cuadro.length ? cuadro.slice().sort(cmp)[0] : null;
+      const regular = coger((a, b) => b.mediana - a.mediana || b.meses_pos - a.meses_pos || a.apuestas - b.apuestas);
+      const masPremios = coger((a, b) => b.premios - a.premios);
+      const menosGasto = coger((a, b) => a.gasto - b.gasto || b.rinde - a.rinde);
+      const mejorSaldo = coger((a, b) => b.saldo - a.saldo);
+      const mejorSin6 = coger((a, b) => b.sin6 - a.sin6);
+      const mejorSin5 = coger((a, b) => b.sin5 - a.sin5);
+      document.getElementById("siete-kicker").textContent = regular
+        ? regular.meses_pos + " de " + regular.meses + " meses en positivo"
+        : "Todo el periodo";
+      document.getElementById("siete-title").textContent = regular
+        ? (regular.mediana >= 1 ? "El mes típico devuelve más de lo jugado" : "Ni la más regular recupera el euro")
+        : "Sin datos del periodo";
+      document.getElementById("siete-nota").textContent = regular
+        ? regla(regular) + ": el mes de en medio devuelve " + veces(regular.mediana) + " € por euro jugado. 20 apuestas gastan 20 veces más: solo compensan si ese número no baja."
+        : "";
       const celda = (n, texto, extra) => `<td class="px-2 py-2 text-center font-mono ${extra || ""}" data-n="${n}">${texto}</td>`;
       const cajon = (p, nivel) => {
         const dias = (p.grandes || []).filter((g) => {
@@ -994,8 +1005,9 @@
         </div>`;
       const modos = ["calientes", "frios", "retrasados"];
       const modoTxt = { calientes: "Calientes", frios: "Fríos", retrasados: "Retrasados" };
-      const mirados = [...new Set(pack.pools.map((p) => String(p.mirados)))].sort((a, b) => Number(a) - Number(b));
-      const apuestas = [...new Set(pack.pools.map((p) => String(p.apuestas)))].sort((a, b) => Number(a) - Number(b));
+      const baseFiltro = cuadro.length ? cuadro : pack.pools;
+      const mirados = [...new Set(baseFiltro.map((p) => String(p.mirados)))].sort((a, b) => Number(a) - Number(b));
+      const apuestas = [...new Set(baseFiltro.map((p) => String(p.apuestas)))].sort((a, b) => Number(a) - Number(b));
       const plazos = (pack.plazos || []).map((z) => z.nombre);
       const estado = {
         modo: new Set(modos),
@@ -1004,11 +1016,8 @@
         plazo: new Set(plazos),
       };
       const listas = { modo: modos, mirados, apuestas, plazo: plazos };
-      const u = pack.uno_saldo;
-      const mejorSin6 = pack.pools.slice().sort((a, b) => b.sin6 - a.sin6)[0];
-      const mejorSin5 = pack.pools.slice().sort((a, b) => b.sin5 - a.sin5)[0];
-      const lineaUno = u && mejorSin6 && mejorSin5
-        ? `Con 1 apuesta, el mejor saldo es ${euro(u.saldo)} (${u.nombre}, ${u.cuantos} números, mirando ${u.mirados}, ${u.plazo}): ${u.tres} de 3 y ${u.cuatros} de 4, sin 5 ni 6. Si solo se quita el 6, lo mejor sigue en ${euro(mejorSin6.sin6)} (${mejorSin6.nombre}, ${mejorSin6.cuantos}, ${ap(mejorSin6.apuestas)}, mirando ${mejorSin6.mirados}, ${mejorSin6.plazo}). Si se quitan el 5 y el 6, ninguna queda en positivo: la menos mala es ${euro(mejorSin5.sin5)}.`
+      const lineaUno = regular
+        ? `Más premios: ${regla(masPremios)} (${dinero(masPremios.premios)}, rinde ${veces(masPremios.rinde)}). Menos gasto: ${ap(menosGasto.apuestas)} (${dinero(menosGasto.gasto)}); las de las mismas apuestas gastan igual. Mejor saldo contando el 5: ${regla(mejorSaldo)} (${euro(mejorSaldo.saldo)}). Sin el 6: ${regla(mejorSin6)} (${euro(mejorSin6.sin6)}). Sin el 5 ni el 6: ${regla(mejorSin5)} (${euro(mejorSin5.sin5)}).`
         : "";
       const chips = (titulo, clave, valores, texto) => {
         const todos = estado[clave].size === valores.length;
@@ -1071,15 +1080,54 @@
               <table id="${id}" class="w-full text-sm text-[#032612]"><thead><tr>${cabezaTramo}</tr></thead><tbody>${cuerpo}</tbody></table>
             </div>`;
         }).join("");
+        const todas = (pack.cuadro || []).filter((p) => pasa(p));
+        const cabezaTodo = [
+          th("puesto", "#", "Puesto según la columna activa.", "pegada"),
+          th("regla", "Regla", "Calientes, fríos o retrasados, y cuántos números.", "pegada2"),
+          th("mirados", "Mirados", "Sorteos anteriores que se usan para elegir."),
+          th("apuestas", "Apuestas", "Boletos por sorteo. El gasto es esto por 0,50 €."),
+          th("meses", "Meses +", "Meses en los que se cobró más de lo jugado."),
+          th("mediana", "Mediana", "Rinde del mes de en medio. 1 es empatar. Un 6 suelto no la mueve."),
+          th("premios", "Premios", "Euros cobrados en todo el periodo."),
+          th("gasto", "Gasto", "Lo jugado. Solo cambia con las apuestas: 20 gastan 20 veces más."),
+          th("rinde", "Rinde", "Premios / gasto. 20 apuestas solo compensan si este número no baja frente a menos apuestas."),
+          th("saldo", "Saldo", "Premios menos gasto, contando el 5 y el 6."),
+          th("sin6", "Sin 6", "Saldo si se quita el dinero de los días con un 6. El gasto se queda."),
+          th("sin5", "Sin 5", "Saldo si se quitan los días con un 5, un 5+C o un 6."),
+        ].join("");
+        const filaTodo = (p, i) => `<tr class="border-t border-[#D3E3D6]">
+          <th class="pegada px-2 py-2 text-left font-mono" scope="row" data-n="${i}">#<span data-puesto>${i + 1}</span></th>
+          <th class="pegada2 px-2 py-2 text-left" scope="row" data-n="${p.nombre} ${String(p.cuantos).padStart(2, "0")} ${String(p.apuestas).padStart(2, "0")}">${p.nombre}, ${p.cuantos}</th>
+          ${celda(p.mirados, p.mirados)}
+          ${celda(p.apuestas, p.apuestas)}
+          ${celda(p.meses_pos, p.meses_pos + "/" + p.meses)}
+          ${celda(p.mediana, veces(p.mediana), "font-bold")}
+          ${celda(p.premios, dinero(p.premios))}
+          ${celda(p.gasto, dinero(p.gasto))}
+          ${celda(p.rinde, veces(p.rinde))}
+          ${celda(p.saldo, euro(p.saldo))}
+          ${celda(p.sin6, euro(p.sin6))}
+          ${celda(p.sin5, euro(p.sin5))}
+        </tr>`;
+        const tablaTodo = todas.length
+          ? `<h3 class="text-xl font-black text-[#032612] mb-1">Todas, en el periodo entero</h3>
+            <p class="text-sm text-[#245233] max-w-2xl mb-2">Cada fila es una combinación en todos los meses. Pulsa una columna: el primer clic ordena de mayor a menor. # y Regla se quedan fijas.</p>
+            <div class="tabla-scroll bg-white rounded-[14px] border border-[#D3E3D6] py-2 pr-2">
+              <table id="tabla-todo" class="w-full text-sm text-[#032612]"><thead><tr>${cabezaTodo}</tr></thead><tbody>${todas.map(filaTodo).join("")}</tbody></table>
+            </div>`
+          : "";
         document.getElementById("siete-tablas").innerHTML =
-          `<p class="text-xs text-[#52695B] mb-2">Pulsa una columna: el primer clic ordena de mayor a menor. # y Regla se quedan fijas.</p>
-          <h3 class="text-xl font-black text-[#032612] mb-2">Saldo positivo</h3>` +
+          tablaTodo +
+          `<p class="text-xs text-[#52695B] mb-2 mt-8">Pulsa una columna: el primer clic ordena de mayor a menor. # y Regla se quedan fijas.</p>
+          <h3 class="text-xl font-black text-[#032612] mb-2">Saldo positivo del último mes</h3>` +
           (positivos.length
             ? tabla("tabla-si", positivos)
             : `<p class="text-sm text-[#52695B] mb-4">Ninguna combinación de este filtro acaba por encima de cero.</p>`) +
           `<h3 class="text-xl font-black text-[#032612] mt-8 mb-1">Mejor combinación en cada tramo</h3>
           <p class="text-sm text-[#245233] max-w-2xl mb-2">Cada fila es un mes natural, del primer sorteo de ese mes al último. Sin 5 dice si ese saldo se cae al quitar el 5 y el 6.</p>` +
           tramosHtml;
+        const tablaTodoEl = document.getElementById("tabla-todo");
+        if (tablaTodoEl) activarOrden(tablaTodoEl, "mediana", -1);
         if (document.getElementById("tabla-si")) activarOrden(document.getElementById("tabla-si"), "saldo", -1);
         bloques.forEach((g) => {
           const t = document.getElementById("tabla-tramo-" + g.largo);

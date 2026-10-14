@@ -19,6 +19,6 @@
 - Ponytail siempre activo (ver AGENTS.md)
 
 ## Estado
-- 2026-10-14: el criterio sigue siendo un boleto con los 6 calientes de los últimos 120 sorteos. Los tramos de combinaciones son meses naturales, uno por fila; ya no hay 3 meses, 6 meses ni 1 año.
+- 2026-10-14: el criterio sigue siendo un boleto con los 6 calientes de los últimos 120 sorteos. Los tramos son meses naturales. En todo el periodo, el rinde es premios/gasto: 20 apuestas solo compensan si no rinden menos. La regularidad es la mediana mensual de ese rinde. La tabla tiene premios, gasto, saldo con el 5, sin 6 y sin 5.
 
 

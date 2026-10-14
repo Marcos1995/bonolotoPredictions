@@ -1,17 +1,17 @@
 # Graph Report - bonolotoPredictions  (2026-10-14)
 
 ## Corpus Check
-- 34 files · ~405,014 words
+- 34 files · ~450,284 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 5 file(s) not represented in the graph (top: .mdc 2, (none) 2, .sqlite 1)
 
 ## Summary
-- 407 nodes · 617 edges · 26 communities (19 shown, 7 thin omitted)
+- 408 nodes · 619 edges · 26 communities (19 shown, 7 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 4 edges (avg confidence: 0.88)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `5c525162`
+- Built from commit: `863dde0f`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -44,8 +44,8 @@
 ## God Nodes (most connected - your core abstractions)
 1. `build()` - 19 edges
 2. `LotteryPatternAnalyzer` - 16 edges
-3. `MultiStrategyPredictor` - 15 edges
-4. `barrido()` - 14 edges
+3. `barrido()` - 15 edges
+4. `MultiStrategyPredictor` - 15 edges
 5. `PatternOptimizer` - 14 edges
 6. `MaximumHitsPredictor` - 12 edges
 7. `BonolotoScraper` - 12 edges
@@ -96,7 +96,7 @@ Nodes (14): main(), MultiStrategyPredictor, Combine top 3 hot numbers with top 3
 
 ### Community 6 - "analyze_web.py"
 Cohesion: 0.05
-Nodes (69): backtest(), _balance(), barrido(), _boletos(), build(), cargar_premios(), uno(), chi2_uniform() (+61 more)
+Nodes (70): backtest(), _balance(), barrido(), _boletos(), build(), cargar_premios(), uno(), chi2_uniform() (+62 more)
 
 ### Community 7 - "MaximumHitsPredictor"
 Cohesion: 0.14
