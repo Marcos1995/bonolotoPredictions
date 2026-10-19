@@ -3609,6 +3609,18 @@
       "source_location": "L1"
     },
     {
+      "id": "start",
+      "label": "START.md",
+      "_origin": "ast",
+      "community": 26,
+      "community_name": "START.md",
+      "file_type": "document",
+      "node_kind": "page",
+      "norm_label": "start.md",
+      "source_file": "START.md",
+      "source_location": "L1"
+    },
+    {
       "id": "patternanalysis_rationale_10",
       "label": "Analyze lottery patterns using statistical methods. This class provides\u2026",
       "_origin": "ast",
@@ -11918,5 +11930,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "863dde0f53480a1a021466e3d1a7599e22449a14"
+  "built_at_commit": "16c0b06fa4e1d6f39cf768ae2bcb625b9b18cee8"
 }
