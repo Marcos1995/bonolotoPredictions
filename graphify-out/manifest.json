@@ -6,9 +6,9 @@
     "semantic_hash": ""
   },
   "analyze_web.py": {
-    "mtime": 1792000116.2199724,
-    "seen": 1792000312.866203,
-    "ast_hash": "96e43d2e7825f496a749d5809bbb375a",
+    "mtime": 1794771581.5394113,
+    "seen": 1794771614.8292687,
+    "ast_hash": "56b60397fb77a88308f3037f326bb945",
     "semantic_hash": ""
   },
   "bestPrediction.py": {
@@ -126,15 +126,15 @@
     "semantic_hash": ""
   },
   ".cursor/skills/jev/SKILL.md": {
-    "mtime": 1791405641.363147,
-    "seen": 1791406906.9790945,
-    "ast_hash": "c3316b3a3660cc86f81c89e6e583c440",
+    "mtime": 1794771297.9968195,
+    "seen": 1794771614.8292687,
+    "ast_hash": "a88ca974669bcef923f90faec8501a99",
     "semantic_hash": ""
   },
   ".cursor/skills/laya/SKILL.md": {
-    "mtime": 1791405641.3621488,
-    "seen": 1791406906.9790945,
-    "ast_hash": "1bc4782d5ba49d165ab91392a9a917b7",
+    "mtime": 1794771297.9958186,
+    "seen": 1794771614.8292687,
+    "ast_hash": "d09c43db3459241f20e0825408df1a70",
     "semantic_hash": ""
   },
   ".cursor/skills/review/SKILL.md": {
@@ -150,27 +150,27 @@
     "semantic_hash": ""
   },
   ".cursor/skills/web-design/SKILL.md": {
-    "mtime": 1791405641.363147,
-    "seen": 1791406906.9790945,
-    "ast_hash": "39e26a48ce021f51964569ca1533e119",
+    "mtime": 1794771297.9968195,
+    "seen": 1794771614.8292687,
+    "ast_hash": "e8a5badfe4e16e610ad8f0250634b0b7",
     "semantic_hash": ""
   },
   ".cursor/skills/web-design/dashboard.md": {
-    "mtime": 1791405641.3645825,
-    "seen": 1791406906.9790945,
-    "ast_hash": "bc383d52ff798c162c0ca3ac1775776f",
+    "mtime": 1794771297.9978204,
+    "seen": 1794771614.8292687,
+    "ast_hash": "9018e55f141fc57e29363fa030dcf904",
     "semantic_hash": ""
   },
   ".github/workflows/analisis.yml": {
-    "mtime": 1791406118.9077263,
-    "seen": 1791406906.9790945,
-    "ast_hash": "667de7ea9449bfe71d80ee45d61b7493",
+    "mtime": 1794771397.8390827,
+    "seen": 1794771614.8292687,
+    "ast_hash": "b32d1339cb7f0cf708e8944a4bbfa972",
     "semantic_hash": ""
   },
   "AGENTS.md": {
-    "mtime": 1791542338.3023078,
-    "seen": 1791542541.8322444,
-    "ast_hash": "9d6990f052140d965d6c26810ce34eba",
+    "mtime": 1794771297.9990394,
+    "seen": 1794771614.8292687,
+    "ast_hash": "eb964b525ed7df2b512c4ed6330c2eea",
     "semantic_hash": ""
   },
   "DESIGN.md": {
@@ -180,9 +180,9 @@
     "semantic_hash": ""
   },
   "PROJECT.md": {
-    "mtime": 1792000176.989863,
-    "seen": 1792000312.8692071,
-    "ast_hash": "e83f1d4ba1dd6343ea12dc51fe4ab152",
+    "mtime": 1794771583.3078377,
+    "seen": 1794771614.8292687,
+    "ast_hash": "6baea25890fe709e6f89e73a8c24a11c",
     "semantic_hash": ""
   },
   "README.md": {
@@ -198,15 +198,15 @@
     "semantic_hash": ""
   },
   "docs/DECISIONES.md": {
-    "mtime": 1791997609.2385168,
-    "seen": 1791997756.3588696,
-    "ast_hash": "da93eba9676343a25c7beaec6b0e5728",
+    "mtime": 1794771413.1891968,
+    "seen": 1794771614.8292687,
+    "ast_hash": "5da8440a9facbe19fa863adfbc4e187a",
     "semantic_hash": ""
   },
   "index.html": {
-    "mtime": 1792000175.2640772,
-    "seen": 1792000312.8692071,
-    "ast_hash": "49062df177b6da3a029ff274d2b7ca02",
+    "mtime": 1794771533.300888,
+    "seen": 1794771614.8292687,
+    "ast_hash": "9eedd439e05c9188f74ebc2a93637f7b",
     "semantic_hash": ""
   },
   "pattern_analysis_results.txt": {
@@ -222,15 +222,21 @@
     "semantic_hash": ""
   },
   "data/premios.json": {
-    "mtime": 1792347509.7572763,
-    "seen": 1792347546.1998794,
-    "ast_hash": "b02577e12f898bc018de2bc999e1264d",
+    "mtime": 1794771453.7211554,
+    "seen": 1794771614.8292687,
+    "ast_hash": "0f92afba8459e64cea13f12d79745e29",
     "semantic_hash": ""
   },
   ".cursor/skills/tablas/SKILL.md": {
     "mtime": 1791542338.3013368,
     "seen": 1791542541.8322444,
     "ast_hash": "0213fecac7b24fa349260bd3416068c8",
+    "semantic_hash": ""
+  },
+  "START.md": {
+    "mtime": 1794771298.0004659,
+    "seen": 1794771614.8292687,
+    "ast_hash": "bcfe3a344eb2f495e821cd3dae85d0cc",
     "semantic_hash": ""
   }
 }

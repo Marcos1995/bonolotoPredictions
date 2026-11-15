@@ -9,7 +9,7 @@
   "7": "MaximumHitsPredictor",
   "8": "OverdueBacktester",
   "9": "tablas/SKILL.md",
-  "10": "db",
+  "10": "nextBonolotoDate",
   "11": "LotteryBacktester",
   "12": "Debug",
   "13": "predictData",
@@ -24,5 +24,13 @@
   "22": "DESIGN.md",
   "23": "DECISIONES.md",
   "24": "explorar.md",
-  "25": "implementar.md"
+  "25": "implementar.md",
+  "26": "build",
+  "27": "load",
+  "28": "next_ticket",
+  "29": "cargar_premios",
+  "30": "shape_check",
+  "31": "noche",
+  "32": "_boletos",
+  "33": "START.md"
 }

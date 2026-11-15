@@ -1,17 +1,17 @@
-# Graph Report - bonolotoPredictions  (2026-10-14)
+# Graph Report - bonolotoPredictions  (2026-11-15)
 
 ## Corpus Check
-- 34 files · ~450,284 words
+- 35 files · ~452,108 words
 - Verdict: corpus is large enough that graph structure adds value.
-- Unclassified: 5 file(s) not represented in the graph (top: .mdc 2, (none) 2, .sqlite 1)
+- Unclassified: 6 file(s) not represented in the graph (top: (none) 3, .mdc 2, .sqlite 1)
 
 ## Summary
-- 408 nodes · 619 edges · 26 communities (19 shown, 7 thin omitted)
+- 418 nodes · 634 edges · 34 communities (25 shown, 9 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 4 edges (avg confidence: 0.88)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `863dde0f`
+- Built from commit: `16c0b06f`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -26,7 +26,7 @@
 - MaximumHitsPredictor
 - OverdueBacktester
 - tablas/SKILL.md
-- db
+- nextBonolotoDate
 - LotteryBacktester
 - Debug
 - predictData
@@ -40,6 +40,13 @@
 - bonolotoPredictions
 - DESIGN.md
 - DECISIONES.md
+- build
+- load
+- next_ticket
+- cargar_premios
+- shape_check
+- noche
+- _boletos
 
 ## God Nodes (most connected - your core abstractions)
 1. `build()` - 19 edges
@@ -56,23 +63,23 @@
 ## Surprising Connections (you probably didn't know these)
 - `load()` --calls--> `load_rows()`  [EXTRACTED]
   analyze_web.py → raffles.py
-- `generate_best_prediction()` --calls--> `nextBonolotoDate()`  [EXTRACTED]
-  bestPrediction.py → commonFunctions.py
 - `noche()` --calls--> `nextBonolotoDate()`  [EXTRACTED]
   analyze_web.py → commonFunctions.py
 - `build()` --calls--> `nextBonolotoDate()`  [EXTRACTED]
   analyze_web.py → commonFunctions.py
-- `generate_best_prediction()` --calls--> `db`  [EXTRACTED]
-  bestPrediction.py → sqliteClass.py
+- `run_series()` --calls--> `nextDrawDate()`  [EXTRACTED]
+  edgeHunt.py → commonFunctions.py
+- `generate_best_prediction()` --calls--> `nextBonolotoDate()`  [EXTRACTED]
+  bestPrediction.py → commonFunctions.py
 
 ## Import Cycles
 - None detected.
 
-## Communities (26 total, 7 thin omitted)
+## Communities (34 total, 9 thin omitted)
 
 ### Community 0 - "edgeHunt.py"
-Cohesion: 0.05
-Nodes (49): nextDrawDate(), Next date after last_date whose weekday is in weekdays (Mon=0)., Build judgments with Laya, Call, Design, borda(), _ensemble_members(), expected_hits() (+41 more)
+Cohesion: 0.06
+Nodes (47): Build judgments with Laya, Call, Design, borda(), _ensemble_members(), expected_hits(), _fill_from_groups(), _fz() (+39 more)
 
 ### Community 1 - "commonFunctions.py"
 Cohesion: 0.10
@@ -95,8 +102,8 @@ Cohesion: 0.08
 Nodes (14): main(), MultiStrategyPredictor, Combine top 3 hot numbers with top 3 cold numbers., Select numbers ensuring balanced range and odd/even distribution., Weight number appearances with exponential decay by recency., Tests multiple lottery prediction strategies and compares their performance., Pick numbers that are overdue compared to their average gap., Get actual lottery numbers for a specific date. (+6 more)
 
 ### Community 6 - "analyze_web.py"
-Cohesion: 0.05
-Nodes (70): backtest(), _balance(), barrido(), _boletos(), build(), cargar_premios(), uno(), chi2_uniform() (+62 more)
+Cohesion: 0.13
+Nodes (21): barrido(), _cobertura(), _coger(), _euros(), _indices(), _jugar(), _listas(), _mascaras() (+13 more)
 
 ### Community 7 - "MaximumHitsPredictor"
 Cohesion: 0.14
@@ -106,9 +113,9 @@ Nodes (12): main(), MaximumHitsPredictor, DataFrame, Generate predictions using 
 Cohesion: 0.16
 Nodes (9): main(), OverdueBacktester, Get the actual numbers drawn on a specific date. Args: date: The draw date…, Run backtesting for the last N days of actual results. Args: days_to_test:…, Backtest lottery predictions using the "longest since appeared" strategy.…, Generate and print a comprehensive summary of backtest results., Predict numbers for the next draw using the best performing strategy., Main entry point for the backtest. (+1 more)
 
-### Community 10 - "db"
-Cohesion: 0.43
-Nodes (3): generate_best_prediction(), Generate the best possible prediction using comprehensive analysis., db
+### Community 10 - "nextBonolotoDate"
+Cohesion: 0.24
+Nodes (7): generate_best_prediction(), Generate the best possible prediction using comprehensive analysis., nextBonolotoDate(), nextDrawDate(), Next date after last_date whose weekday is in weekdays (Mon=0)., Bonoloto draws Mon-Sat. Skip Sunday., db
 
 ### Community 11 - "LotteryBacktester"
 Cohesion: 0.24
@@ -131,8 +138,8 @@ Cohesion: 0.40
 Nodes (4): 1. Screenshots, 2. Look, 3. Fix and repeat, Verify (UI)
 
 ### Community 17 - "Web design"
-Cohesion: 0.40
-Nodes (4): Before HECHO, Steps, Style = `DESIGN.md`, Web design
+Cohesion: 0.29
+Nodes (6): Before HECHO, Steps (only case 1 or case 2), Style = `DESIGN.md`, Web design, When Stitch does not run, When Stitch runs
 
 ### Community 18 - "Agent rules"
 Cohesion: 0.50
@@ -146,24 +153,48 @@ Nodes (3): Laya, Reply (decision-only requests), Steps
 Cohesion: 0.50
 Nodes (3): Check, Do, Review
 
+### Community 26 - "build"
+Cohesion: 0.16
+Nodes (17): build(), chi2_uniform(), comb(), consec_stats(), _count_z(), decade_rows(), ending_rows(), freq_table() (+9 more)
+
+### Community 27 - "load"
+Cohesion: 0.20
+Nodes (12): _comp(), dias_sin_datos(), fetch_dia(), fetch_live(), _html(), load(), parse_live(), 6 bolas del tablero en vivo, o None si el sorteo sigue en '?'. (+4 more)
+
+### Community 28 - "next_ticket"
+Cohesion: 0.29
+Nodes (10): backtest(), _balance(), next_ticket(), picks_now(), _pool(), Reglas que miran solo el pasado. Azar = media teórica, no una simulación., 3 pares y 3 impares de los más frecuentes. El backtest no le gana al azar., _scores() (+2 more)
+
+### Community 29 - "cargar_premios"
+Cohesion: 0.33
+Nodes (6): cargar_premios(), uno(), _euro_es(), parse_premios(), Premio unitario publicado ese día. Si el 6 no tuvo acertantes, el 6 es el bote., Premios reales por fecha. Cache en data/premios.json; solo baja los que faltan.
+
+### Community 30 - "shape_check"
+Cohesion: 0.40
+Nodes (4): La forma (cuántos impares, hueco, amplitud) se juzga con el pasado solo., Boletos armados solo con sorteos anteriores al último, contra ese último., _score_past(), shape_check()
+
+### Community 31 - "noche"
+Cohesion: 0.67
+Nodes (3): _huecos(), noche(), El criterio: un boleto con los 6 calientes de los últimos 120 sorteos.
+
 ## Knowledge Gaps
-- **31 isolated node(s):** `1. Root cause`, `2. Compare`, `3. Hypothesis`, `4. Fix`, `Red flags → back to step 1` (+26 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 202 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **7 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **33 isolated node(s):** `1. Root cause`, `2. Compare`, `3. Hypothesis`, `4. Fix`, `Red flags → back to step 1` (+28 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 208 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **9 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `LotteryPatternAnalyzer` connect `LotteryPatternAnalyzer` to `commonFunctions.py`?**
-  _High betweenness centrality (0.125) - this node is a cross-community bridge._
+  _High betweenness centrality (0.121) - this node is a cross-community bridge._
 - **Why does `MultiStrategyPredictor` connect `MultiStrategyPredictor` to `commonFunctions.py`?**
-  _High betweenness centrality (0.099) - this node is a cross-community bridge._
+  _High betweenness centrality (0.096) - this node is a cross-community bridge._
 - **Why does `PatternOptimizer` connect `PatternOptimizer` to `commonFunctions.py`?**
-  _High betweenness centrality (0.094) - this node is a cross-community bridge._
+  _High betweenness centrality (0.092) - this node is a cross-community bridge._
 - **What connects `1. Root cause`, `2. Compare`, `3. Hypothesis` to the rest of the system?**
-  _31 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _33 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `edgeHunt.py` be split into smaller, more focused modules?**
-  _Cohesion score 0.053939714436805924 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.05649717514124294 - nodes in this community are weakly interconnected._
 - **Should `commonFunctions.py` be split into smaller, more focused modules?**
   _Cohesion score 0.09878048780487805 - nodes in this community are weakly interconnected._
 - **Should `webScraper.py` be split into smaller, more focused modules?**

@@ -18,3 +18,4 @@
 2026-10-09 · Un boleto: los 6 calientes de los últimos 120 sorteos · en 20 trimestres y 10 semestres ninguna mediana es positiva; la rueda de 12 y 10 apuestas solo gana un tramo, el del 6 · descartado: nada, boleto40, rueda · laya 0.40 · confianza: baja
 2026-10-09 · Los plazos en la web son 3 meses, 6 meses y 1 año, siempre en tramos · el usuario quitó los de 3 y 5 años · descartado: 3 años, 5 años · laya — · confianza: —
 2026-10-14 · Los tramos son un mes natural por fila · el usuario pidió mes a mes en vez de trimestral · descartado: bloques de 30 sorteos, meses naturales conservando 6 meses y 1 año · laya 0.97 · confianza: alta
+2026-11-15 · Seguir con las hojas de Lotoideas y rellenar el hueco reciente con la ficha del día · SELAE responde 403 a los scripts y una API con clave es de pago · descartado: SELAE, loteriasapi · laya — · confianza: baja · sin Laya

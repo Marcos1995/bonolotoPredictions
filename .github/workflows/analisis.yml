@@ -1,7 +1,8 @@
 name: analisis
 on:
   schedule:
-    - cron: "0 5 * * *"
+    - cron: "0 5,18 * * *"
+    - cron: "30 21 * * *"
   workflow_dispatch:
   push:
     branches: [main]
@@ -18,11 +19,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - run: pip install pandas
+      - run: pip install "pandas>=2.2,<3" colorama
       - run: python analyze_web.py
       - name: Publicar JSON si cambió
         run: |
-          git add data/bonoloto.json
+          git add data/bonoloto.json data/premios.json
           git diff --cached --quiet && exit 0
           git -c user.name="bonoloto-bot" -c user.email="actions@users.noreply.github.com" commit -m "Actualiza el analisis de Bonoloto"
           git push

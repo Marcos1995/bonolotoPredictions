@@ -1,7 +1,8 @@
 """Bonoloto: patrones históricos y backtest walk-forward contra el azar.
 
 Escribe data/bonoloto.json. Fuente: hojas públicas de raffles.py (mismo origen
-que el sqlite local). Sin lookahead: cada regla usa solo sorteos anteriores.
+que el sqlite local). Si a la hoja le falta un sorteo reciente, se rellena con
+la ficha de ese día. Sin lookahead: cada regla usa solo sorteos anteriores.
 """
 import bisect
 import datetime as dt
@@ -10,6 +11,7 @@ import math
 import re
 import urllib.request
 from collections import Counter
+from zoneinfo import ZoneInfo
 from concurrent.futures import ThreadPoolExecutor
 from itertools import combinations
 from pathlib import Path
@@ -66,14 +68,60 @@ def parse_live(html):
     return dt.date(int(dm.group(3)), month, int(dm.group(1))), tuple(mains), extras
 
 
-def fetch_live():
-    """SELAE responde 403 desde aquí. Este tablero publica el sorteo a los pocos minutos."""
-    req = urllib.request.Request(LIVE_URL, headers={"User-Agent": "Mozilla/5.0"})
+def _html(url):
+    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
     try:
-        html = urllib.request.urlopen(req, timeout=20).read().decode("utf-8", "replace")
+        return urllib.request.urlopen(req, timeout=20).read().decode("utf-8", "replace")
     except Exception:
         return None
-    return parse_live(html)
+
+
+def fetch_live():
+    """SELAE responde 403 desde aquí. Este tablero publica el sorteo a los pocos minutos."""
+    html = _html(LIVE_URL)
+    return parse_live(html) if html else None
+
+
+def fetch_dia(day):
+    """Ficha de un día ya celebrado. None si esa fecha aún no está publicada."""
+    html = _html(f"https://www.combinacionganadora.com/bonoloto/resultados/{day.isoformat()}/")
+    got = parse_live(html) if html else None
+    if not got or got[0] != day:
+        return None
+    return got
+
+
+_MADRID = ZoneInfo("Europe/Madrid")
+
+
+def _tope_publicado(today=None, now=None):
+    """Último sorteo que ya debería estar publicado. El bombo es a las 21:30 en Madrid.
+
+    Una hora sin zona se lee como hora de Madrid. El runner de GitHub va en UTC.
+    """
+    if now is None:
+        now = dt.datetime.now(_MADRID)
+    elif now.tzinfo is not None:
+        now = now.astimezone(_MADRID)
+    today = today or now.date()
+    end = today
+    if end.weekday() < 6 and (now.hour, now.minute) < (21, 40):
+        end -= dt.timedelta(days=1)
+    while end.weekday() == 6:
+        end -= dt.timedelta(days=1)
+    return end
+
+
+def dias_sin_datos(have, today=None, now=None, days=21):
+    tope = _tope_publicado(today, now)
+    start = tope - dt.timedelta(days=days)
+    missing = []
+    d = start
+    while d <= tope:
+        if d.weekday() < 6 and d not in have:
+            missing.append(d)
+        d += dt.timedelta(days=1)
+    return missing
 
 
 def load():
@@ -99,6 +147,29 @@ def load():
         c = _comp(extra)
         if c is not None:
             comps[d] = c
+    rellenos = []
+    have = {d for d, _n in draws}
+    for day in dias_sin_datos(have):
+        got = fetch_dia(day)
+        if not got:
+            continue
+        d, main, extra = got
+        ordered = tuple(sorted(main))
+        if tuple(main) == ordered:
+            ya_ordenadas += 1
+        draws.append((d, ordered))
+        have.add(d)
+        rellenos.append(d.isoformat())
+        if len(extra) >= 2 and 0 <= extra[1] <= 9:
+            reins.append((d, extra[1]))
+        c = _comp(extra)
+        if c is not None:
+            comps[d] = c
+    if rellenos:
+        draws.sort(key=lambda x: x[0])
+    siguen = [d.isoformat() for d in dias_sin_datos(have)]
+    if siguen:
+        print("sin datos", " ".join(siguen))
     en_vivo = None
     live = fetch_live()
     if live and live[0] not in {d for d, _n in draws}:
@@ -119,6 +190,7 @@ def load():
         "ya_ordenadas": ya_ordenadas,
         "nota": "La hoja pública trae las seis bolas de menor a mayor. El bombo no sale así: puede salir 45, luego 8, luego 17. Ese orden de extracción no está en los datos.",
         "en_vivo": en_vivo,
+        "rellenos": rellenos,
     }
     return draws, reins, orden, comps
 
@@ -1119,7 +1191,9 @@ def build():
     modal = max(oe, key=lambda r: r["sorteos"])
     payload = {
         "juego": "Bonoloto",
-        "fuente": "Hojas públicas Lotoideas" + (" y el tablero en vivo del último hueco" if orden.get("en_vivo") else ""),
+        "fuente": "Hojas públicas Lotoideas"
+        + (" y las fichas de los días que la hoja aún no traía" if orden.get("rellenos") else "")
+        + (" y el tablero en vivo del último hueco" if orden.get("en_vivo") else ""),
         "desde": draws[0][0].isoformat(),
         "hasta": last.isoformat(),
         "proximo": nxt.isoformat(),
