@@ -93,6 +93,9 @@
     #siete-title, #siete-nota { overflow-wrap: anywhere; }
     .tabla-scroll table { border-collapse: separate; border-spacing: 0; min-width: 46rem; }
     .tabla-scroll.angosta table { min-width: 36rem; }
+    .tabla-clara table { min-width: 0; }
+    .tabla-clara th, .tabla-clara td { white-space: normal; }
+    .fila-elegida td { background: #18E667 !important; color: #032612 !important; font-weight: 700; }
     .tabla-scroll th, .tabla-scroll td { white-space: nowrap; background-color: #fff; }
     .tabla-scroll thead th { position: sticky; top: 0; z-index: 2; background-color: #fff; }
     .tabla-scroll .pegada, .tabla-scroll .pegada2 {
@@ -225,1104 +228,122 @@
     </div>
   </div>
 
-  <main class="max-w-4xl mx-auto px-4 py-8 sm:px-6 md:px-8 space-y-12">
-
-    <section class="max-w-2xl space-y-2 text-base text-[#183925]" aria-label="Cómo leer las tablas">
-      <p><span class="font-black text-[#032612]">Calientes</span> son los que más salieron. <span class="font-black text-[#032612]">Fríos</span>, los que menos. <span class="font-black text-[#032612]">Retrasados</span>, los que más sorteos llevan sin salir.</p>
-      <p><span class="font-black text-[#032612]">Mirados</span> es cuántos sorteos anteriores se usan para elegirlos, de 20 a 400. <span class="font-black text-[#032612]">Plazo</span> es un mes natural: cada fila va del primer sorteo de ese mes al último. No hay tramos de 3 meses, de 6 meses ni de 1 año.</p>
-      <p><span class="font-black text-[#032612]">Rinde</span> es premios dividido por gasto. 1 es empatar. 20 apuestas gastan 20 veces más: solo compensan si el rinde no baja. <span class="font-black text-[#032612]">Mediana</span> es el rinde del mes de en medio, para que un 6 suelto no mande.</p>
-    </section>
-
-    <section id="noche" class="section-reveal" aria-labelledby="noche-title">
-      <div class="bg-[#18E667] text-[#032612] p-6 sm:p-8 rounded-[14px] mb-4">
-        <p class="text-xs uppercase tracking-widest font-mono font-bold mb-2">El criterio</p>
-        <h2 id="noche-title" class="text-3xl sm:text-5xl font-black tracking-tight leading-tight mb-3">Un boleto: los 6 calientes de los últimos 120 sorteos</h2>
-        <p id="noche-nota" class="text-base font-semibold max-w-2xl mb-4">El saldo se parte por meses naturales. Cada fila es un mes, hasta el último sorteo publicado.</p>
-        <ol id="criterio-bolas" class="flex flex-wrap gap-3"></ol>
-        <p id="criterio-fecha" class="mt-4 text-sm font-semibold"></p>
-      </div>
-      <div id="noche-rows" class="space-y-4"></div>
-    </section>
-
-    <section id="siete" class="section-reveal" aria-labelledby="siete-title">
-      <div class="bg-[#18E667] text-[#032612] p-6 sm:p-8 rounded-[14px] mb-4">
-        <p id="siete-kicker" class="text-xs uppercase tracking-widest font-mono font-bold mb-2">Saldo del plazo</p>
-        <h2 id="siete-title" class="text-3xl sm:text-5xl font-black tracking-tight leading-tight mb-3">Lo que acaba en positivo</h2>
-        <p id="siete-nota" class="text-base font-semibold max-w-2xl">Mirar 400 sorteos y jugar 12 calientes con 10 o 20 apuestas llegó a un 6. Esa fila está en la tabla.</p>
-      </div>
-      <div id="siete-rows" class="space-y-8"></div>
-    </section>
-
-    <!-- SECCIÓN 1: CABECERA Y HALLAZGO CENTRAL -->
-    <header class="section-reveal pt-4 pb-2 border-b border-[#DDE7DF] relative">
-        <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pr-14 sm:pr-0">
-        <!-- Kicker -->
-        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E8F8EC] border border-[#C6E8CD] text-xs font-semibold text-[#0B4021] font-mono">
-          <svg class="w-3.5 h-3.5 text-[#18E667] fill-current" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>
-          <span id="kicker-rango">Bonoloto · 9.410 sorteos · 28 feb 1988 – 7 oct 2026</span>
-        </span>
-
-        <!-- Chip de fuente -->
-        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-[#D5E0D7] text-xs text-[#3E5546] font-medium shadow-xs">
-          <svg class="w-3.5 h-3.5 text-[#2A663E]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-          Fuente: Hojas públicas Lotoideas
-        </span>
-      </div>
-
-      <!-- Motivo decorativo de sección: Glifo geométrico de rejilla 7x7 (49 números) -->
-      <div class="absolute right-0 top-12 opacity-10 pointer-events-none hidden sm:block">
-        <svg width="120" height="120" viewBox="0 0 70 70" fill="#032612">
-          <circle cx="5" cy="5" r="3"/><circle cx="15" cy="5" r="3"/><circle cx="25" cy="5" r="3"/><circle cx="35" cy="5" r="3"/><circle cx="45" cy="5" r="3"/><circle cx="55" cy="5" r="3"/><circle cx="65" cy="5" r="3"/>
-          <circle cx="5" cy="15" r="3"/><circle cx="15" cy="15" r="3"/><circle cx="25" cy="15" r="3"/><circle cx="35" cy="15" r="3"/><circle cx="45" cy="15" r="3"/><circle cx="55" cy="15" r="3"/><circle cx="65" cy="15" r="3"/>
-          <circle cx="5" cy="25" r="3"/><circle cx="15" cy="25" r="3"/><circle cx="25" cy="25" r="3"/><circle cx="35" cy="25" r="3"/><circle cx="45" cy="25" r="3"/><circle cx="55" cy="25" r="3"/><circle cx="65" cy="25" r="3"/>
-          <circle cx="5" cy="35" r="3"/><circle cx="15" cy="35" r="3"/><circle cx="25" cy="35" r="3"/><circle cx="35" cy="35" r="3"/><circle cx="45" cy="35" r="3"/><circle cx="55" cy="35" r="3"/><circle cx="65" cy="35" r="3"/>
-          <circle cx="5" cy="45" r="3"/><circle cx="15" cy="45" r="3"/><circle cx="25" cy="45" r="3"/><circle cx="35" cy="45" r="3"/><circle cx="45" cy="45" r="3"/><circle cx="55" cy="45" r="3"/><circle cx="65" cy="45" r="3"/>
-          <circle cx="5" cy="55" r="3"/><circle cx="15" cy="55" r="3"/><circle cx="25" cy="55" r="3"/><circle cx="35" cy="55" r="3"/><circle cx="45" cy="55" r="3"/><circle cx="55" cy="55" r="3"/><circle cx="65" cy="55" r="3"/>
-          <circle cx="5" cy="65" r="3"/><circle cx="15" cy="65" r="3"/><circle cx="25" cy="65" r="3"/><circle cx="35" cy="65" r="3"/><circle cx="45" cy="65" r="3"/><circle cx="55" cy="65" r="3"/><circle cx="65" cy="65" r="3"/>
-        </svg>
-      </div>
-
-      <!-- H1 display ultra negrita -->
-      <h1 id="hallazgo" class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-[#032612] tracking-tight leading-[1.08] mb-4 max-w-3xl">
-        Los 30 salen un poco más. Del 1 al 9, un poco menos.
-      </h1>
-
-      <p id="hallazgo-nota" class="text-base sm:text-lg text-[#2A4734] leading-relaxed max-w-2xl font-normal break-words">
-        El 1-9 tiene 9 bolas y el resto 10. El azar ya descuenta eso. Un boleto concreto sigue siendo <span class="font-bold text-[#032612] bg-[#E2F7E7] px-1.5 py-0.5 rounded">1 entre 13.983.816</span>.
-      </p>
+  <main class="max-w-3xl mx-auto px-4 py-8 sm:px-6 space-y-10">
+    <header class="section-reveal pr-14">
+      <p id="kicker" class="text-sm font-semibold text-[#245233]">Bonoloto</p>
+      <h1 id="hallazgo" class="mt-3 text-4xl sm:text-5xl font-black tracking-tight leading-[1.05]">Cargando el análisis.</h1>
+      <p id="porque" class="mt-4 text-lg leading-snug max-w-2xl"></p>
     </header>
 
-    <!-- SECCIÓN 2: FILA DE 4 KPIS -->
+    <section id="kpi-hero" class="section-reveal rounded-[14px] bg-[#18E667] text-[#032612] p-5 sm:p-8">
+      <p id="cuando" class="text-sm font-bold uppercase tracking-wide"></p>
+      <div id="boletos" class="mt-4 space-y-6"></div>
+      <p id="reintegro" class="mt-5 text-base font-semibold max-w-xl"></p>
+      <p id="complementario" class="mt-2 text-sm font-medium max-w-xl"></p>
+    </section>
+
     <section class="section-reveal">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xs font-bold uppercase tracking-wider text-[#4A6353] font-mono">Indicadores clave de distribución</h2>
-        <span class="text-xs text-[#6B8573]">Media observada vs. Modelo estocástico</span>
-      </div>
-
-      <!-- Grid responsive: 1 col móvil -> 2 col tablet -> 4 col escritorio -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        
-        <!-- KPI 1 HERO: Fondo sólido #18E667, texto #032612 -->
-        <article id="kpi-hero" class="bg-[#18E667] text-[#032612] p-5 rounded-[14px] shadow-sm flex flex-col justify-between border-2 border-[#12C856] relative overflow-hidden">
-          <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-[#032612]/5 rounded-full pointer-events-none"></div>
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <span id="hero-label" class="text-xs uppercase font-extrabold tracking-wider text-[#032612]/75 font-mono">Decena por encima del azar</span>
-              <span class="p-1.5 rounded-lg bg-[#032612] text-[#18E667]">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
-              </span>
-            </div>
-            <div class="flex items-baseline gap-1 my-1">
-              <span id="hero-num" class="text-4xl sm:text-5xl font-black tracking-tight text-[#032612]">1,245</span>
-            </div>
-            <p id="hero-unit" class="text-xs font-bold text-[#032612]/80 uppercase tracking-wide">números de los 30 por sorteo</p>
-          </div>
-          <div class="mt-4 pt-3 border-t border-[#032612]/15">
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#032612] text-[#18E667] text-xs font-bold on-ink">
-              <span>=</span>
-              <span id="hero-pill">▲ +0,020 frente al azar (1,225)</span>
-            </span>
-          </div>
-        </article>
-
-        <!-- KPI 2: Con seguidos -->
-        <article class="bg-white p-5 rounded-[14px] border border-[#E1E8E2] shadow-xs flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-xs uppercase font-bold tracking-wider text-[#4A6353] font-mono">Números seguidos</span>
-              <span class="p-1.5 rounded-lg bg-[#F0F5F1] text-[#1C4229]">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/></svg>
-              </span>
-            </div>
-            <div class="text-3xl sm:text-4xl font-extrabold text-[#032612] my-1" id="seguidos-num">49,4%</div>
-            <p class="text-xs text-[#52695B]">con al menos una pareja seguida</p>
-          </div>
-          <div class="mt-4 pt-3 border-t border-[#F0F4F1]">
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#F1F6F2] text-[#254A32] text-xs font-semibold">
-              <span class="text-[#8B2E2E]" id="seguidos-arrow">▼</span>
-              <span id="seguidos-pill">0,1% bajo el azar (49,5%)</span>
-            </span>
-          </div>
-        </article>
-
-        <!-- KPI 3: 3 pares y 3 impares -->
-        <article class="bg-white p-5 rounded-[14px] border border-[#E1E8E2] shadow-xs flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-xs uppercase font-bold tracking-wider text-[#4A6353] font-mono">Simetría Par/Impar</span>
-              <span class="p-1.5 rounded-lg bg-[#F0F5F1] text-[#1C4229]">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-              </span>
-            </div>
-            <div class="text-3xl sm:text-4xl font-extrabold text-[#032612] my-1" id="sim-num">33,6%</div>
-            <p id="sim-unit" class="text-xs text-[#52695B]">de los sorteos salen así. No es un acierto de números</p>
-          </div>
-          <div class="mt-4 pt-3 border-t border-[#F0F4F1]">
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#EDF8F0] text-[#13542B] text-xs font-semibold">
-              <span class="text-[#0E6C34]" id="sim-arrow">▲</span>
-              <span id="sim-pill">0,3% sobre azar (33,3%)</span>
-            </span>
-          </div>
-        </article>
-
-        <!-- KPI 4: Combinaciones repetidas -->
-        <article class="bg-white p-5 rounded-[14px] border border-[#E1E8E2] shadow-xs flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-xs uppercase font-bold tracking-wider text-[#4A6353] font-mono">Repeticiones</span>
-              <span class="p-1.5 rounded-lg bg-[#F0F5F1] text-[#1C4229]">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-              </span>
-            </div>
-            <div class="text-3xl sm:text-4xl font-extrabold text-[#032612] my-1">4</div>
-            <p id="rep-n" class="text-xs text-[#52695B]">sextetos repetidos en el histórico</p>
-          </div>
-          <div class="mt-4 pt-3 border-t border-[#F0F4F1]">
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#F2F5F3] text-[#334D3C] text-xs font-semibold">
-              <span>▲</span>
-              <span id="rep-pill">4 frente a unas 3 que espera el azar</span>
-            </span>
-          </div>
-        </article>
-
-      </div>
+      <h2 class="text-2xl sm:text-3xl font-black">Las reglas de estos números</h2>
+      <ul id="reglas" class="mt-4 space-y-3 text-base leading-snug"></ul>
     </section>
 
-    <!-- SECCIÓN 4 (Colocada para control temporal interactivo de los datos): CONTROL SEGMENTADO -->
-    <section class="section-reveal bg-[#EAF2EC] p-3 rounded-[14px] border border-[#D3E3D6] flex flex-col sm:flex-row items-center justify-between gap-3">
-      <div class="flex items-center gap-2 text-xs font-semibold text-[#184428]">
-        <svg class="w-4 h-4 text-[#168E42]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        <span>Horizonte de cómputo estadístico:</span>
-      </div>
-
-      <!-- Botonera segmentada -->
-      <div id="filter-container" class="inline-flex p-1 bg-white rounded-xl border border-[#CBDCCE] shadow-xs w-full sm:w-auto" role="tablist">
-        <button type="button" onclick="setPeriod('all')" id="btn-period-all" class="flex-1 sm:flex-initial px-4 py-1.5 rounded-lg text-xs transition-all active-pill">
-          Todo
-        </button>
-        <button type="button" onclick="setPeriod('200')" id="btn-period-200" class="flex-1 sm:flex-initial px-4 py-1.5 rounded-lg text-xs font-medium text-[#486351] hover:text-[#032612] transition-all">
-          Últimos 200
-        </button>
-        <button type="button" onclick="setPeriod('year')" id="btn-period-year" class="flex-1 sm:flex-initial px-4 py-1.5 rounded-lg text-xs font-medium text-[#486351] hover:text-[#032612] transition-all">
-          Último año
-        </button>
-      </div>
-    </section>
-
-    <!-- SECCIÓN 3: DOS GRÁFICOS ESTADÍSTICOS -->
-    <section class="section-reveal space-y-8">
-      
-      <!-- Gráfico 1: Barras de distribución par / impar -->
-      <div class="bg-white p-6 rounded-[14px] border border-[#E1E8E2] shadow-xs">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-2">
-          <h3 class="text-lg sm:text-xl font-black text-[#032612]">
-            Lo normal es 3 y 3, porque así lo dice el combinatorio
-          </h3>
-          <!-- Leyenda -->
-          <div class="flex items-center gap-4 text-xs font-medium">
-            <span class="inline-flex items-center gap-1.5">
-              <span class="w-3 h-3 rounded-xs bg-[#18E667] border border-[#10B850]"></span>
-              <span id="oe-legend-n">Observado</span>
-            </span>
-            <span class="inline-flex items-center gap-1.5 text-[#546E5E]">
-              <span class="w-3 h-3 rounded-xs bg-[#032612]"></span>
-              Teórico (Azar)
-            </span>
-          </div>
-        </div>
-        
-        <p class="text-xs text-[#5A7363] mb-6">
-          De 0 a 6 impares en el boleto. La barra oscura es la combinatoria; la verde es el histórico.
-        </p>
-
-        <div id="oe-rows" class="space-y-3.5 max-w-2xl mx-auto pt-2" role="img" aria-label="Impares observados frente al azar"></div>
-
-        <!-- Caption de una sola línea -->
-        <div class="mt-5 pt-3 border-t border-[#EEF2EF] text-xs text-[#526B5C]">
-          Cada barra verde es el histórico; la oscura es C(25, impares)·C(24, pares) / C(49, 6). El control de arriba cambia esta gráfica y las decenas, no el backtest.
-        </div>
-      </div>
-
-      <section id="decenas" class="bg-[#E8F8EC] p-6 sm:p-8 rounded-[14px] border border-[#C6E8CD]" aria-labelledby="decenas-title">
-        <div class="flex items-end justify-between gap-3 mb-2">
-          <h3 id="decenas-title" class="text-2xl sm:text-4xl font-black text-[#032612] tracking-tight leading-none">Qué decena sale más</h3>
-          <svg class="w-16 h-10 shrink-0 text-[#0A3D22]" viewBox="0 0 64 40" fill="currentColor" aria-hidden="true">
-            <circle cx="8" cy="20" r="5"/><circle cx="22" cy="12" r="4"/><circle cx="22" cy="28" r="4"/><circle cx="36" cy="8" r="3"/><circle cx="36" cy="20" r="3"/><circle cx="36" cy="32" r="3"/><circle cx="50" cy="20" r="6"/>
-          </svg>
-        </div>
-        <p class="text-sm text-[#245233] mb-5 max-w-xl">De la que más se pasa del azar a la que más se queda corta. El 1-9 tiene 9 bolas; las otras decenas, 10.</p>
-        <div id="decena-rows" class="space-y-3"></div>
-        <p id="decena-cap" class="mt-4 text-xs text-[#526B5C]">Bolas de esa decena por sorteo, frente a 6 × bolas / 49.</p>
-        <h4 class="mt-8 text-lg font-black text-[#032612]">Terminaciones, del 0 al 9</h4>
-        <p class="text-xs text-[#526B5C] mb-3">El 0 solo está en 10, 20, 30 y 40. El resto de cifras tiene 5 bolas.</p>
-        <div id="terminacion-rows" class="grid grid-cols-2 sm:grid-cols-5 gap-2"></div>
-      </section>
-
-      <section class="orden-band p-6 sm:p-8 rounded-[14px]" aria-labelledby="orden-title">
-        <p class="text-xs uppercase tracking-widest font-mono text-[#18E667] mb-2">Orden publicado ≠ orden del bombo</p>
-        <h3 id="orden-title" class="text-3xl sm:text-5xl font-black tracking-tight leading-[1.05] mb-4">El bombo no sale ordenado</h3>
-        <p id="orden-nota" class="text-base sm:text-lg leading-relaxed max-w-2xl">
-          Las filas públicas vienen de menor a mayor. En el bombo puede salir 45, luego 8, luego 17. Ese orden de extracción no está en los datos, así que no se mira la posición. Las <a href="https://www.boe.es/buscar/doc.php?id=BOE-A-2000-18839" class="underline">normas</a> de <a href="https://www.loteriasyapuestas.es/es/bonoloto" class="underline">Bonoloto</a> publican la combinación, no el orden de salida.
-          <span id="orden-cuenta"></span>
-        </p>
-      </section>
-
-      <div id="comparacion" class="bg-white p-6 rounded-[14px] border border-[#E1E8E2] shadow-xs">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-2">
-          <h3 class="text-lg sm:text-xl font-black text-[#032612]">
-            Ninguna regla se separa lo bastante para cobrar
-          </h3>
-          <!-- Leyenda -->
-          <div class="flex items-center gap-3 text-xs font-medium">
-            <span class="inline-flex items-center gap-1.5 text-[#032612]">
-              <span class="w-3 h-3 rounded-full bg-[#18E667] border border-[#032612]"></span>
-              Rendimiento regla
-            </span>
-            <span class="inline-flex items-center gap-1.5 text-[#B3261E]">
-              <span class="w-4 h-0.5 border-t-2 border-dashed border-[#B3261E]"></span>
-              Línea del azar (0,735)
-            </span>
-          </div>
-        </div>
-
-        <p class="text-xs text-[#5A7363] mb-5">
-          <span id="prueba-n">Aciertos medios en los sorteos de prueba. Cada regla solo ve los sorteos anteriores. Las barras están ampliadas alrededor de 0,73 para que se vea la diferencia.</span>
-        </p>
-
-        <!-- Visualización con línea de referencia central de 0,735 -->
-        <div class="relative py-4 space-y-4">
-          <!-- Línea vertical de referencia del azar posicionada al 60% del ancho relativo -->
-          <div class="absolute top-0 bottom-0 left-[62%] w-px border-l-2 border-dashed border-[#B3261E] z-10 hidden sm:block">
-            <span class="absolute -top-3 -translate-x-1/2 bg-[#B3261E] text-white text-[9px] font-mono px-1 rounded">0,735</span>
-          </div>
-
-          <!-- Regla 1: Calientes (0,752) -->
-          <div class="space-y-1">
-            <div class="flex justify-between text-xs font-semibold">
-              <span class="text-[#032612]">1. Calientes (últimos 100 sorteos)</span>
-              <span class="font-mono text-[#032612] font-bold">0,752 aciertos <span class="text-[#15803D] text-[10px] font-bold">(+0,017)</span></span>
-            </div>
-            <div class="w-full bg-[#EEF4EF] rounded-full h-3 overflow-hidden">
-              <div class="bg-[#18E667] h-3 rounded-full" style="width: 76.5%;"></div>
-            </div>
-          </div>
-
-          <!-- Regla 2: Repetir ayer (0,734) -->
-          <div class="space-y-1">
-            <div class="flex justify-between text-xs font-semibold">
-              <span class="text-[#2C4635]">2. Repetir ayer (sorteo previo)</span>
-              <span class="font-mono text-[#2C4635]">0,734 aciertos <span class="text-[#991B1B] text-[10px]">(-0,001)</span></span>
-            </div>
-            <div class="w-full bg-[#EEF4EF] rounded-full h-3 overflow-hidden">
-              <div class="bg-[#8BD8A4] h-3 rounded-full" style="width: 61.2%;"></div>
-            </div>
-          </div>
-
-          <!-- Regla 3: 3 y 3 (0,732) -->
-          <div class="space-y-1">
-            <div class="flex justify-between text-xs font-semibold">
-              <span class="text-[#2C4635]">3. 3 pares y 3 impares fijos</span>
-              <span class="font-mono text-[#2C4635]">0,732 aciertos <span class="text-[#991B1B] text-[10px]">(-0,003)</span></span>
-            </div>
-            <div class="w-full bg-[#EEF4EF] rounded-full h-3 overflow-hidden">
-              <div class="bg-[#8BD8A4] h-3 rounded-full" style="width: 59.8%;"></div>
-            </div>
-          </div>
-
-          <!-- Regla 4: Frecuencia total (0,731) -->
-          <div class="space-y-1">
-            <div class="flex justify-between text-xs font-semibold">
-              <span class="text-[#2C4635]">4. Frecuencia total histórica</span>
-              <span class="font-mono text-[#2C4635]">0,731 aciertos <span class="text-[#991B1B] text-[10px]">(-0,004)</span></span>
-            </div>
-            <div class="w-full bg-[#EEF4EF] rounded-full h-3 overflow-hidden">
-              <div class="bg-[#8BD8A4] h-3 rounded-full" style="width: 58.5%;"></div>
-            </div>
-          </div>
-
-          <!-- Regla 5: Fríos (0,730) -->
-          <div class="space-y-1">
-            <div class="flex justify-between text-xs font-semibold">
-              <span class="text-[#2C4635]">5. Fríos (los menos salidos)</span>
-              <span class="font-mono text-[#2C4635]">0,730 aciertos <span class="text-[#991B1B] text-[10px]">(-0,005)</span></span>
-            </div>
-            <div class="w-full bg-[#EEF4EF] rounded-full h-3 overflow-hidden">
-              <div class="bg-[#8BD8A4] h-3 rounded-full" style="width: 57.2%;"></div>
-            </div>
-          </div>
-
-          <!-- Regla 6: Retrasados (0,727) -->
-          <div class="space-y-1">
-            <div class="flex justify-between text-xs font-semibold">
-              <span class="text-[#2C4635]">6. Retrasados (mayor ausencia)</span>
-              <span class="font-mono text-[#2C4635]">0,727 aciertos <span class="text-[#991B1B] text-[10px]">(-0,008)</span></span>
-            </div>
-            <div class="w-full bg-[#EEF4EF] rounded-full h-3 overflow-hidden">
-              <div class="bg-[#8BD8A4] h-3 rounded-full" style="width: 54.0%;"></div>
-            </div>
-          </div>
-
-        </div>
-
-        <!-- Caption -->
-        <div class="mt-4 pt-3 border-t border-[#EEF2EF] text-xs text-[#526B5C]">
-          0,752 frente a 0,735 es un extra de 0,017 aciertos por sorteo. No es un premio de 6. Con seis reglas medidas, quedarse con la mejor infla un poco el z.
-        </div>
-      </div>
-
-    </section>
-
-    <!-- SECCIÓN 5: RANKING DETALLADO DE REGLAS (Sin mapas, solo discos verdes) -->
     <section class="section-reveal">
-      <div class="mb-4">
-        <h2 class="text-xl sm:text-2xl font-black text-[#032612] tracking-tight">
-          Ranking de las 6 reglas analizadas
-        </h2>
-        <p class="text-xs sm:text-sm text-[#4E6656]">
-          <span id="prueba-ciega">Prueba ciega desde el sorteo 300 hasta el último sorteo publicado. El azar, jugando 6 números, deja 0,735 aciertos.</span>
-        </p>
-      </div>
-
-      <div class="space-y-2.5">
-        
-        <!-- Fila 1: Calientes -->
-        <div class="bg-white p-4 rounded-[14px] border border-[#CDE5D2] shadow-xs flex items-center justify-between gap-3">
-          <div class="flex items-center gap-3">
-            <!-- Miniatura: disco verde con número de posición -->
-            <div class="w-9 h-9 rounded-full bg-[#18E667] text-[#032612] font-black text-sm flex items-center justify-center shrink-0 border border-[#0EBD4E]">
-              1
-            </div>
-            <div>
-              <div class="flex items-center gap-2">
-                <h4 class="text-sm font-extrabold text-[#032612]">Calientes</h4>
-                <span class="text-[10px] font-bold font-mono px-1.5 py-0.5 rounded bg-[#E4F8EB] text-[#0D622D]">z = 2,17</span>
-              </div>
-              <p class="text-xs text-[#526D5A]">Los 6 números con mayor salida en los últimos 100 sorteos.</p>
-            </div>
-          </div>
-          <div class="text-right shrink-0">
-            <span class="text-base font-black text-[#032612] font-mono">0,752</span>
-            <span class="block text-[10px] text-[#16803D] font-semibold">▲ +0,017</span>
-          </div>
-        </div>
-
-        <!-- Fila 2: Repetir ayer -->
-        <div class="bg-white p-4 rounded-[14px] border border-[#E1E8E2] shadow-xs flex items-center justify-between gap-3">
-          <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-full bg-[#E2ECE4] text-[#22442F] font-bold text-sm flex items-center justify-center shrink-0">
-              2
-            </div>
-            <div>
-              <h4 class="text-sm font-bold text-[#142C1E]">Repetir ayer</h4>
-              <p class="text-xs text-[#5E7866]">Jugar exactamente los 6 números que salieron en el sorteo anterior.</p>
-            </div>
-          </div>
-          <div class="text-right shrink-0">
-            <span class="text-base font-bold text-[#22442F] font-mono">0,734</span>
-            <span class="block text-[10px] text-[#8C3E3E]">▼ -0,001</span>
-          </div>
-        </div>
-
-        <!-- Fila 3: 3 y 3 -->
-        <div class="bg-white p-4 rounded-[14px] border border-[#E1E8E2] shadow-xs flex items-center justify-between gap-3">
-          <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-full bg-[#E2ECE4] text-[#22442F] font-bold text-sm flex items-center justify-center shrink-0">
-              3
-            </div>
-            <div>
-              <h4 class="text-sm font-bold text-[#142C1E]">3 y 3</h4>
-              <p class="text-xs text-[#5E7866]">Equilibrio exacto de 3 pares y 3 impares en cada apuesta.</p>
-            </div>
-          </div>
-          <div class="text-right shrink-0">
-            <span class="text-base font-bold text-[#22442F] font-mono">0,732</span>
-            <span class="block text-[10px] text-[#8C3E3E]">▼ -0,003</span>
-          </div>
-        </div>
-
-        <!-- Fila 4: Frecuencia total -->
-        <div class="bg-white p-4 rounded-[14px] border border-[#E1E8E2] shadow-xs flex items-center justify-between gap-3">
-          <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-full bg-[#E2ECE4] text-[#22442F] font-bold text-sm flex items-center justify-center shrink-0">
-              4
-            </div>
-            <div>
-              <h4 class="text-sm font-bold text-[#142C1E]">Frecuencia total</h4>
-              <p class="text-xs text-[#5E7866]">Los 6 números que acumulan más salidas en el histórico completo.</p>
-            </div>
-          </div>
-          <div class="text-right shrink-0">
-            <span class="text-base font-bold text-[#22442F] font-mono">0,731</span>
-            <span class="block text-[10px] text-[#8C3E3E]">▼ -0,004</span>
-          </div>
-        </div>
-
-        <!-- Fila 5: Fríos -->
-        <div class="bg-white p-4 rounded-[14px] border border-[#E1E8E2] shadow-xs flex items-center justify-between gap-3">
-          <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-full bg-[#E2ECE4] text-[#22442F] font-bold text-sm flex items-center justify-center shrink-0">
-              5
-            </div>
-            <div>
-              <h4 class="text-sm font-bold text-[#142C1E]">Fríos</h4>
-              <p class="text-xs text-[#5E7866]">Los 6 números que menos veces han aparecido en la ventana móvil.</p>
-            </div>
-          </div>
-          <div class="text-right shrink-0">
-            <span class="text-base font-bold text-[#22442F] font-mono">0,730</span>
-            <span class="block text-[10px] text-[#8C3E3E]">▼ -0,005</span>
-          </div>
-        </div>
-
-        <!-- Fila 6: Retrasados -->
-        <div class="bg-white p-4 rounded-[14px] border border-[#E1E8E2] shadow-xs flex items-center justify-between gap-3">
-          <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-full bg-[#E2ECE4] text-[#22442F] font-bold text-sm flex items-center justify-center shrink-0">
-              6
-            </div>
-            <div>
-              <h4 class="text-sm font-bold text-[#142C1E]">Retrasados</h4>
-              <p class="text-xs text-[#5E7866]">Los 6 números con mayor cantidad de jornadas sin aparecer.</p>
-            </div>
-          </div>
-          <div class="text-right shrink-0">
-            <span class="text-base font-bold text-[#22442F] font-mono">0,727</span>
-            <span class="block text-[10px] text-[#8C3E3E]">▼ -0,008</span>
-          </div>
-        </div>
-
+      <h2 class="text-2xl sm:text-3xl font-black">Una apuesta frente a dos</h2>
+      <p class="mt-2 text-sm text-[#52695B] max-w-2xl">«Por euro» es lo cobrado entre lo gastado en todo el periodo, solo con premios de 3 y de 4. «Mes de en medio» es ese mismo cociente en el mes típico: suele ser cero porque muchos meses no tocan ni un 3. El primer clic en una columna ordena de mayor a menor.</p>
+      <div class="tabla-scroll tabla-clara mt-4">
+        <table class="w-full text-sm text-left">
+          <caption class="sr-only">Una apuesta frente a dos, según cuántos sorteos se miran</caption>
+          <thead>
+            <tr id="thead"></tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
       </div>
     </section>
 
-    <!-- SECCIÓN 6: BLOQUE DE COLOR DISTINTO CON GESTO ENORME, 6 BOLAS Y LA ÚNICA ACCIÓN PRINCIPAL -->
-    <section class="section-reveal bg-[#041E0F] text-[#E8FAEE] p-6 sm:p-8 rounded-[14px] border-2 border-[#18E667]/40 shadow-xl relative overflow-hidden">
-      
-      <!-- Motivo decorativo de fondo: Anillo concéntrico de bombo -->
-      <div class="absolute -right-16 -top-16 w-64 h-64 rounded-full border-8 border-[#18E667]/10 pointer-events-none"></div>
-
-      <div class="relative z-10 max-w-2xl">
-        <span class="inline-block px-3 py-1 rounded-full bg-[#18E667]/20 text-[#18E667] text-xs font-mono font-bold uppercase tracking-wider mb-3">
-          <span id="forma-kicker">Sorteo del 7 oct, juzgado solo con el pasado</span>
-        </span>
-
-        <h3 id="forma-title" class="text-2xl sm:text-3xl font-black text-white tracking-tight mb-2">
-          La forma decía 3 y 3. Salió 1 impar.
-        </h3>
-
-        <!-- Las seis bolas con tipo enorme -->
-        <div class="my-6">
-          <div class="grid grid-cols-3 sm:grid-cols-6 gap-3" id="bolas">
-            <!-- Bola 16 -->
-            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#18E667] text-[#032612] font-black text-2xl sm:text-3xl flex items-center justify-center shadow-lg border-2 border-white/80 mx-auto">
-              6
-            </div>
-            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#18E667] text-[#032612] font-black text-2xl sm:text-3xl flex items-center justify-center shadow-lg border-2 border-white/80 mx-auto">
-              20
-            </div>
-            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#18E667] text-[#032612] font-black text-2xl sm:text-3xl flex items-center justify-center shadow-lg border-2 border-white/80 mx-auto">
-              21
-            </div>
-            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#18E667] text-[#032612] font-black text-2xl sm:text-3xl flex items-center justify-center shadow-lg border-2 border-white/80 mx-auto">
-              30
-            </div>
-            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#18E667] text-[#032612] font-black text-2xl sm:text-3xl flex items-center justify-center shadow-lg border-2 border-white/80 mx-auto">
-              34
-            </div>
-            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#18E667] text-[#032612] font-black text-2xl sm:text-3xl flex items-center justify-center shadow-lg border-2 border-white/80 mx-auto">
-              38
-            </div>
-          </div>
-        </div>
-
-        <p id="forma-nota" class="text-sm sm:text-base text-[#B0D5BC] leading-relaxed mb-6 font-normal">
-          El 33,6% es la parte de sorteos en los que salen 3 impares y 3 pares. No es un porcentaje de números acertados.
-        </p>
-
-        <!-- ÚNICA ACCIÓN PRINCIPAL: Botón #0A3D22 con texto claro -->
-        <div>
-          <a id="main-cta" href="#comparacion" class="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-[14px] bg-[#0A3D22] text-[#E8FAEE] hover:bg-[#0D4D2B] border border-[#18E667]/40 text-sm sm:text-base font-bold shadow-lg">
-            <span>Ver la comparación con el azar</span>
-            <svg class="w-5 h-5 text-[#18E667]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <!-- SECCIÓN 7: OTRO GESTO DISTINTO (SUMAS, CHI-CUADRADO Y URNA DE REINTEGRO) -->
-    <section class="section-reveal bg-white p-6 sm:p-8 rounded-[14px] border border-[#E1E8E2] shadow-xs">
-      
-      <div class="flex items-center justify-between mb-4">
-        <span class="text-xs uppercase font-bold tracking-widest text-[#245A36] font-mono">Test de uniformidad global</span>
-        <!-- Motivo decorativo de sección: Micro-gráfico de campana gaussiana -->
-        <svg class="w-14 h-6 text-[#18E667]" fill="none" stroke="currentColor" viewBox="0 0 100 40">
-          <path d="M 0 38 Q 30 38 45 10 T 50 6 T 55 10 Q 70 38 100 38" stroke-width="2.5" fill="none" stroke="currentColor"/>
-        </svg>
-      </div>
-
-      <h3 class="text-xl sm:text-2xl font-black text-[#032612] mb-6">
-        Comportamiento estocástico y ley de los grandes números
-      </h3>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        
-        <!-- Tarjeta A: Suma media -->
-        <div class="bg-[#F8FAF8] p-4 rounded-xl border border-[#E1E8E2]">
-          <div class="text-xs text-[#526D5B] font-medium mb-1">Suma media observada</div>
-          <div class="flex items-baseline gap-2 mb-2">
-            <span class="text-3xl font-extrabold text-[#032612]">150,7</span>
-            <span class="text-xs text-[#526D5B]">vs. 150,0 azar</span>
-          </div>
-          <div class="w-full bg-[#E3EDE5] h-2 rounded-full overflow-hidden mb-2">
-            <div class="bg-[#18E667] h-2 rounded-full" style="width: 50.4%;"></div>
-          </div>
-          <p class="text-xs text-[#627D6B] leading-relaxed">
-            <span id="hueco-nota">La suma media es 150,7 y el centro del azar es 150. Entre un número y el siguiente, ya ordenados, el hueco medio es 7,14: el mismo que sale de la combinatoria. La amplitud (del más bajo al más alto) es 35,7, también la teórica.</span>
-          </p>
-        </div>
-
-        <!-- Tarjeta B: Chi-cuadrado números 1 al 49 -->
-        <div class="bg-[#F8FAF8] p-4 rounded-xl border border-[#E1E8E2]">
-          <div class="text-xs text-[#526D5B] font-medium mb-1">Ajuste de frecuencias (1 al 49)</div>
-          <div class="flex items-baseline gap-2 mb-2">
-            <span class="text-3xl font-extrabold text-[#032612]">p = 0,94</span>
-            <span class="text-xs text-[#136A34] font-semibold">χ² parejo</span>
-          </div>
-          <div class="w-full bg-[#E3EDE5] h-2 rounded-full overflow-hidden mb-2">
-            <div class="bg-[#032612] h-2 rounded-full" style="width: 94%;"></div>
-          </div>
-          <p id="bombo-nota" class="text-xs text-[#627D6B] leading-relaxed">
-            El sorteo usa un bombo físico, según las <a href="https://www.boe.es/buscar/doc.php?id=BOE-A-2000-18839" class="underline">normas</a>: 49 bolas del mismo material y peso, y el reintegro en otro de 10. La combinación que publican ya va de menor a mayor. El orden en que salen las bolas no está en la hoja.
-          </p>
-        </div>
-
-        <!-- Tarjeta C: Urna de reintegro (0 al 9) -->
-        <div class="bg-[#F8FAF8] p-4 rounded-xl border border-[#E1E8E2]">
-          <div class="text-xs text-[#526D5B] font-medium mb-1">Urna del reintegro (0 al 9)</div>
-          <div class="flex items-baseline gap-2 mb-2">
-            <span class="text-3xl font-extrabold text-[#032612]">10,0%</span>
-            <span class="text-xs text-[#136A34] font-semibold">1/10 c/u</span>
-          </div>
-          <div class="w-full bg-[#E3EDE5] h-2 rounded-full overflow-hidden mb-2">
-            <div class="bg-[#18E667] h-2 rounded-full" style="width: 100%;"></div>
-          </div>
-          <p class="text-xs text-[#627D6B] leading-relaxed">
-            <span id="rein-copy">El reintegro es otra urna, del 0 al 9. La cifra más baja es el 6 (9,2%) y la más alta el 7 (10,6%). Con diez cifras, esa diferencia cabe en el azar. No entra en el intento.</span>
-          </p>
-        </div>
-
-      </div>
-      <p id="extremos" class="mt-6 text-sm text-[#183925] leading-relaxed">Los que más salen: 33 (1.218), 10 (1.204), 22 (1.196), 46 (1.196), 2 (1.188), 34 (1.187). Los que menos: 29 (1.089), 5 (1.101), 14 (1.104), 38 (1.110), 4 (1.111). Lo esperado, si fueran iguales, es 1.152 veces cada uno.</p>
-    </section>
-    <footer class="section-reveal pt-8 pb-12 border-t border-[#DDE7DF] text-xs text-[#506859] space-y-3">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-        <p class="font-semibold text-[#183925]">
-          <span id="fuente-fecha">Fuente: Lotoideas · Datos históricos computados hasta el último sorteo publicado.</span>
-        </p>
-          <span class="font-mono text-[11px] text-[#698271]">Walk-forward · hipergeométrica 6/49</span>
-      </div>
-      <p class="leading-relaxed">
-        El análisis no incluye el orden de extracción del bombo, el número complementario ni el desglose de premios en euros. Las seis reglas miden aciertos sobre el conjunto de 6 números, no sobre la posición de salida.
-      </p>
-      <div class="p-3 rounded-lg bg-[#EAEFEA] border border-[#D5E0D7] text-[#294533] font-medium">
-        <strong>Aviso legal:</strong> Este documento es un estudio meramente analítico y matemático. No es un consejo de apuesta ni una recomendación de juego. El juego puede generar adicción. Juega con responsabilidad.
-      </div>
+    <footer class="section-reveal border-t border-[#DDE7DF] pt-6 text-xs text-[#506859] space-y-2">
+      <p id="fuente" class="font-semibold text-[#183925]"></p>
+      <p>Estudio de <a class="underline" href="https://www.loteriasyapuestas.es/es/bonoloto">Bonoloto</a>. No es un consejo de juego. El sorteo es aleatorio.</p>
     </footer>
-
   </main>
-
   <script>
-    const pct = (x) => (x * 100).toLocaleString("es-ES", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + "%";
-    const num = (x, d = 3) => x.toLocaleString("es-ES", { minimumFractionDigits: d, maximumFractionDigits: d });
-    let DATA = null;
+    const euro = (n) => n.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const meses = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+    const fmtFecha = (iso) => {
+      const [y, m, d] = iso.split("-");
+      return Number(d) + " " + meses[Number(m) - 1] + " " + y;
+    };
+    const columnas = [
+      ["nombre", "Cómo"],
+      ["mirados", "Mirados"],
+      ["apuestas", "Apuestas"],
+      ["rinde_bajo", "Por euro"],
+      ["mediana_baja", "Mes de en medio"],
+      ["saldo_bajo", "Saldo"],
+    ];
+    let filas = [];
+    let orden = { key: "rinde_bajo", dir: -1 };
 
-    const fmt3 = (x) => x.toLocaleString("es-ES", { minimumFractionDigits: 3, maximumFractionDigits: 3 });
-
-    function renderDecades(pack) {
-      const rows = pack.decenas.slice().sort((a, b) => (b.por_sorteo - b.azar) - (a.por_sorteo - a.azar));
-      document.getElementById("decena-rows").innerHTML = rows.map((r) => {
-        const d = r.por_sorteo - r.azar;
-        const arrow = d >= 0 ? "▲" : "▼";
-        const sign = d > 0 ? "+" : "−";
-        const thumb = r.decena === "1-9" ? "1" : r.decena.slice(0, 2);
-        return `<article class="grid grid-cols-[auto_minmax(0,1fr)_auto] gap-3 items-center bg-white rounded-[14px] p-3 border border-[#C6E8CD]">
-          <div class="dec-thumb w-14 h-14 rounded-full font-black text-lg flex items-center justify-center shrink-0" aria-hidden="true">${thumb}</div>
-          <div class="min-w-0">
-            <h4 class="font-black text-[#032612] text-lg leading-tight">${r.decena}</h4>
-            <p class="text-sm text-[#245233]">${r.bolas === 9 ? "9 bolas, no 10" : r.bolas + " bolas"} · ${fmt3(r.por_sorteo)} por sorteo · azar ${fmt3(r.azar)}</p>
-          </div>
-          <b class="font-mono text-sm text-[#032612] whitespace-nowrap">${arrow} ${sign}${fmt3(Math.abs(d))}</b>
-        </article>`;
-      }).join("");
-      document.getElementById("decena-cap").textContent =
-        "Bolas de esa decena por sorteo, en " + pack.sorteos.toLocaleString("es-ES") + " sorteos. El azar es 6 × bolas de la decena / 49.";
-      const ends = pack.terminaciones.slice().sort((a, b) => b.z - a.z);
-      document.getElementById("terminacion-rows").innerHTML = ends.map((r) => {
-        const d = r.por_sorteo - r.azar;
-        const arrow = d >= 0 ? "▲" : "▼";
-        const sign = d > 0 ? "+" : "−";
-        return `<div class="bg-white rounded-xl p-2 border border-[#C6E8CD]">
-          <div class="font-black text-xl text-[#032612]">${r.digito}</div>
-          <p class="text-[11px] leading-snug text-[#526B5C]">${r.bolas} bolas · ${arrow} ${sign}${fmt3(Math.abs(d))} frente a ${fmt3(r.azar)}</p>
-        </div>`;
-      }).join("");
-      const top = rows[0];
-      const gap = top.por_sorteo - top.azar;
-      const arrow = gap >= 0 ? "▲" : "▼";
-      const sign = gap > 0 ? "+" : "−";
-      document.getElementById("hero-num").textContent = fmt3(top.por_sorteo);
-      document.getElementById("hero-unit").textContent = "números de los " + top.decena + " por sorteo";
-      document.getElementById("hero-pill").textContent = arrow + " " + sign + fmt3(Math.abs(gap)) + " frente al azar (" + fmt3(top.azar) + ")";
+    function bola(n) {
+      return `<span class="bola bola-criterio">${n}</span>`;
     }
 
-    function activarOrden(table, inicio, inicioDir) {
-      const buttons = [...table.querySelectorAll("thead button[data-k]")];
-      let col = inicio;
-      let dir = inicioDir;
-      const pintar = () => {
-        const idx = buttons.findIndex((b) => b.dataset.k === col);
-        const rows = [...table.tBodies[0].rows];
-        rows.sort((a, b) => {
-          const ka = a.cells[idx].dataset.n;
-          const kb = b.cells[idx].dataset.n;
-          const na = Number(ka);
-          const nb = Number(kb);
-          const cmp = Number.isFinite(na) && Number.isFinite(nb) ? na - nb : String(ka).localeCompare(String(kb), "es");
-          return cmp * dir;
-        });
-        rows.forEach((row, i) => {
-          table.tBodies[0].appendChild(row);
-          const puesto = row.querySelector("[data-puesto]");
-          if (puesto) puesto.textContent = String(i + 1);
-        });
-        buttons.forEach((b) => {
-          const on = b.dataset.k === col;
-          b.parentElement.setAttribute("aria-sort", on ? (dir < 0 ? "descending" : "ascending") : "none");
-          b.querySelector(".flecha").textContent = on ? (dir < 0 ? "▼" : "▲") : "";
-        });
-      };
-      buttons.forEach((b) => b.addEventListener("click", () => {
-        if (col === b.dataset.k) dir *= -1;
-        else { col = b.dataset.k; dir = -1; }
-        pintar();
-      }));
-      pintar();
-      pegarColumnas(table);
-    }
-
-    function pegarColumnas(table) {
-      const cols = [...table.querySelectorAll(".pegada")];
-      if (!cols.length) return;
-      const w = Math.ceil(Math.max(...cols.map((c) => c.getBoundingClientRect().width)));
-      if (!(w > 8)) return;
-      cols.forEach((c) => { c.style.minWidth = w + "px"; });
-      table.style.setProperty("--col1", w + "px");
-    }
-
-    function renderSiete(data) {
-      const pack = data.calientes_ventanas;
-      if (!pack || !pack.pools) return;
-      const euro = (n) => (n >= 0 ? "+" : "−") + Math.abs(n).toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
-      const dinero = (n) => n.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
-      const ap = (n) => n + (n === 1 ? " apuesta" : " apuestas");
-      const veces = (n) => n.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-      const regla = (r) => r.nombre + ", " + r.cuantos + " números, " + ap(r.apuestas) + ", mirando " + r.mirados;
-      const cuadro = pack.cuadro || [];
-      const coger = (cmp) => cuadro.length ? cuadro.slice().sort(cmp)[0] : null;
-      const regular = coger((a, b) => b.mediana - a.mediana || b.meses_pos - a.meses_pos || a.apuestas - b.apuestas);
-      const masPremios = coger((a, b) => b.premios - a.premios);
-      const menosGasto = coger((a, b) => a.gasto - b.gasto || b.rinde - a.rinde);
-      const mejorSaldo = coger((a, b) => b.saldo - a.saldo);
-      const mejorSin6 = coger((a, b) => b.sin6 - a.sin6);
-      const mejorSin5 = coger((a, b) => b.sin5 - a.sin5);
-      document.getElementById("siete-kicker").textContent = regular
-        ? regular.meses_pos + " de " + regular.meses + " meses en positivo"
-        : "Todo el periodo";
-      document.getElementById("siete-title").textContent = regular
-        ? (regular.mediana >= 1 ? "El mes típico devuelve más de lo jugado" : "Ni la más regular recupera el euro")
-        : "Sin datos del periodo";
-      document.getElementById("siete-nota").textContent = regular
-        ? regla(regular) + ": el mes de en medio devuelve " + veces(regular.mediana) + " € por euro jugado. 20 apuestas gastan 20 veces más: solo compensan si ese número no baja."
-        : "";
-      const celda = (n, texto, extra) => `<td class="px-2 py-2 text-center font-mono ${extra || ""}" data-n="${n}">${texto}</td>`;
-      const cajon = (p, nivel) => {
-        const dias = (p.grandes || []).filter((g) => {
-          if (g.boletos["6"]) return nivel === "6";
-          if (g.boletos["5c"]) return nivel === "5c";
-          return nivel === "5";
-        });
-        const tickets = dias.reduce((s, g) => s + (g.boletos[nivel] || 0), 0);
-        const euros = dias.reduce((s, g) => s + g.euros, 0);
-        return { tickets, euros, texto: tickets ? tickets + " · " + dinero(euros) : "0" };
-      };
-      const th = (k, label, ayuda, pegada) =>
-        `<th class="${pegada || ""}" scope="col" aria-sort="none" title="${ayuda}"><button type="button" class="ord" data-k="${k}">${label}<span class="flecha" aria-hidden="true"></span></button></th>`;
-      const fila = (p, i) => {
-        const seis = cajon(p, "6");
-        const cincoC = cajon(p, "5c");
-        const cinco = cajon(p, "5");
-        const regla = p.nombre + ", " + p.cuantos;
-        return `<tr class="border-t border-[#D3E3D6]">
-          <th class="pegada px-2 py-2 text-left font-mono" scope="row" data-n="${i}">#<span data-puesto>${i + 1}</span></th>
-          <th class="pegada2 px-2 py-2 text-left" scope="row" data-n="${p.nombre} ${String(p.cuantos).padStart(2, "0")} ${String(p.apuestas).padStart(2, "0")}">${regla}</th>
-          ${celda(p.mirados, p.mirados)}
-          ${celda(p.sorteos, p.plazo)}
-          ${celda(p.saldo, euro(p.saldo), "font-bold")}
-          ${celda(p.sin6, euro(p.sin6))}
-          ${celda(p.sin5, euro(p.sin5))}
-          ${celda(seis.euros, seis.texto)}
-          ${celda(cincoC.euros, cincoC.texto)}
-          ${celda(cinco.euros, cinco.texto)}
-          ${celda(p.cuatros, p.cuatros)}
-          ${celda(p.tres, p.tres)}
-          ${celda(p.dias, p.dias)}
-          ${celda(p.dias_menor, p.dias_menor)}
-          ${celda(p.apuestas, p.apuestas)}
-          ${celda(p.coste_dia, dinero(p.coste_dia))}
-        </tr>`;
-      };
-      const cabeza = [
-        th("puesto", "#", "Puesto según la columna activa.", "pegada"),
-        th("regla", "Regla", "Calientes, fríos o retrasados, y cuántos números.", "pegada2"),
-        th("mirados", "Mirados", "Sorteos anteriores que se usan para elegir los números."),
-        th("plazo", "Plazo", "Cuánto tiempo se juega esa elección."),
-        th("saldo", "Saldo", "Premios menos lo jugado en ese plazo."),
-        th("sin6", "Sin 6", "Saldo si se quita el dinero de los días con un 6. El coste de esos días se queda."),
-        th("sin5", "Sin 5", "Saldo si se quitan los días con un 5, un 5+C o un 6. El coste se queda."),
-        th("seis", "6", "Veces que un boleto acertó los 6, y el dinero de esos días."),
-        th("cincoc", "5+C", "Veces con 5 y el complementario, y el dinero de esos días."),
-        th("cinco", "5", "Veces con 5, sin el complementario, y el dinero de esos días."),
-        th("cuatro", "4", "Boletos con 4 aciertos en ese plazo."),
-        th("tres", "3", "Boletos con 3 aciertos en ese plazo."),
-        th("dias", "Días", "Días con algún premio de 3 o más."),
-        th("chicos", "Días 3-4", "Días con premio en los que no hubo 5 ni 6. Un 6 no cuenta aquí."),
-        th("apuestas", "Apuestas", "Boletos que se compran cada sorteo."),
-        th("dia", "Al día", "Coste de un sorteo, a 0,50 € el boleto."),
-      ].join("");
-      const tabla = (id, rows) => `<div class="tabla-scroll bg-white rounded-[14px] border border-[#D3E3D6] py-2 pr-2">
-          <table id="${id}" class="w-full text-sm text-[#032612]">
-            <thead><tr>${cabeza}</tr></thead><tbody>${rows.map(fila).join("")}</tbody>
-          </table>
-        </div>`;
-      const modos = ["calientes", "frios", "retrasados"];
-      const modoTxt = { calientes: "Calientes", frios: "Fríos", retrasados: "Retrasados" };
-      const baseFiltro = cuadro.length ? cuadro : pack.pools;
-      const mirados = [...new Set(baseFiltro.map((p) => String(p.mirados)))].sort((a, b) => Number(a) - Number(b));
-      const apuestas = [...new Set(baseFiltro.map((p) => String(p.apuestas)))].sort((a, b) => Number(a) - Number(b));
-      const plazos = (pack.plazos || []).map((z) => z.nombre);
-      const estado = {
-        modo: new Set(modos),
-        mirados: new Set(mirados),
-        apuestas: new Set(apuestas),
-        plazo: new Set(plazos),
-      };
-      const listas = { modo: modos, mirados, apuestas, plazo: plazos };
-      const lineaUno = regular
-        ? `Más premios: ${regla(masPremios)} (${dinero(masPremios.premios)}, rinde ${veces(masPremios.rinde)}). Menos gasto: ${ap(menosGasto.apuestas)} (${dinero(menosGasto.gasto)}); las de las mismas apuestas gastan igual. Mejor saldo contando el 5: ${regla(mejorSaldo)} (${euro(mejorSaldo.saldo)}). Sin el 6: ${regla(mejorSin6)} (${euro(mejorSin6.sin6)}). Sin el 5 ni el 6: ${regla(mejorSin5)} (${euro(mejorSin5.sin5)}).`
-        : "";
-      const chips = (titulo, clave, valores, texto) => {
-        const todos = estado[clave].size === valores.length;
-        const botones = [`<button type="button" class="chip ${todos ? "on" : ""}" data-g="${clave}" data-v="*">Todos</button>`]
-          .concat(valores.map((v) => `<button type="button" class="chip ${!todos && estado[clave].has(v) ? "on" : ""}" data-g="${clave}" data-v="${v}">${texto(v)}</button>`));
-        return `<div class="mb-3"><p class="text-xs font-black text-[#032612] mb-1">${titulo}</p><div class="flex flex-wrap gap-1">${botones.join("")}</div></div>`;
-      };
-      const pasa = (row) => (
-        (estado.modo.size === modos.length || estado.modo.has(row.modo))
-        && (estado.mirados.size === mirados.length || estado.mirados.has(String(row.mirados)))
-        && (estado.apuestas.size === apuestas.length || estado.apuestas.has(String(row.apuestas)))
-        && (estado.plazo.size === plazos.length || estado.plazo.has(row.plazo))
-      );
-      const cabezaTramo = [
-        th("puesto", "#", "Puesto según la columna activa.", "pegada"),
-        th("tramo", "Tramo", "Fechas de ese bloque, una detrás de otra.", "pegada2"),
-        th("regla", "Regla", "La combinación con mejor saldo dentro del filtro."),
-        th("mirados", "Mirados", "Sorteos anteriores usados para elegir."),
-        th("apuestas", "Apuestas", "Boletos por sorteo."),
-        th("saldo", "Saldo", "Premios menos lo jugado en el tramo."),
-        th("sin5", "Sin 5", "Saldo al quitar los días con 5, 5+C o 6."),
-        th("seis", "6", "Boletos con 6 en ese tramo."),
-      ].join("");
-      const pintar = () => {
-        const positivos = pack.pools.filter((p) => p.saldo > 0 && pasa(p));
-        const bloques = ((pack.tramos && pack.tramos.series) || []).filter((g) => estado.plazo.size === plazos.length || estado.plazo.has(g.nombre));
-        const tramosHtml = bloques.map((g) => {
-          const filas = g.tramos.map((tramo) => {
-            let best = null;
-            pack.tramos.reglas.forEach((r, i) => {
-              if (!pasa({ modo: r.modo, mirados: r.mirados, apuestas: r.apuestas, plazo: g.nombre })) return;
-              const saldo = tramo.saldo[i];
-              const sin5 = tramo.sin5[i];
-              if (!best || saldo > best.saldo || (saldo === best.saldo && sin5 > best.sin5)) {
-                best = { ...r, saldo, sin5, seises: tramo.seises[i], desde: tramo.desde, hasta: tramo.hasta };
-              }
-            });
-            return best;
-          }).filter(Boolean);
-          const cuenta = new Map();
-          filas.forEach((f) => {
-            const k = f.nombre + " " + f.cuantos + " · " + f.mirados + " mirados · " + ap(f.apuestas);
-            cuenta.set(k, (cuenta.get(k) || 0) + 1);
-          });
-          const patron = [...cuenta.entries()].sort((a, b) => b[1] - a[1])[0];
-          const cuerpo = filas.map((f, i) => `<tr class="border-t border-[#D3E3D6]">
-            <th class="pegada px-2 py-2 text-left font-mono" scope="row" data-n="${i}">#<span data-puesto>${i + 1}</span></th>
-            <th class="pegada2 px-2 py-2 text-left" scope="row" data-n="${f.desde}">${f.mes ? f.mes + " · " : ""}${f.desde} → ${f.hasta}</th>
-            ${celda(f.nombre + " " + String(f.cuantos).padStart(2, "0"), f.nombre + ", " + f.cuantos)}
-            ${celda(f.mirados, f.mirados)}
-            ${celda(f.apuestas, f.apuestas)}
-            ${celda(f.saldo, euro(f.saldo), "font-bold")}
-            ${celda(f.sin5, euro(f.sin5))}
-            ${celda(f.seises, f.seises)}
-          </tr>`).join("");
-          const id = "tabla-tramo-" + g.largo;
-          return `<h3 class="text-xl font-black text-[#032612] mt-6 mb-1">${g.nombre}</h3>
-            <p class="text-sm text-[#245233] mb-2">${filas.length} tramos seguidos. La que más veces gana: ${patron ? patron[0] + ", " + patron[1] + " de " + filas.length : "ninguna"}.</p>
-            <div class="tabla-scroll bg-white rounded-[14px] border border-[#D3E3D6] py-2 pr-2">
-              <table id="${id}" class="w-full text-sm text-[#032612]"><thead><tr>${cabezaTramo}</tr></thead><tbody>${cuerpo}</tbody></table>
-            </div>`;
-        }).join("");
-        const todas = (pack.cuadro || []).filter((p) => pasa(p));
-        const cabezaTodo = [
-          th("puesto", "#", "Puesto según la columna activa.", "pegada"),
-          th("regla", "Regla", "Calientes, fríos o retrasados, y cuántos números.", "pegada2"),
-          th("mirados", "Mirados", "Sorteos anteriores que se usan para elegir."),
-          th("apuestas", "Apuestas", "Boletos por sorteo. El gasto es esto por 0,50 €."),
-          th("meses", "Meses +", "Meses en los que se cobró más de lo jugado."),
-          th("mediana", "Mediana", "Rinde del mes de en medio. 1 es empatar. Un 6 suelto no la mueve."),
-          th("premios", "Premios", "Euros cobrados en todo el periodo."),
-          th("gasto", "Gasto", "Lo jugado. Solo cambia con las apuestas: 20 gastan 20 veces más."),
-          th("rinde", "Rinde", "Premios / gasto. 20 apuestas solo compensan si este número no baja frente a menos apuestas."),
-          th("saldo", "Saldo", "Premios menos gasto, contando el 5 y el 6."),
-          th("sin6", "Sin 6", "Saldo si se quita el dinero de los días con un 6. El gasto se queda."),
-          th("sin5", "Sin 5", "Saldo si se quitan los días con un 5, un 5+C o un 6."),
-        ].join("");
-        const filaTodo = (p, i) => `<tr class="border-t border-[#D3E3D6]">
-          <th class="pegada px-2 py-2 text-left font-mono" scope="row" data-n="${i}">#<span data-puesto>${i + 1}</span></th>
-          <th class="pegada2 px-2 py-2 text-left" scope="row" data-n="${p.nombre} ${String(p.cuantos).padStart(2, "0")} ${String(p.apuestas).padStart(2, "0")}">${p.nombre}, ${p.cuantos}</th>
-          ${celda(p.mirados, p.mirados)}
-          ${celda(p.apuestas, p.apuestas)}
-          ${celda(p.meses_pos, p.meses_pos + "/" + p.meses)}
-          ${celda(p.mediana, veces(p.mediana), "font-bold")}
-          ${celda(p.premios, dinero(p.premios))}
-          ${celda(p.gasto, dinero(p.gasto))}
-          ${celda(p.rinde, veces(p.rinde))}
-          ${celda(p.saldo, euro(p.saldo))}
-          ${celda(p.sin6, euro(p.sin6))}
-          ${celda(p.sin5, euro(p.sin5))}
-        </tr>`;
-        const tablaTodo = todas.length
-          ? `<h3 class="text-xl font-black text-[#032612] mb-1">Todas, en el periodo entero</h3>
-            <p class="text-sm text-[#245233] max-w-2xl mb-2">Cada fila es una combinación en todos los meses. Pulsa una columna: el primer clic ordena de mayor a menor. # y Regla se quedan fijas.</p>
-            <div class="tabla-scroll bg-white rounded-[14px] border border-[#D3E3D6] py-2 pr-2">
-              <table id="tabla-todo" class="w-full text-sm text-[#032612]"><thead><tr>${cabezaTodo}</tr></thead><tbody>${todas.map(filaTodo).join("")}</tbody></table>
-            </div>`
-          : "";
-        document.getElementById("siete-tablas").innerHTML =
-          tablaTodo +
-          `<p class="text-xs text-[#52695B] mb-2 mt-8">Pulsa una columna: el primer clic ordena de mayor a menor. # y Regla se quedan fijas.</p>
-          <h3 class="text-xl font-black text-[#032612] mb-2">Saldo positivo del último mes</h3>` +
-          (positivos.length
-            ? tabla("tabla-si", positivos)
-            : `<p class="text-sm text-[#52695B] mb-4">Ninguna combinación de este filtro acaba por encima de cero.</p>`) +
-          `<h3 class="text-xl font-black text-[#032612] mt-8 mb-1">Mejor combinación en cada tramo</h3>
-          <p class="text-sm text-[#245233] max-w-2xl mb-2">Cada fila es un mes natural, del primer sorteo de ese mes al último. Sin 5 dice si ese saldo se cae al quitar el 5 y el 6.</p>` +
-          tramosHtml;
-        const tablaTodoEl = document.getElementById("tabla-todo");
-        if (tablaTodoEl) activarOrden(tablaTodoEl, "mediana", -1);
-        if (document.getElementById("tabla-si")) activarOrden(document.getElementById("tabla-si"), "saldo", -1);
-        bloques.forEach((g) => {
-          const t = document.getElementById("tabla-tramo-" + g.largo);
-          if (t) activarOrden(t, "saldo", -1);
-        });
-        document.querySelectorAll("#siete-tablas table").forEach((t) => {
-          if (t.querySelector(".pegada")) pegarColumnas(t);
-        });
-      };
-      document.getElementById("siete-rows").innerHTML =
-        `<p class="text-sm text-[#183925] max-w-2xl mb-3">${lineaUno}</p>
-        <div id="siete-filtros" class="mb-4">
-          ${chips("Tipo", "modo", modos, (v) => modoTxt[v])}
-          ${chips("Plazo", "plazo", plazos, (v) => v)}
-          ${chips("Apuestas", "apuestas", apuestas, (v) => v)}
-          ${chips("Mirados", "mirados", mirados, (v) => v)}
-        </div>
-        <div id="siete-tablas"></div>`;
-      document.getElementById("siete-filtros").addEventListener("click", (ev) => {
-        const b = ev.target.closest("button[data-g]");
-        if (!b) return;
-        const clave = b.dataset.g;
-        const valores = listas[clave];
-        const set = estado[clave];
-        if (b.dataset.v === "*") valores.forEach((v) => set.add(v));
-        else if (set.size === valores.length) { set.clear(); set.add(b.dataset.v); }
-        else if (set.has(b.dataset.v)) set.delete(b.dataset.v);
-        else set.add(b.dataset.v);
-        if (set.size === 0) valores.forEach((v) => set.add(v));
-        document.getElementById("siete-filtros").innerHTML =
-          chips("Tipo", "modo", modos, (v) => modoTxt[v])
-          + chips("Plazo", "plazo", plazos, (v) => v)
-          + chips("Apuestas", "apuestas", apuestas, (v) => v)
-          + chips("Mirados", "mirados", mirados, (v) => v);
-        pintar();
-      });
-      pintar();
-      const repintarPegadas = () => {
-        document.querySelectorAll("table").forEach((t) => {
-          if (t.querySelector(".pegada")) pegarColumnas(t);
-        });
-      };
-      if (document.fonts && document.fonts.ready) document.fonts.ready.then(repintarPegadas);
-      if (!window.__pegarTablas) {
-        window.__pegarTablas = true;
-        window.addEventListener("resize", repintarPegadas);
-      }
-    }
-
-    function renderOdds(pack) {
-      const rows = pack.pares_impares;
-      const max = Math.max(...rows.map((r) => Math.max(r.obs, r.azar)), 0.01);
-      const host = document.getElementById("oe-rows");
-      host.innerHTML = rows.map((r) => {
-        const peak = r.impares === 3;
-        const wO = (r.obs / max * 100).toFixed(1);
-        const wA = (r.azar / max * 100).toFixed(1);
-        return `<div class="grid grid-cols-12 items-center gap-2 text-xs ${peak ? "bg-[#F2FAF4] p-2 rounded-lg border border-[#D5EBD9]" : ""}">
-          <span class="col-span-3 sm:col-span-2 font-mono font-semibold text-[#284733]">${r.impares} impares</span>
-          <div class="col-span-6 sm:col-span-8 flex flex-col gap-1">
-            <div class="flex items-center gap-2">
-              <div class="min-w-0 flex-1"><div class="h-3 rounded-r bg-[#18E667]" style="width:${wO}%"></div></div>
-              <span class="shrink-0 font-mono text-[11px] text-[#032612] font-semibold">${pct(r.obs)}</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <div class="min-w-0 flex-1"><div class="bar-azar h-2 rounded-r bg-[#032612]" style="width:${wA}%"></div></div>
-              <span class="shrink-0 font-mono text-[10px] text-[#556D5F]">${pct(r.azar)} azar</span>
-            </div>
-          </div>
-          <span class="col-span-3 sm:col-span-2 text-right text-[11px] text-[#44634F] font-mono">${r.sorteos.toLocaleString("es-ES")} casos</span>
-        </div>`;
-      }).join("");
-      document.getElementById("oe-legend-n").textContent = "Observado (" + pack.sorteos.toLocaleString("es-ES") + ")";
-      const mid = rows.find((r) => r.impares === 3);
-      const dpp = mid.obs - mid.azar;
-      document.getElementById("sim-num").textContent = pct(mid.obs);
-      document.getElementById("sim-pill").textContent = pct(Math.abs(dpp)) + " frente al azar (" + pct(mid.azar) + ")";
-      document.getElementById("sim-arrow").textContent = dpp >= 0 ? "▲" : "▼";
-      const azS = DATA.seguidos.azar_al_menos_uno;
-      const dS = pack.seguidos - azS;
-      document.getElementById("seguidos-arrow").textContent = dS >= 0 ? "▲" : "▼";
-      document.getElementById("seguidos-pill").textContent = pct(Math.abs(dS)) + (dS >= 0 ? " sobre" : " bajo") + " el azar (" + pct(azS) + ")";
-      document.getElementById("seguidos-num").textContent = pct(pack.seguidos);
-    }
-
-    function setPeriod(period) {
-      const map = { all: "todo", "200": "d200", year: "anyo" };
-      ["all", "200", "year"].forEach((id) => {
-        const btn = document.getElementById("btn-period-" + id);
-        btn.classList.remove("active-pill");
-        btn.classList.add("text-[#486351]", "font-medium");
-        btn.setAttribute("aria-selected", "false");
-      });
-      const on = document.getElementById("btn-period-" + period);
-      on.classList.add("active-pill");
-      on.classList.remove("text-[#486351]", "font-medium");
-      on.setAttribute("aria-selected", "true");
-      if (DATA) {
-        renderOdds(DATA.ventanas[map[period]]);
-        renderDecades(DATA.ventanas[map[period]]);
-      }
-    }
-
-    function renderNoche(data) {
-      const n = data.noche;
-      if (!n) return;
-      document.getElementById("noche-title").textContent =
-        "Un boleto: los 6 calientes de los últimos " + n.mirados + " sorteos";
-      document.getElementById("criterio-fecha").textContent =
-        "Para el sorteo del " + n.fecha + ". Esos " + n.mirados + " van del " + n.desde + " al " + n.hasta + ". El de esta noche no entra.";
-      document.getElementById("criterio-bolas").innerHTML = n.calientes.slice(0, 6).map((num) =>
-        `<li><span class="bola bola-criterio">${num}</span></li>`
-      ).join("");
-      const bloque = (nombre, lista, nota) => `<article class="bg-white rounded-[14px] border border-[#D3E3D6] p-4">
-          <h3 class="text-xl font-black text-[#032612]">${nombre}</h3>
-          <p class="text-sm text-[#245233] mb-3">${nota}</p>
-          <ol class="flex flex-wrap gap-3">
-            ${lista.map((num, i) => `<li class="flex flex-col items-center gap-1">
-              <span class="bola ${i < 6 ? "bola-si" : "bola-no"}">${num}</span>
-              <span class="text-[10px] font-mono text-[#52695B]">${i + 1}</span>
-            </li>`).join("")}
-          </ol>
-        </article>`;
-      document.getElementById("noche-rows").innerHTML = [
-        bloque("Calientes", n.calientes, "El boleto de arriba son los 6 primeros. Del 7 al 12 no se juega."),
-        bloque("Fríos", n.frios, "Los que menos salieron. No son el criterio."),
-        bloque("Retrasados", n.retrasados, "Los que más sorteos llevan sin salir. No son el criterio."),
-      ].join("");
-    }
-
-    function boot(data) {
-      DATA = data;
-      renderNoche(data);
-      renderSiete(data);
-      const expRep = data.sorteos * (data.sorteos - 1) / (2 * data.universo);
-      document.getElementById("rep-pill").textContent = data.repeticiones_exactas + " frente a unas " + num(expRep, 1) + " que espera el azar";
-      document.getElementById("rep-n").textContent = "sextetos repetidos en " + data.sorteos.toLocaleString("es-ES") + " sorteos";
-      document.getElementById("oe-legend-n").textContent = "Observado (" + data.sorteos.toLocaleString("es-ES") + ")";
-      const host = document.getElementById("bolas");
-      const ultimo = data.formas.ultimo;
-      const pasado = data.formas.con_el_pasado;
-      host.innerHTML = ultimo.numeros.map((n) =>
-        `<div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#18E667] text-[#032612] font-black text-2xl sm:text-3xl flex items-center justify-center shadow-lg border-2 border-white/80 mx-auto">${n}</div>`
-      ).join("");
-      const cal = pasado.reglas.calientes;
-      const fri = pasado.reglas.frios;
-      document.getElementById("forma-kicker").textContent = "Sorteo del " + ultimo.fecha + ", juzgado solo con el pasado";
-      document.getElementById("forma-title").textContent = "La forma decía 3 y 3. Salió " + ultimo.impares + (ultimo.impares === 1 ? " impar." : " impares.");
-      document.getElementById("forma-nota").textContent =
-        "El " + pct(data.formas.acierto_3_y_3) + " es la parte de sorteos con 3 impares y 3 pares, igual que el combinatorio. No cuenta números acertados. El " + ultimo.fecha + " salió " + ultimo.numeros.join(", ") + " (" + ultimo.impares + (ultimo.impares === 1 ? " impar" : " impares") + "). Los 6 calientes de entonces (" + cal.numeros.join(", ") + ") acertaron " + cal.aciertos + ".";
-      const meses = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
-      const fmtFecha = (iso) => {
-        const [y, m, d] = iso.split("-");
-        return Number(d) + " " + meses[Number(m) - 1] + " " + y;
-      };
-      document.getElementById("kicker-rango").textContent =
+    function pinta(data) {
+      document.title = "Bonoloto · " + data.titulo;
+      document.getElementById("kicker").textContent =
         "Bonoloto · " + data.sorteos.toLocaleString("es-ES") + " sorteos · " + fmtFecha(data.desde) + " – " + fmtFecha(data.hasta);
-      document.getElementById("fuente-fecha").textContent =
-        "Fuente: Lotoideas · Datos históricos computados hasta el " + fmtFecha(data.hasta) + ".";
-      document.getElementById("prueba-ciega").textContent =
-        "Prueba ciega desde el sorteo " + data.warmup + " hasta el " + fmtFecha(data.hasta) +
-        ". El azar, jugando 6 números, deja " + data.aciertos_azar.toLocaleString("es-ES") + " aciertos.";
-      document.getElementById("prueba-n").textContent =
-        "Aciertos medios en " + (data.sorteos - data.warmup).toLocaleString("es-ES") +
-        " sorteos de prueba. Cada regla solo ve los sorteos anteriores. Las barras están ampliadas alrededor de 0,73 para que se vea la diferencia.";
-      document.getElementById("orden-cuenta").textContent =
-        " En esta hoja, " + data.orden.ya_ordenadas.toLocaleString("es-ES") + " de " + data.orden.filas.toLocaleString("es-ES") + " sorteos ya vienen ordenados.";
-      const topD = data.patrones.decenas.slice().sort((a, b) => b.z - a.z)[0];
-      const lowD = data.patrones.decenas.slice().sort((a, b) => a.z - b.z)[0];
-      const mas = (id) => id === "1-9" ? "Del 1 al 9 sale un poco más." : "Los " + id.slice(0, 2) + " salen un poco más.";
-      const menos = (id) => id === "1-9" ? "Del 1 al 9, un poco menos." : "Los " + id.slice(0, 2) + ", un poco menos.";
-      document.getElementById("hallazgo").textContent = mas(topD.decena) + " " + menos(lowD.decena);
-      document.getElementById("hallazgo-nota").innerHTML =
-        "La decena " + lowD.decena + " tiene " + lowD.bolas + " bolas" +
-        (lowD.bolas < 10 ? "; las demás, 10" : "") +
-        ". El azar ya descuenta eso. Un boleto concreto sigue siendo <span class=\"font-bold text-[#032612] bg-[#E2F7E7] px-1.5 py-0.5 rounded\">1 entre " +
-        data.universo.toLocaleString("es-ES") + "</span>.";
-      document.getElementById("hueco-nota").textContent =
-        "La suma media es " + data.sumas.media.toLocaleString("es-ES") + " y el centro del azar es 150. El hueco medio entre números ya ordenados es " + data.formas.hueco_medio.toLocaleString("es-ES") + ", y la combinatoria dice " + data.formas.hueco_azar.toLocaleString("es-ES") + ". La amplitud media es " + data.formas.amplitud_media.toLocaleString("es-ES") + " frente a " + data.formas.amplitud_azar.toLocaleString("es-ES") + ".";
-      const freq = data.frecuencia.slice().sort((a, b) => b.count - a.count);
-      const exp = data.chi2.esperado_por_numero;
-      const line = (rows) => rows.map((r) => r.n + " (" + r.count.toLocaleString("es-ES") + ")").join(", ");
-      document.getElementById("extremos").textContent =
-        "Los que más salen: " + line(freq.slice(0, 6)) + ". Los que menos: " + line(freq.slice(-6).reverse()) +
-        ". Lo esperado, si fueran iguales, es " + Math.round(exp).toLocaleString("es-ES") + " veces cada uno. " +
-        "Dos números pegados salen en el " + pct(data.patrones.seguidos) + " de los sorteos. A distancia 1 o 2, en el " + pct(data.patrones.a_lo_sumo_2) + " (el azar, " + pct(data.patrones.azar_a_lo_sumo_2) + "). " +
-        "Misma terminación, en el " + pct(data.patrones.misma_terminacion) + " (el azar, " + pct(data.patrones.azar_misma_terminacion) + ").";
-      const reins = data.reintegro.filas;
-      const total = reins.reduce((s, r) => s + r.count, 0);
-      const ranked = reins.slice().sort((a, b) => a.count - b.count);
-      const lo = ranked[0], hi = ranked[ranked.length - 1];
-      document.getElementById("rein-copy").textContent =
-        "El reintegro es otra urna, del 0 al 9. La más baja es el " + lo.n + " (" + pct(lo.count / total) + ") y la más alta el " + hi.n + " (" + pct(hi.count / total) + "). Con diez cifras, esa diferencia cabe en el azar. No entra en el intento.";
-      renderOdds(data.ventanas.todo);
-      renderDecades(data.ventanas.todo);
+      document.getElementById("hallazgo").textContent = data.titulo;
+      document.getElementById("porque").textContent = data.porque;
+      document.getElementById("cuando").textContent = "Para el sorteo del " + fmtFecha(data.proximo) + ". El de hoy no entra en la cuenta.";
+      document.getElementById("boletos").innerHTML = data.boletos.map((b) => `
+        <div>
+          <p class="text-sm font-bold">${b.nombre}</p>
+          <div class="mt-2 flex flex-wrap gap-2">${b.numeros.map(bola).join("")}</div>
+          <p class="mt-2 text-sm font-semibold">${b.detalle}. No ha salido nunca.</p>
+        </div>`).join("");
+      document.getElementById("reintegro").textContent = data.reintegro.nota;
+      document.getElementById("complementario").textContent = data.complementario;
+      document.getElementById("reglas").innerHTML = data.reglas.map((t) => `<li>${t}</li>`).join("");
+      document.getElementById("fuente").textContent =
+        "Fuente: Lotoideas · hasta el " + fmtFecha(data.hasta) + ".";
+      filas = data.tabla.slice();
+      cabecera();
+      ordena("rinde_bajo", -1);
+    }
+
+    function cabecera() {
+      document.getElementById("thead").innerHTML = columnas.map(([key, label]) =>
+        `<th scope="col"><button type="button" class="ord" data-key="${key}">${label}<span class="flecha" data-flecha="${key}"></span></button></th>`
+      ).join("");
+      document.querySelectorAll("#thead button").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const key = btn.getAttribute("data-key");
+          const dir = orden.key === key && orden.dir === -1 ? 1 : -1;
+          ordena(key, dir);
+        });
+      });
+    }
+
+    function ordena(key, dir) {
+      orden = { key, dir };
+      const texto = key === "nombre";
+      filas.sort((a, b) => {
+        const va = a[key], vb = b[key];
+        const cmp = texto ? String(va).localeCompare(String(vb), "es") : va - vb;
+        return cmp * dir;
+      });
+      document.querySelectorAll("[data-flecha]").forEach((el) => {
+        el.textContent = el.getAttribute("data-flecha") === key ? (dir === -1 ? " ↓" : " ↑") : "";
+      });
+      document.getElementById("tbody").innerHTML = filas.map((f) => `
+        <tr class="${f.elegida ? "fila-elegida" : ""}">
+          <td class="px-2 py-2" data-n="${f.nombre}">${f.nombre}</td>
+          <td class="px-2 py-2" data-n="${f.mirados}">${f.mirados}</td>
+          <td class="px-2 py-2" data-n="${f.apuestas}">${f.apuestas}</td>
+          <td class="px-2 py-2" data-n="${f.rinde_bajo}">${euro(f.rinde_bajo)}</td>
+          <td class="px-2 py-2" data-n="${f.mediana_baja}">${euro(f.mediana_baja)}</td>
+          <td class="px-2 py-2" data-n="${f.saldo_bajo}">${euro(f.saldo_bajo)} €</td>
+        </tr>`).join("");
     }
 
     document.getElementById("theme-toggle").addEventListener("click", () => {
@@ -1331,8 +352,7 @@
       localStorage.setItem("tema", next);
     });
 
-    fetch("data/bonoloto.json", { cache: "no-store" }).then((r) => r.json()).then(boot);
+    fetch("data/bonoloto.json", { cache: "no-store" }).then((r) => r.json()).then(pinta);
   </script>
 </body>
-
 </html>

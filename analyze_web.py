@@ -1166,29 +1166,222 @@ def noche(draws, window=120):
     }
 
 
+VENTANAS_CLARAS = (80, 120, 200, 320)
+_TOP_CLARO = 12
+
+
+def _hot(segment):
+    score = [0] * (N + 1)
+    for _d, nums in segment:
+        for n in nums:
+            score[n] += 1
+    return sorted(range(1, N + 1), key=lambda n: (-score[n], n))
+
+
+def _forma(nums):
+    """3 pares y 3 impares, no seis seguidos, y al menos tres decenas."""
+    if sum(n % 2 for n in nums) != 3:
+        return False
+    s = tuple(sorted(nums))
+    if all(s[i + 1] - s[i] == 1 for i in range(5)):
+        return False
+    return len({(n - 1) // 10 for n in s}) >= 3
+
+
+def _buscar(pool, vistos, debe=(), con=None, solape=None):
+    if len(pool) < 6:
+        return None
+    pos = {n: i for i, n in enumerate(pool)}
+    best = None
+    best_heat = None
+    for comb in combinations(pool, 6):
+        if debe and any(n not in comb for n in debe):
+            continue
+        nums = tuple(sorted(comb))
+        if nums in vistos or not _forma(nums):
+            continue
+        if con is not None and len(set(nums) & set(con)) != solape:
+            continue
+        heat = sum(pos[n] for n in nums)
+        if best_heat is None or heat < best_heat:
+            best_heat = heat
+            best = nums
+    return best
+
+
+def _armar(modo, ranked, vistos):
+    """una: 6 calientes con las reglas. dos: la segunda incluye el 7.º. nueve: dos boletos de los 9, con 3 en común."""
+    primera = _buscar(ranked[:_TOP_CLARO], vistos) or _buscar(ranked[:18], vistos)
+    if not primera:
+        return []
+    if modo == "una":
+        return [primera]
+    if modo == "dos":
+        septimo = next(n for n in ranked if n not in primera)
+        pool = list(dict.fromkeys([septimo] + ranked[:_TOP_CLARO]))[:_TOP_CLARO]
+        segunda = _buscar(pool, vistos, debe=(septimo,))
+        if not segunda or segunda == primera:
+            return []
+        return [primera, segunda]
+    pool = ranked[:9]
+    base = _buscar(pool, vistos) or primera
+    segunda = _buscar(pool, vistos, con=base, solape=3)
+    if not segunda:
+        return []
+    return [base, segunda]
+
+
+def _euros_de(tabla, boletos, claves):
+    sub = {k: boletos.get(k, 0) for k in claves}
+    got = _euros(tabla, sub)
+    return 0.0 if got is None else got
+
+
+def _fila_clara(modo, nombre, mirados, meses):
+    rindes = sorted(m["premio"] / m["gasto"] for m in meses if m["gasto"])
+    bajos = sorted(m["bajo"] / m["gasto"] for m in meses if m["gasto"])
+    premio = sum(m["premio"] for m in meses)
+    bajo = sum(m["bajo"] for m in meses)
+    gasto = sum(m["gasto"] for m in meses)
+    mid = len(rindes) // 2
+    return {
+        "modo": modo,
+        "nombre": nombre,
+        "mirados": mirados,
+        "apuestas": 1 if modo == "una" else 2,
+        "mediana": round(rindes[mid], 4) if rindes else 0,
+        "mediana_baja": round(bajos[mid], 4) if bajos else 0,
+        "rinde": round(premio / gasto, 4) if gasto else 0,
+        "rinde_bajo": round(bajo / gasto, 4) if gasto else 0,
+        "saldo": round(premio - gasto, 2),
+        "saldo_bajo": round(bajo - gasto, 2),
+        "gasto": round(gasto, 2),
+        "meses": len(rindes),
+        "c3": sum(m["c3"] for m in meses),
+        "c4": sum(m["c4"] for m in meses),
+        "c5": sum(m["c5"] for m in meses),
+        "c6": sum(m["c6"] for m in meses),
+    }
+
+
+def _claro(draws, comps, premios):
+    """1 frente a 2 apuestas. El mes de en medio, sin el dinero del 5 y del 6."""
+    modos = (("una", "Una apuesta"), ("dos", "Dos, con el 7.º"), ("nueve", "Dos, de nueve números"))
+    start = max(max(VENTANAS_CLARAS), len(draws) - HISTORIA)
+    seen = {tuple(sorted(nums)) for _d, nums in draws[:start]}
+    meses = {(modo, ventana): {} for modo, _n in modos for ventana in VENTANAS_CLARAS}
+    saltos = Counter()
+    for i in range(start, len(draws)):
+        d, nums = draws[i]
+        tabla = premios.get(d.isoformat())
+        if tabla:
+            key = (d.year, d.month)
+            for ventana in VENTANAS_CLARAS:
+                ranked = _hot(draws[i - ventana:i])
+                for modo, _nombre in modos:
+                    tickets = _armar(modo, ranked, seen)
+                    if not tickets:
+                        saltos[(modo, ventana)] += 1
+                        continue
+                    _t5, _t6, bol = _boletos(tickets, nums, comps.get(d))
+                    box = meses[(modo, ventana)].setdefault(
+                        key, {"premio": 0.0, "bajo": 0.0, "gasto": 0.0, "c3": 0, "c4": 0, "c5": 0, "c6": 0}
+                    )
+                    box["premio"] += _euros_de(tabla, bol, ("3", "4", "5", "5c", "6"))
+                    box["bajo"] += _euros_de(tabla, bol, ("3", "4"))
+                    box["gasto"] += 0.50 * len(tickets)
+                    box["c3"] += bol["3"]
+                    box["c4"] += bol["4"]
+                    box["c5"] += bol["5"] + bol["5c"]
+                    box["c6"] += bol["6"]
+        seen.add(tuple(sorted(nums)))
+    filas = []
+    for modo, nombre in modos:
+        for ventana in VENTANAS_CLARAS:
+            filas.append(_fila_clara(modo, nombre, ventana, list(meses[(modo, ventana)].values())))
+    if saltos:
+        print("dias sin boleto", dict(saltos))
+    return filas
+
+
+def _euro_es(n):
+    return f"{n:.2f}".replace(".", ",")
+
+
+def _detalle_boleto(nums):
+    impares = sum(n % 2 for n in nums)
+    dec = []
+    for d in sorted({(n - 1) // 10 for n in nums}):
+        dec.append("1-9" if d == 0 else f"{d * 10}-{d * 10 + 9}")
+    return f"{impares} impares y {6 - impares} pares · decenas {', '.join(dec)}"
+
+
 def build():
     draws, reins, orden, comps = load()
     premios = cargar_premios([d for d, _n in draws[-HISTORIA:]])
-    freq, exp = freq_table(draws)
-    counts = [row["count"] for row in freq]
-    chi = chi2_uniform(counts, exp)
     oe = odd_even(draws)
-    cons = consec_stats(draws)
-    last_date = draws[-1][0]
-    year_cut = last_date.replace(year=last_date.year - 1)
-    windows = {
-        "todo": slice_pack(draws),
-        "d200": slice_pack(draws[-200:]),
-        "anyo": slice_pack([d for d in draws if d[0] >= year_cut]),
-    }
-    sums = sum_stats(draws)
-    formas = shape_check(draws)
     rein = reintegro_stats(reins)
-    strategies = backtest(draws)
+    filas = _claro(draws, comps, premios)
     last = draws[-1][0]
     nxt = cf.nextBonolotoDate(last)
-    best = strategies[0]
-    modal = max(oe, key=lambda r: r["sorteos"])
+    por_modo = {}
+    for fila in filas:
+        por_modo.setdefault(fila["modo"], []).append(fila["rinde_bajo"])
+    media = {m: sum(v) / len(v) for m, v in por_modo.items()}
+    dos_modo = "dos" if media["dos"] >= media["nueve"] else "nueve"
+    modo = dos_modo if media[dos_modo] > media["una"] + 0.02 else "una"
+    candidatas = [f for f in filas if f["modo"] == modo]
+    elegida = max(candidatas, key=lambda f: (f["rinde_bajo"], -abs(f["mirados"] - 120)))
+    ranked = _hot(draws[-elegida["mirados"]:])
+    vistos = {tuple(sorted(nums)) for _d, nums in draws}
+    tickets = _armar(modo, ranked, vistos)
+    cruda = _buscar(ranked[:_TOP_CLARO], set())
+    septimo = next(n for n in ranked if n not in (tickets[0] if tickets else ()))
+    forma3 = next(r for r in oe if r["impares"] == 3)
+    top_rein = max(rein["filas"], key=lambda r: (r["count"], -r["n"]))
+    reps = _repeats(draws)
+    visibles = [f for f in filas if f["modo"] in ("una", dos_modo)]
+    for f in visibles:
+        f["elegida"] = f["modo"] == elegida["modo"] and f["mirados"] == elegida["mirados"]
+    if modo == "una":
+        titulo = "Una apuesta. La segunda no devuelve más."
+    else:
+        titulo = "Dos apuestas. Devuelven más por euro que una."
+    dos_txt = "el 7.º en la segunda" if dos_modo == "dos" else "dos boletos sacados de los 9 más calientes"
+    dos_media = _euro_es(media[dos_modo])
+    if media["nueve"] + 0.02 < media["dos"]:
+        cola = "por debajo de meter solo el 7.º."
+    elif media["dos"] + 0.02 < media["nueve"]:
+        cola = "por encima de meter solo el 7.º."
+    else:
+        cola = "parecido a meter solo el 7.º."
+    cierre = "no mejora, y pagas el doble." if modo == "una" else "deja más por euro, así que hoy hay dos boletos."
+    porque = (
+        f"Una apuesta son 6 números y cuesta 0,50 €. "
+        f"De 80, 120, 200 y 320 sorteos mirados, devuelve {_euro_es(media['una'])} € por euro. "
+        f"Dos apuestas ({dos_txt}) devuelven {dos_media} € por euro: {cierre} "
+        f"El boleto de hoy mira {elegida['mirados']}, la mirada que más devolvió "
+        f"({_euro_es(elegida['rinde_bajo'])} € por euro), con {elegida['c3']} premios de 3 y {elegida['c4']} premios de 4. "
+        f"Saldo de esa fila: {_euro_es(elegida['saldo_bajo'])} €. "
+    )
+    if elegida["c5"] == 0 and elegida["c6"] == 0:
+        porque += "No hubo ningún 5 ni ningún 6, así que esto no sale de un premio gordo. "
+    else:
+        porque += (
+            f"Con el 5 y el 6 el saldo sería {_euro_es(elegida['saldo'])} € "
+            f"({elegida['c5']} cincos y {elegida['c6']} seises). Sin ellos, no se sostiene. "
+        )
+    porque += (
+        f"Partir nueve números, del 1 al 6 y del 1 al 3 con el 7 al 9, devuelve {_euro_es(media['nueve'])} € por euro, {cola} "
+        "Ninguna recupera el euro. Esto es la menos mala, no un sistema."
+    )
+    boletos = []
+    for i, nums in enumerate(tickets, 1):
+        boletos.append({
+            "nombre": "Apuesta" if len(tickets) == 1 else f"Apuesta {i}",
+            "numeros": list(nums),
+            "detalle": _detalle_boleto(nums),
+        })
     payload = {
         "juego": "Bonoloto",
         "fuente": "Hojas públicas Lotoideas"
@@ -1198,65 +1391,44 @@ def build():
         "hasta": last.isoformat(),
         "proximo": nxt.isoformat(),
         "sorteos": len(draws),
-        "universo": SPACE,
-        "aciertos_azar": round(EXP_HITS, 4),
-        "chi2": {"stat": chi[0], "p": chi[1], "esperado_por_numero": round(exp, 1)} if chi else None,
-        "frecuencia": freq,
-        "pares_impares": oe,
-        "seguidos": cons,
-        "sumas": sums,
-        "formas": formas,
-        "orden": orden,
-        "patrones": patrones(draws),
-        "reintegro": rein,
-        "estrategias": strategies,
-        "mejor_z": best["z"],
-        "forma_modal": {"impares": modal["impares"], "pares": modal["pares"], "obs": modal["obs"], "azar": modal["azar"]},
-        "ventanas": windows,
-        "calientes_ventanas": barrido(draws, comps, premios),
-        "noche": noche(draws),
-        "boletos": picks_now(draws),
-        "intento": {
-            "regla": best["id"],
-            "nombre": best["nombre"],
-            "numeros": picks_now(draws)[best["id"]],
-            "media": best["media"],
-            "z": best["z"],
-            "extra": round(best["media"] - EXP_HITS, 4),
+        "titulo": titulo,
+        "porque": porque.strip(),
+        "reintegro": {
+            "n": top_rein["n"],
+            "nota": f"Reintegro: el {top_rein['n']}, si te obligan a marcar uno. La urna va del 0 al 9 y la diferencia cabe en el azar. Cualquiera vale.",
         },
-        "propuesta": {
-            "numeros": next_ticket(draws),
-            "nota": "3 pares y 3 impares de los más frecuentes. Esa regla queda por debajo del azar en el backtest.",
-        },
-        "repeticiones_exactas": _repeats(draws),
-        "warmup": WARMUP,
-        "ventana": WIN,
+        "complementario": (
+            f"El complementario no se marca. Sale del bombo, entre los que no han salido. "
+            f"Solo paga si ya tienes 5 y tu sexto número es ese. "
+            f"El siguiente caliente, el {septimo}, "
+            + ("va en la segunda apuesta." if len(tickets) == 2 else "no se juega: la segunda apuesta no compensa.")
+        ),
+        "septimo": septimo,
+        "boletos": boletos,
+        "descarto_repetida": bool(cruda and cruda in vistos),
+        "reglas": [
+            f"3 impares y 3 pares. Es la forma más común: el {round(forma3['obs'] * 100)} % de los sorteos, igual que el combinatorio.",
+            "No van seis números seguidos. Eso casi no ha salido. Una pareja seguida sale más o menos la mitad de las veces, así que no la busco ni la evito.",
+            "Al menos tres decenas, para no juntar los seis en el mismo bloque.",
+            f"En {len(draws)} sorteos, una combinación de seis se ha repetido {reps} veces. El boleto de hoy no es ninguna de las ya salidas.",
+        ],
+        "tabla": visibles,
+        "elegida": {"modo": elegida["modo"], "mirados": elegida["mirados"]},
     }
     out = Path("data")
     out.mkdir(exist_ok=True)
     (out / "bonoloto.json").write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+    nums = " | ".join(" ".join(map(str, b["numeros"])) for b in boletos)
     print(
         f"sorteos={payload['sorteos']} {payload['desde']}..{payload['hasta']} proximo={payload['proximo']} "
-        f"mejor={best['nombre']} z={best['z']} forma3={formas['acierto_3_y_3']} "
-        f"ultimo={formas['ultimo']} hueco={formas['hueco_medio']}/{formas['hueco_azar']}"
+        f"{titulo} mirados={elegida['mirados']} {nums}"
     )
-    v = payload["calientes_ventanas"]
-    if v["pools"]:
-        p = v["pools"][0]
+    for f in filas:
         print(
-            f"en_positivo={v['en_positivo']}/{v['probadas']} "
-            f"mejor={p['nombre']} {p['cuantos']} mirados={p['mirados']} {p['plazo']} "
-            f"apuestas={p['apuestas']} saldo={p['saldo']}"
+            f"{f['modo']:5} mirados={f['mirados']:3} por_euro={f['rinde_bajo']:.3f} "
+            f"mediana={f['mediana_baja']:.3f} saldo={f['saldo_bajo']:.0f} "
+            f"c3={f['c3']} c4={f['c4']} c5={f['c5']} c6={f['c6']}"
         )
-    else:
-        print(f"en_positivo=0/{v['probadas']}")
-    p = payload["patrones"]
-    print("orden", orden["ya_ordenadas"], "/", orden["filas"])
-    print("decenas", [(d["decena"], d["bolas"], d["por_sorteo"], d["azar"], d["z"]) for d in p["decenas"]])
-    print(
-        f"seguidos={p['seguidos']} cerca2={p['a_lo_sumo_2']}/{p['azar_a_lo_sumo_2']} "
-        f"terminacion={p['misma_terminacion']}/{p['azar_misma_terminacion']}"
-    )
 
 
 def _repeats(draws):
