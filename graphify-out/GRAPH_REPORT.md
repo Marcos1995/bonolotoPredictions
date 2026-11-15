@@ -1,17 +1,17 @@
 # Graph Report - bonolotoPredictions  (2026-11-15)
 
 ## Corpus Check
-- 35 files · ~115,952 words
+- 35 files · ~116,159 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 6 file(s) not represented in the graph (top: (none) 3, .mdc 2, .sqlite 1)
 
 ## Summary
-- 429 nodes · 647 edges · 33 communities (25 shown, 8 thin omitted)
+- 429 nodes · 648 edges · 33 communities (25 shown, 8 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 4 edges (avg confidence: 0.88)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `61fb56e0`
+- Built from commit: `6e048c92`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -26,7 +26,7 @@
 - MaximumHitsPredictor
 - OverdueBacktester
 - tablas/SKILL.md
-- nextBonolotoDate
+- db
 - LotteryBacktester
 - Debug
 - predictData
@@ -66,10 +66,10 @@
   analyze_web.py → commonFunctions.py
 - `build()` --calls--> `nextBonolotoDate()`  [EXTRACTED]
   analyze_web.py → commonFunctions.py
-- `run_series()` --calls--> `nextDrawDate()`  [EXTRACTED]
-  edgeHunt.py → commonFunctions.py
 - `generate_best_prediction()` --calls--> `nextBonolotoDate()`  [EXTRACTED]
   bestPrediction.py → commonFunctions.py
+- `generate_best_prediction()` --calls--> `db`  [EXTRACTED]
+  bestPrediction.py → sqliteClass.py
 
 ## Import Cycles
 - None detected.
@@ -77,12 +77,12 @@
 ## Communities (33 total, 8 thin omitted)
 
 ### Community 0 - "edgeHunt.py"
-Cohesion: 0.06
-Nodes (47): Build judgments with Laya, Call, Design, borda(), _ensemble_members(), expected_hits(), _fill_from_groups(), _fz() (+39 more)
+Cohesion: 0.05
+Nodes (49): nextDrawDate(), Next date after last_date whose weekday is in weekdays (Mon=0)., Build judgments with Laya, Call, Design, borda(), _ensemble_members(), expected_hits() (+41 more)
 
 ### Community 1 - "commonFunctions.py"
-Cohesion: 0.12
-Nodes (19): Best Prediction Generator ========================= Comprehensive analysis…, collections, colorama, Pick k unique ints from a value_counts-like Series, then fill low..high., topUniqueNumbers(), datetime, Maximum Hits Predictor ====================== Predicts lottery numbers by…, Multi-Strategy Lottery Predictor ================================ Implements… (+11 more)
+Cohesion: 0.11
+Nodes (20): Best Prediction Generator ========================= Comprehensive analysis…, collections, colorama, Pick k unique ints from a value_counts-like Series, then fill low..high., topUniqueNumbers(), datetime, Maximum Hits Predictor ====================== Predicts lottery numbers by…, Multi-Strategy Lottery Predictor ================================ Implements… (+12 more)
 
 ### Community 2 - "webScraper.py"
 Cohesion: 0.07
@@ -101,8 +101,8 @@ Cohesion: 0.08
 Nodes (14): main(), MultiStrategyPredictor, Combine top 3 hot numbers with top 3 cold numbers., Select numbers ensuring balanced range and odd/even distribution., Weight number appearances with exponential decay by recency., Tests multiple lottery prediction strategies and compares their performance., Pick numbers that are overdue compared to their average gap., Get actual lottery numbers for a specific date. (+6 more)
 
 ### Community 6 - "analyze_web.py"
-Cohesion: 0.11
-Nodes (22): barrido(), _cobertura(), _coger(), _euros(), _euros_de(), _indices(), _jugar(), _listas() (+14 more)
+Cohesion: 0.12
+Nodes (21): barrido(), _cobertura(), _coger(), _euros(), _euros_de(), _indices(), _jugar(), _listas() (+13 more)
 
 ### Community 7 - "MaximumHitsPredictor"
 Cohesion: 0.14
@@ -112,9 +112,9 @@ Nodes (12): main(), MaximumHitsPredictor, DataFrame, Generate predictions using 
 Cohesion: 0.16
 Nodes (9): main(), OverdueBacktester, Get the actual numbers drawn on a specific date. Args: date: The draw date…, Run backtesting for the last N days of actual results. Args: days_to_test:…, Backtest lottery predictions using the "longest since appeared" strategy.…, Generate and print a comprehensive summary of backtest results., Predict numbers for the next draw using the best performing strategy., Main entry point for the backtest. (+1 more)
 
-### Community 10 - "nextBonolotoDate"
-Cohesion: 0.24
-Nodes (7): generate_best_prediction(), Generate the best possible prediction using comprehensive analysis., nextBonolotoDate(), nextDrawDate(), Next date after last_date whose weekday is in weekdays (Mon=0)., Bonoloto draws Mon-Sat. Skip Sunday., db
+### Community 10 - "db"
+Cohesion: 0.31
+Nodes (5): generate_best_prediction(), Generate the best possible prediction using comprehensive analysis., nextBonolotoDate(), Bonoloto draws every day, Sunday included., db
 
 ### Community 11 - "LotteryBacktester"
 Cohesion: 0.24
@@ -178,7 +178,7 @@ Nodes (15): _armar(), _boletos(), build(), _buscar(), _claro(), _detalle_boleto(
 
 ## Knowledge Gaps
 - **33 isolated node(s):** `1. Root cause`, `2. Compare`, `3. Hypothesis`, `4. Fix`, `Red flags → back to step 1` (+28 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 213 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 212 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **8 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
@@ -191,9 +191,9 @@ _Questions this graph is uniquely positioned to answer:_
 - **What connects `1. Root cause`, `2. Compare`, `3. Hypothesis` to the rest of the system?**
   _33 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `edgeHunt.py` be split into smaller, more focused modules?**
-  _Cohesion score 0.05649717514124294 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.053939714436805924 - nodes in this community are weakly interconnected._
 - **Should `commonFunctions.py` be split into smaller, more focused modules?**
-  _Cohesion score 0.11764705882352941 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.1126984126984127 - nodes in this community are weakly interconnected._
 - **Should `webScraper.py` be split into smaller, more focused modules?**
   _Cohesion score 0.07058823529411765 - nodes in this community are weakly interconnected._
 - **Should `LotteryPatternAnalyzer` be split into smaller, more focused modules?**

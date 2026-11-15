@@ -20,7 +20,7 @@
 
 ## Estado
 - 2026-10-14: el criterio sigue siendo un boleto con los 6 calientes de los últimos 120 sorteos. Los tramos son meses naturales. En todo el periodo, el rinde es premios/gasto: 20 apuestas solo compensan si no rinden menos. La regularidad es la mediana mensual de ese rinde. La tabla tiene premios, gasto, saldo con el 5, sin 6 y sin 5.
-- 2026-11-15: la web pública sigue siendo solo Bonoloto. El histórico sale de las hojas de Lotoideas (Primitiva, Euromillones, El Gordo y EuroDreams están en `raffles.py`, no en la página). SELAE cierra el JSON a los scripts. Si la hoja llega tarde, el análisis rellena ese día con la ficha publicada. La acción corre a las 05:00, 18:00 y 21:30 UTC; el sorteo del día entra a partir de las 21:40 hora de Madrid.
+- 2026-11-15: la web pública sigue siendo solo Bonoloto. El histórico sale de las hojas de Lotoideas (Primitiva, Euromillones, El Gordo y EuroDreams están en `raffles.py`, no en la página). SELAE cierra el JSON a los scripts. Si la hoja llega tarde, el análisis rellena ese día con la ficha publicada. La acción corre a las 05:00, 18:00 y 21:30 UTC; el sorteo del día entra a partir de las 21:40 hora de Madrid. Bonoloto se sortea los siete días; el domingo entra igual que el resto.
 - 2026-11-15: la página enseña una apuesta de 0,50 €. Dos apuestas devuelven lo mismo por euro. El complementario no se elige. El reintegro da igual. Una combinación ya salida no se vuelve a proponer.
 
 

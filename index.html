@@ -236,7 +236,7 @@
     </header>
 
     <section id="kpi-hero" class="section-reveal rounded-[14px] bg-[#18E667] text-[#032612] p-5 sm:p-8">
-      <p id="cuando" class="text-sm font-bold uppercase tracking-wide"></p>
+      <p id="cuando" class="text-sm font-bold"></p>
       <div id="boletos" class="mt-4 space-y-6"></div>
       <p id="reintegro" class="mt-5 text-base font-semibold max-w-xl"></p>
       <p id="complementario" class="mt-2 text-sm font-medium max-w-xl"></p>
@@ -284,6 +284,26 @@
     let filas = [];
     let orden = { key: "rinde_bajo", dir: -1 };
 
+    function fraseSorteo(data) {
+      const ahora = new Date();
+      const iso = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Europe/Madrid", year: "numeric", month: "2-digit", day: "2-digit"
+      }).format(ahora);
+      const hm = new Intl.DateTimeFormat("en-GB", {
+        timeZone: "Europe/Madrid", hour: "2-digit", minute: "2-digit", hourCycle: "h23"
+      }).format(ahora);
+      const dia = new Intl.DateTimeFormat("es-ES", { timeZone: "Europe/Madrid", weekday: "long" }).format(ahora);
+      const [h, min] = hm.split(":").map(Number);
+      const antes = h < 21 || (h === 21 && min < 40);
+      if (data.proximo === iso && antes) {
+        return "Para el sorteo de hoy, " + dia + " " + fmtFecha(data.proximo) + ". Sale a las 21:30 y todavía no está en el histórico, que llega al " + fmtFecha(data.hasta) + ".";
+      }
+      if (data.hasta === iso) {
+        return "El sorteo de hoy ya está en el histórico. La apuesta es para el " + fmtFecha(data.proximo) + ".";
+      }
+      return "Para el sorteo del " + fmtFecha(data.proximo) + ". El histórico llega al " + fmtFecha(data.hasta) + ".";
+    }
+
     function bola(n) {
       return `<span class="bola bola-criterio">${n}</span>`;
     }
@@ -294,7 +314,7 @@
         "Bonoloto · " + data.sorteos.toLocaleString("es-ES") + " sorteos · " + fmtFecha(data.desde) + " – " + fmtFecha(data.hasta);
       document.getElementById("hallazgo").textContent = data.titulo;
       document.getElementById("porque").textContent = data.porque;
-      document.getElementById("cuando").textContent = "Para el sorteo del " + fmtFecha(data.proximo) + ". El de hoy no entra en la cuenta.";
+      document.getElementById("cuando").textContent = fraseSorteo(data);
       document.getElementById("boletos").innerHTML = data.boletos.map((b) => `
         <div>
           <p class="text-sm font-bold">${b.nombre}</p>

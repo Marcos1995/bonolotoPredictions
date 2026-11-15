@@ -105,9 +105,7 @@ def _tope_publicado(today=None, now=None):
         now = now.astimezone(_MADRID)
     today = today or now.date()
     end = today
-    if end.weekday() < 6 and (now.hour, now.minute) < (21, 40):
-        end -= dt.timedelta(days=1)
-    while end.weekday() == 6:
+    if (now.hour, now.minute) < (21, 40):
         end -= dt.timedelta(days=1)
     return end
 
@@ -118,7 +116,7 @@ def dias_sin_datos(have, today=None, now=None, days=21):
     missing = []
     d = start
     while d <= tope:
-        if d.weekday() < 6 and d not in have:
+        if d not in have:
             missing.append(d)
         d += dt.timedelta(days=1)
     return missing

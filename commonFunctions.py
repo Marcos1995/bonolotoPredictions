@@ -36,8 +36,8 @@ def nextDrawDate(last_date, weekdays=(0, 1, 2, 3, 4, 5)):
 
 
 def nextBonolotoDate(last_date):
-    """Bonoloto draws Mon-Sat. Skip Sunday."""
-    return nextDrawDate(last_date, (0, 1, 2, 3, 4, 5))
+    """Bonoloto draws every day, Sunday included."""
+    return last_date + dt.timedelta(days=1)
 
 
 def topUniqueNumbers(counts, k=6, low=1, high=49):

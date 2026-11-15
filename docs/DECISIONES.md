@@ -20,3 +20,4 @@
 2026-10-14 · Los tramos son un mes natural por fila · el usuario pidió mes a mes en vez de trimestral · descartado: bloques de 30 sorteos, meses naturales conservando 6 meses y 1 año · laya 0.97 · confianza: alta
 2026-11-15 · Seguir con las hojas de Lotoideas y rellenar el hueco reciente con la ficha del día · SELAE responde 403 a los scripts y una API con clave es de pago · descartado: SELAE, loteriasapi · laya — · confianza: baja · sin Laya
 2026-11-15 · Una apuesta, los 6 calientes con forma 3 y 3, mirando 320 · dos apuestas devuelven lo mismo por euro y cuestan el doble; en el periodo no hubo ni un 5 ni un 6 · descartado: dos con el 7º, dos boletos de nueve números · sin Laya
+2026-11-15 · Bonoloto se sortea los siete días · el histórico tiene domingo desde 2022 y el código lo saltaba, así que el domingo 15 proponía el lunes 16 · descartado: lunes a sábado · sin Laya

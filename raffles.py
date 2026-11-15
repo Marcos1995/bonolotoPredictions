@@ -12,7 +12,7 @@ def _csv(pacx, gids=None):
 # Number games drawn ~every 1-3 days (plus Sunday Gordo). Lototurf 6/12 skipped: tiny urn.
 GAMES = {
     "Bonoloto": {
-        "n": 49, "w": 6, "weekdays": (0, 1, 2, 3, 4, 5),
+        "n": 49, "w": 6, "weekdays": (0, 1, 2, 3, 4, 5, 6),
         "csv": _csv("2PACX-1vQALTRaLDFfhXOAQmeONPqmFKm9yOiQ4W97rhWgR41BZ7czFsjK5YktD6fnETKHGB9YUnyQ4XBSbhZx", (0, 1)),
         "extra_types": ("Complementario", "Reintegro"),
     },

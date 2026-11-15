@@ -6,9 +6,9 @@
     "semantic_hash": ""
   },
   "analyze_web.py": {
-    "mtime": 1794773158.923137,
-    "seen": 1794773260.644831,
-    "ast_hash": "6349185f5d1c38bcc714d3496d0aeac1",
+    "mtime": 1794773727.4261727,
+    "seen": 1794773809.9336925,
+    "ast_hash": "5a88b2373bc53210b2b267f38e169353",
     "semantic_hash": ""
   },
   "bestPrediction.py": {
@@ -18,15 +18,15 @@
     "semantic_hash": ""
   },
   "commonFunctions.py": {
-    "mtime": 1786973027.6697044,
-    "seen": 1791406906.9790945,
-    "ast_hash": "b946d6555649f75b0c1c244eec4fd22c",
+    "mtime": 1794773725.1816254,
+    "seen": 1794773809.9336925,
+    "ast_hash": "70269b0ad90734b361c63675db35a959",
     "semantic_hash": ""
   },
   "data/bonoloto.json": {
-    "mtime": 1794773159.2162578,
-    "seen": 1794773260.644831,
-    "ast_hash": "64167f902eb90e1872b755ed9f802988",
+    "mtime": 1794773772.2196527,
+    "seen": 1794773809.9336925,
+    "ast_hash": "971678cd2014a2345d8c1b1a5add6d3a",
     "semantic_hash": ""
   },
   "edgeHunt.py": {
@@ -84,9 +84,9 @@
     "semantic_hash": ""
   },
   "raffles.py": {
-    "mtime": 1786973168.589934,
-    "seen": 1791406906.9790945,
-    "ast_hash": "6ce2ba20c7f312bccc3e2ee702389daf",
+    "mtime": 1794773726.0950692,
+    "seen": 1794773809.9336925,
+    "ast_hash": "6da8037cfdc82f52f0cc434442feff6a",
     "semantic_hash": ""
   },
   "sqliteClass.py": {
@@ -96,9 +96,9 @@
     "semantic_hash": ""
   },
   "test_helpers.py": {
-    "mtime": 1787912393.044979,
-    "seen": 1791406906.9790945,
-    "ast_hash": "129c446e7f47cb527dd9bde0820fcd91",
+    "mtime": 1794773769.237485,
+    "seen": 1794773809.9336925,
+    "ast_hash": "d887d2b752b4a86bdfcd62690b745b38",
     "semantic_hash": ""
   },
   "webScraper.py": {
@@ -180,9 +180,9 @@
     "semantic_hash": ""
   },
   "PROJECT.md": {
-    "mtime": 1794773248.8884141,
-    "seen": 1794773260.644831,
-    "ast_hash": "4471b6527bbb62ef2d4c62c81bfca0eb",
+    "mtime": 1794773738.2893093,
+    "seen": 1794773809.9336925,
+    "ast_hash": "1b8474752d9b6c6f42f98c484319cf7d",
     "semantic_hash": ""
   },
   "README.md": {
@@ -198,15 +198,15 @@
     "semantic_hash": ""
   },
   "docs/DECISIONES.md": {
-    "mtime": 1794773189.0019698,
-    "seen": 1794773260.644831,
-    "ast_hash": "b7d087ed1fe093077cd835c0155cd1d2",
+    "mtime": 1794773771.1942544,
+    "seen": 1794773809.9336925,
+    "ast_hash": "68506fd0c65aade09eec70a3663a0945",
     "semantic_hash": ""
   },
   "index.html": {
-    "mtime": 1794772967.53126,
-    "seen": 1794773260.644831,
-    "ast_hash": "7f2cb4e7710d96abea7a7d9db416b6dd",
+    "mtime": 1794773736.1959364,
+    "seen": 1794773809.9336925,
+    "ast_hash": "10410ffe23e3648908ddd6be386cba06",
     "semantic_hash": ""
   },
   "pattern_analysis_results.txt": {

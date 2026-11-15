@@ -3,8 +3,13 @@ import datetime as dt
 import pandas as pd
 import commonFunctions as cf
 
-# Sat 8 Aug 2026 -> skip Sunday -> Mon 10
-assert cf.nextBonolotoDate(dt.date(2026, 8, 8)) == dt.date(2026, 8, 10)
+# Sat 8 Aug 2026 -> Sunday 9. Bonoloto draws all seven days.
+assert cf.nextBonolotoDate(dt.date(2026, 8, 8)) == dt.date(2026, 8, 9)
+from zoneinfo import ZoneInfo
+import analyze_web as aw
+_madrid = ZoneInfo("Europe/Madrid")
+assert aw._tope_publicado(now=dt.datetime(2026, 11, 15, 21, 13, tzinfo=_madrid)) == dt.date(2026, 11, 14)
+assert aw._tope_publicado(now=dt.datetime(2026, 11, 15, 21, 45, tzinfo=_madrid)) == dt.date(2026, 11, 15)
 assert cf.nextBonolotoDate(dt.date(2026, 8, 11)) == dt.date(2026, 8, 12)
 assert cf.nextDrawDate(dt.date(2026, 8, 15), (3, 5)) == dt.date(2026, 8, 20)  # Sat -> Thu Primitiva
 
